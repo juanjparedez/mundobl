@@ -97,11 +97,10 @@ try {
   assert.equal(response.headers.get('cache-control'), 'no-store');
   const items = await response.json();
   assert.equal(items.length, 5);
-  assert.ok(
-    items.every(
-      (item) => item.series.seasons[0].episodes[0].viewStatus.length === 0
-    )
-  );
+  // The library only carries progress summaries: no episode rows, and
+  // nothing from another account's tracking.
+  assert.ok(items.every((item) => item.series.seasons === undefined));
+  assert.ok(!JSON.stringify(items).includes(other));
   assert.ok(!JSON.stringify(items).includes('PRIVATE EDITORIAL'));
   assert.equal((await (await active.GET()).json()).length, 2);
   let saved = await (

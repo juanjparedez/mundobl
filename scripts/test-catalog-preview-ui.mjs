@@ -1,15 +1,11 @@
 import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
-import pg from 'pg';
+import { createTestPool } from './db/test-pool.mjs';
 import { encode } from 'next-auth/jwt';
 import { mkdirSync } from 'node:fs';
 const base = process.env.SERIES_FORM_TEST_BASE_URL || 'http://localhost:3018';
 assert(['127.0.0.1', 'localhost'].includes(new URL(base).hostname));
-const url = new URL(process.env.DATABASE_URL || '');
-assert.equal(url.hostname, '127.0.0.1');
-assert.equal(url.port, '55433');
-assert.equal(url.pathname, '/mundobl_replay');
-const pool = new pg.Pool({ connectionString: url.toString() });
+const pool = createTestPool();
 const browser = await chromium.launch();
 const ids = [];
 const userId = `catalog-local-${Date.now()}`;

@@ -12,12 +12,13 @@
  */
 
 import { ONBOARDING_MAX_PICKS } from '@/constants/onboarding';
-import { prisma, filterOnboardingSeriesIds } from './database';
+import { filterOnboardingSeriesIds } from './database';
 import {
   ProgressNotFoundError,
   setProgress,
   setSeriesTrackingStatus,
 } from './tracking';
+import { inSequence } from './prisma-client';
 
 export interface OnboardingPick {
   seriesId: number;
@@ -83,7 +84,7 @@ export async function completeOnboarding(
   );
   const valid = picks.filter((pick) => allowed.has(pick.seriesId));
 
-  await prisma.$transaction(async (tx) => {
+  await inSequence(async (tx) => {
     for (const pick of valid) {
       await setSeriesTrackingStatus(tx, userId, pick.seriesId, 'VIENDO');
       if (pick.seasonNumber === null || pick.episodeNumber === null) continue;

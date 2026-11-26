@@ -62,7 +62,7 @@ Seguimiento y notas se escriben en una transacción. No se modifica la ficha edi
 
 `npx tsx scripts/test-tracking-backup.ts` prueba planificación de exportación/restauración, identidad de la cuenta, conservación de fechas, reintentos, duplicados, referencias inexistentes y entradas inválidas con datos sintéticos, sin conexión a una base. TypeScript y ESLint cubren las rutas y la integración del helper.
 
-También se ejecutó `test-tracking-database.ts` con SQL real sobre PGlite local: vista previa sin escrituras, propiedad de la cuenta, conservación de fechas, reintentos y prioridad de los datos existentes. Ver `seguimiento-pruebas-locales.md` para reproducirlo y conocer sus límites. La prueba de fallo deliberado/rollback y los reintentos concurrentes pasaron después sobre PostgreSQL nativo (ver `seguimiento-pruebas-locales.md`).
+También se ejecutó `test-tracking-database.ts` con SQL real sobre PGlite local: vista previa sin escrituras, propiedad de la cuenta, conservación de fechas, reintentos y prioridad de los datos existentes. Desde el paso a D1 (2026-11) esa prueba corre dentro de `npm run test:all` sobre SQLite local; ver [pruebas-locales.md](pruebas-locales.md).
 
 ### Historial de cambios
 
@@ -73,7 +73,11 @@ El export personal incluye `trackingEvents`. Cada evento conserva su ID, estado 
 Con sesión iniciada, `PATCH /api/user/watch-date` recibe, por ejemplo:
 
 ```json
-{"episodeId":123,"watchedDate":"2024-06-15","expectedDate":"2024-06-16T14:30:00.000Z"}
+{
+  "episodeId": 123,
+  "watchedDate": "2024-06-15",
+  "expectedDate": "2024-06-16T14:30:00.000Z"
+}
 ```
 
 Usar la fecha previa exacta de la exportación como expectedDate; null indica que era desconocida. watchedDate null vuelve a dejarla desconocida. Solo se corrigen marcas VISTA de tu cuenta. Un 409 indica que el registro cambió, no existe o ya no está visto: actualizar el dato antes de intentar de nuevo. No crea contenido ni modifica el progreso; queda constancia en el historial privado. Las fechas elegidas son días UTC. La interfaz permite corregir fechas de series, temporadas y episodios vistos.

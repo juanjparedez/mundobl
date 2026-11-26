@@ -53,10 +53,10 @@ const prisma = {
   season: { create: write('season.create', { id: 10 }) },
   viewStatus: { upsert: write('viewStatus.upsert') },
   seriesRevision: { create: write('seriesRevision.create') },
-  $transaction: async (fn) => {
-    calls.push({ operation: 'transaction' });
-    return fn(prisma);
-  },
+};
+const inSequence = async (fn) => {
+  calls.push({ operation: 'sequence' });
+  return fn(prisma);
 };
 for (const entity of [
   'seriesActor',
@@ -71,6 +71,7 @@ for (const entity of [
 }
 globalThis.__contributionHarness = {
   prisma,
+  inSequence,
   auth,
   catalog,
   search: async (kind, search) => {
@@ -84,6 +85,8 @@ const stubs = {
     export const searchContributionMetadata = (...args) => globalThis.__contributionHarness.search(...args);
     export const prepareUniverseSlot = async () => {};
     export const resolveBasedOnValue = async value => value;`,
+  '@/lib/prisma-client':
+    'export const inSequence = (...args) => globalThis.__contributionHarness.inSequence(...args);',
   '@/lib/auth-helpers': `import { NextResponse } from 'next/server';
     export const requireAuth = async () => globalThis.__contributionHarness.auth();
     export const requireRole = async roles => {
@@ -124,7 +127,12 @@ const built = await build({
       setup(builder) {
         builder.onResolve({ filter: /.*/ }, (args) => {
           // collaborator-guard uses a relative import of the same database module.
-          const key = args.path === './database' ? '@/lib/database' : args.path;
+          const key =
+            args.path === './database'
+              ? '@/lib/database'
+              : args.path === './prisma-client'
+                ? '@/lib/prisma-client'
+                : args.path;
           if (key in stubs) return { path: key, namespace: 'test-stub' };
         });
         builder.onLoad({ filter: /.*/, namespace: 'test-stub' }, (args) => ({
@@ -257,7 +265,7 @@ for (const field of [
   'submittedById',
 ])
   assert.equal(field in update.data, false);
-assert.equal(calls[0].operation, 'transaction');
+assert.equal(calls[0].operation, 'sequence');
 // Cada guardado deja la foto previa y sube la version de la ficha.
 const revision = calls.find(
   (call) => call.operation === 'seriesRevision.create'
@@ -286,7 +294,7 @@ ownershipChanged = true;
 assert.equal((await patch({ tagNames: [] })).status, 403);
 assert.deepEqual(
   calls.map((call) => call.operation),
-  ['transaction', 'series.update.rejected']
+  ['sequence', 'series.update.rejected']
 );
 ownershipChanged = false;
 calls.length = 0;
@@ -306,7 +314,7 @@ assert.equal(
 );
 assert.equal(calls.length, 0);
 assert.equal((await api.POST(request(publicBody))).status, 201);
-assert.equal(calls[0].operation, 'transaction');
+assert.equal(calls[0].operation, 'sequence');
 const created = calls.find((call) => call.operation === 'series.create').args
   .data;
 assert.equal(created.origin, 'USER_EMBED');
@@ -348,5 +356,5 @@ assert.equal((await lookup('kind=actors')).status, 401);
 assert.equal(lookups.length, 1);
 delete globalThis.__contributionHarness;
 console.log(
-  'PASS: existing references, ambiguous names, role/ownership/scope, ignored editorial fields, no mutations on rejected metadata, transactional contribution creation. Route dependencies simulated; no real PostgreSQL verification.'
+  'PASS: existing references, ambiguous names, role/ownership/scope, ignored editorial fields, no mutations on rejected metadata, sequenced contribution creation. Route dependencies simulated; no real database.'
 );

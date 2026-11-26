@@ -12,6 +12,7 @@ let allowed = false;
 let invalidated = 0;
 const mocks = {
   './database': db,
+  './lease': require('../src/lib/lease.ts'),
   './playability-audit': {
     runPlayabilityJob: async (trigger) => {
       calls.push(['playability', trigger]);
@@ -130,7 +131,7 @@ try {
   if (saved === undefined) delete process.env.CRON_SECRET;
   else process.env.CRON_SECRET = saved;
   console.log(
-    'PASS: auth, validation, selected jobs, daily orchestration, partial failure, real PostgreSQL concurrent lock and release, cache invalidation.'
+    'PASS: auth, validation, selected jobs, daily orchestration, partial failure, concurrent lease and release, cache invalidation.'
   );
 } finally {
   await db.prisma.$disconnect();

@@ -1,10 +1,10 @@
-import { prisma } from '@/lib/database';
 import {
   ProgressNotFoundError,
   setEpisodesWatched,
   setSeriesTrackingStatus,
 } from '@/lib/tracking';
 import { LOCAL_INTENTS, type LocalIntent } from '@/lib/local-progress';
+import { inSequence } from './prisma-client';
 
 export const MAX_LOCAL_IMPORT_ITEMS = 200;
 const MAX_EPISODES_PER_SERIES = 500;
@@ -64,7 +64,7 @@ export async function importLocalProgress(
   const failed: number[] = [];
   for (const item of items) {
     try {
-      await prisma.$transaction(async (tx) => {
+      await inSequence(async (tx) => {
         const series = await tx.series.findUnique({
           where: { id: item.seriesId },
           select: { id: true },

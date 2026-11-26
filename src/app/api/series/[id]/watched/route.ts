@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { ProgressNotFoundError, setEpisodesWatched } from '@/lib/tracking';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import { WATCHING_METRICS } from '@/lib/achievements';
+import { inSequence } from '@/lib/prisma-client';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const result = await prisma.$transaction((tx) =>
+    const result = await inSequence((tx) =>
       setEpisodesWatched(tx, authResult.userId, seriesId, episodeIds, watched)
     );
 

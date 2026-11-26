@@ -28,17 +28,17 @@ La aplicación registra revisiones y preserva episodios/seguimiento; no envía n
 
 El manifiesto `scripts/data/ver-content-2026-10-24.json` contiene IDs exactos, numeración editorial, partes, fecha de publicación y título original como evidencia. No importa automáticamente todos los elementos de una playlist.
 
-| Ficha | Capítulos | Videos | Fuente |
-| --- | ---: | ---: | --- |
-| 611 — My damn business | 7 | 7 | [GND](https://www.youtube.com/playlist?list=PL-UjFgW8TJEcVMXRV63uoHXg7rXv7mwll) |
-| 502 — Love in protocol | 4 | 4 | [GND](https://www.youtube.com/playlist?list=PL-UjFgW8TJEfcBaYLr8jyN_Dn00ScQ6CW) |
-| 76 — Blue boys | 4 | 4 | [Sukfilm, EP1–4](https://www.youtube.com/playlist?list=PLYfaogVGCvwTczUW4K1YELu_cWQfUQ21a) |
-| 77 — Blue boys 2 | 4 | 4 | [Sukfilm, EP5–8](https://www.youtube.com/playlist?list=PLYfaogVGCvwTczUW4K1YELu_cWQfUQ21a) |
-| 198 — First note of love | 12 | 12 | [GagaOOLala](https://www.youtube.com/playlist?list=PL-NRJVNnoKievO009xKPNKIM93g2Z3GGY) |
-| Nueva — The Best Story | 3 | 6 | [Rookie](https://www.youtube.com/playlist?list=PLUTllkCvL25gr75IzPcKrHtH57UmCoQTG) |
-| Nueva — 21 Days Theory | 4 | 8 | [Rookie](https://www.youtube.com/playlist?list=PLUTllkCvL25jAHOPCJo_TphtVWkWcyfR3) |
-| Nueva — On Cloud Nine | 6 | 6 | [Mind Trio](https://www.youtube.com/playlist?list=PLHWvrNIJL6cWZ-doJDFK2VMshJFRfvz5H) |
-| **Total** | **44** | **51** | **8 fichas** |
+| Ficha                    | Capítulos | Videos | Fuente                                                                                     |
+| ------------------------ | --------: | -----: | ------------------------------------------------------------------------------------------ |
+| 611 — My damn business   |         7 |      7 | [GND](https://www.youtube.com/playlist?list=PL-UjFgW8TJEcVMXRV63uoHXg7rXv7mwll)            |
+| 502 — Love in protocol   |         4 |      4 | [GND](https://www.youtube.com/playlist?list=PL-UjFgW8TJEfcBaYLr8jyN_Dn00ScQ6CW)            |
+| 76 — Blue boys           |         4 |      4 | [Sukfilm, EP1–4](https://www.youtube.com/playlist?list=PLYfaogVGCvwTczUW4K1YELu_cWQfUQ21a) |
+| 77 — Blue boys 2         |         4 |      4 | [Sukfilm, EP5–8](https://www.youtube.com/playlist?list=PLYfaogVGCvwTczUW4K1YELu_cWQfUQ21a) |
+| 198 — First note of love |        12 |     12 | [GagaOOLala](https://www.youtube.com/playlist?list=PL-NRJVNnoKievO009xKPNKIM93g2Z3GGY)     |
+| Nueva — The Best Story   |         3 |      6 | [Rookie](https://www.youtube.com/playlist?list=PLUTllkCvL25gr75IzPcKrHtH57UmCoQTG)         |
+| Nueva — 21 Days Theory   |         4 |      8 | [Rookie](https://www.youtube.com/playlist?list=PLUTllkCvL25jAHOPCJo_TphtVWkWcyfR3)         |
+| Nueva — On Cloud Nine    |         6 |      6 | [Mind Trio](https://www.youtube.com/playlist?list=PLHWvrNIJL6cWZ-doJDFK2VMshJFRfvz5H)      |
+| **Total**                |    **44** | **51** | **8 fichas**                                                                               |
 
 Los 51 videos pasaron canal oficial, duración ≥300 segundos, disponibilidad en los siete mercados core y página anónima de YouTube con `playabilityStatus=OK`. Esta comprobación no equivale a ver completos los 51 videos ni garantiza subtítulos en español. First Note of Love tiene restricción declarada para JP/KR. La disponibilidad puede cambiar.
 
@@ -48,16 +48,16 @@ Se excluyó **The Star**: la API decía público/embebible, pero su página exig
 
 Los manifiestos adicionales son `scripts/data/ver-content-youtube-expanded-2026-10-24.json` y `scripts/data/ver-content-vimeo-2026-10-24.json`.
 
-| Ficha | Capítulos/videos | Fuente |
-| --- | ---: | --- |
-| Nueva — Love Bill | 10 | O2, YouTube |
-| 592 — Mr. Cinderella | 8 | O2, YouTube |
-| Nueva — Mr. Cinderella 2 | 8 | O2, YouTube |
-| Nueva — Be Your Star | 20 | O2, YouTube |
-| Nueva — VIAN | 12 | O2, YouTube |
-| 233 — Happy Ending | 3 | Strongberry, YouTube |
-| 16 — A First Love Story | 2 | Strongberry, YouTube |
-| Nueva — Yu and Rachel (2014, Taiwán) | 1 | WU ZI-EN, Vimeo |
+| Ficha                                | Capítulos/videos | Fuente               |
+| ------------------------------------ | ---------------: | -------------------- |
+| Nueva — Love Bill                    |               10 | O2, YouTube          |
+| 592 — Mr. Cinderella                 |                8 | O2, YouTube          |
+| Nueva — Mr. Cinderella 2             |                8 | O2, YouTube          |
+| Nueva — Be Your Star                 |               20 | O2, YouTube          |
+| Nueva — VIAN                         |               12 | O2, YouTube          |
+| 233 — Happy Ending                   |                3 | Strongberry, YouTube |
+| 16 — A First Love Story              |                2 | Strongberry, YouTube |
+| Nueva — Yu and Rachel (2014, Taiwán) |                1 | WU ZI-EN, Vimeo      |
 
 El lote combinado contiene **16 títulos, 108 capítulos y 115 videos**: 15 títulos de YouTube y uno de Vimeo. Love Bill usa el EP3 oficial alternativo sin restricción de edad; VIAN conserva el final original. Want to See You se excluyó por membresía en su EP14.
 

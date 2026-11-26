@@ -1,4 +1,6 @@
-import { Prisma, type PrismaClient } from '@prisma/client';
+import type { AppPrismaClient } from './prisma-client';
+import { createManySkippingDuplicates } from './create-many';
+import { Prisma } from '@prisma/client';
 import {
   EMPTY_SUPPORT,
   isSupportOwner,
@@ -6,7 +8,7 @@ import {
   SupportError,
   type parseSupportMutation,
 } from './support-input';
-export function createSupportRepository(db: PrismaClient) {
+export function createSupportRepository(db: AppPrismaClient) {
   async function requireOwner(userId: string) {
     const user = await db.user.findUnique({
       where: { id: userId },
@@ -39,47 +41,45 @@ export function createSupportRepository(db: PrismaClient) {
     input: ReturnType<typeof parseSupportMutation>
   ) {
     await requireOwner(userId);
-    await db.$transaction(async (tx) => {
-      await tx.supportSettings.createMany({
-        data: [
-          { id: 1, draft: { intro: '', purpose: '', thanks: '', methods: [] } },
-        ],
-        skipDuplicates: true,
-      });
-      const row = await tx.supportSettings.findUniqueOrThrow({
-        where: { id: 1 },
-      });
-      if (row.version !== input.version)
-        throw new SupportError(409, 'conflict');
-      const data: Prisma.SupportSettingsUpdateManyMutationInput = {
-        version: { increment: 1 },
-        updatedBy: userId,
-      };
-      if (input.action === 'save')
-        data.draft = JSON.parse(
-          JSON.stringify(input.content)
-        ) as Prisma.InputJsonValue;
-      if (input.action === 'publish') {
-        const content = parseSupportContent(row.draft, true);
-        content.methods = content.methods
-          .filter((m) => m.enabled)
-          .map((m) =>
-            m.kind === 'link'
-              ? { ...m, alias: '', holder: '', bank: '', currency: '' }
-              : { ...m, url: '' }
-          );
-        data.published = JSON.parse(
-          JSON.stringify(content)
-        ) as Prisma.InputJsonValue;
-        data.enabled = true;
-      }
-      if (input.action === 'hide') data.enabled = false;
-      const changed = await tx.supportSettings.updateMany({
-        where: { id: 1, version: input.version },
-        data,
-      });
-      if (changed.count !== 1) throw new SupportError(409, 'conflict');
+    // Everything is validated before the first write (D1 has no rollback);
+    // the version in the WHERE keeps concurrent saves from overwriting.
+    const empty = { intro: '', purpose: '', thanks: '', methods: [] };
+    const row = (await db.supportSettings.findUnique({ where: { id: 1 } })) ?? {
+      version: 0,
+      draft: empty,
+    };
+    if (row.version !== input.version) throw new SupportError(409, 'conflict');
+    const data: Prisma.SupportSettingsUpdateManyMutationInput = {
+      version: { increment: 1 },
+      updatedBy: userId,
+    };
+    if (input.action === 'save')
+      data.draft = JSON.parse(
+        JSON.stringify(input.content)
+      ) as Prisma.InputJsonValue;
+    if (input.action === 'publish') {
+      const content = parseSupportContent(row.draft, true);
+      content.methods = content.methods
+        .filter((m) => m.enabled)
+        .map((m) =>
+          m.kind === 'link'
+            ? { ...m, alias: '', holder: '', bank: '', currency: '' }
+            : { ...m, url: '' }
+        );
+      data.published = JSON.parse(
+        JSON.stringify(content)
+      ) as Prisma.InputJsonValue;
+      data.enabled = true;
+    }
+    if (input.action === 'hide') data.enabled = false;
+    await createManySkippingDuplicates([{ id: 1, draft: empty }], (rows) =>
+      db.supportSettings.createMany({ data: rows })
+    );
+    const changed = await db.supportSettings.updateMany({
+      where: { id: 1, version: input.version },
+      data,
     });
+    if (changed.count !== 1) throw new SupportError(409, 'conflict');
     return getSupportAdmin(userId);
   }
   return {

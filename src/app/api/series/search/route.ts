@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
         AND: [
           {
             OR: [
-              { title: { contains: query, mode: 'insensitive' } },
-              { originalTitle: { contains: query, mode: 'insensitive' } },
+              { title: { contains: query } },
+              { originalTitle: { contains: query } },
             ],
           },
           excludeId ? { id: { not: parseInt(excludeId, 10) } } : {},

@@ -1,8 +1,8 @@
 # Deploy en Cloudflare Workers
 
 MundoBL corre en Cloudflare Workers Paid (USD 5 por mes) con
-[`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare). La base sigue
-en Supabase y las imágenes en R2. Vercel se dejó en noviembre de 2026 porque
+[`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare). La base es la
+D1 `mundobl` y las imágenes están en R2. Vercel se dejó en noviembre de 2026 porque
 el plan gratis se pasaba de cuota (CPU e ISR writes) y amenazaba con pausar la
 cuenta.
 
@@ -13,7 +13,8 @@ cuenta.
 - Durable Objects (cola de revalidación y tag cache).
 - R2 aparte: 10 GB y 1 millón de escrituras por mes gratis. El cache ISR vive
   en el bucket `mundobl-opennext-cache`, que el primer deploy crea solo.
-- Hyperdrive (pool de conexiones a Supabase): sin costo extra.
+- D1: 25.000 millones de filas leídas y 50 millones escritas por mes, 5 GB
+  de storage. MundoBL usa una fracción mínima.
 - Rate limiting del Worker (`ratelimits` en `wrangler.jsonc`): sin costo por
   uso.
 - Logs del Worker: desde el 1/12/2026 se cobran por GB; el plan incluye
@@ -34,7 +35,7 @@ también se cobren como request los archivos estáticos, que hoy son gratis.
 | `.github/workflows/deploy.yml`       | Botón **Deploy producción**: build, secrets y deploy.                                                                           |
 | `scripts/prepare-production-env.mjs` | Junta `MUNDOBL_ENV` y los secrets sueltos del repo, valida lo obligatorio y arma el entorno del build y los secrets del Worker. |
 | `scripts/run-with-env.mjs`           | Corre el build con ese entorno.                                                                                                 |
-| `scripts/ensure-hyperdrive.mjs`      | Busca o crea el Hyperdrive `mundobl-db` y agrega el binding al deploy. Sin permiso en el token, sigue sin Hyperdrive.           |
+| `migrations/`                        | Migraciones SQL de la D1. El deploy las aplica (`wrangler d1 migrations apply`) antes de buildear.                              |
 | `public/_headers`                    | Cache larga de los estáticos con hash (`/_next/static`, `antd.css`).                                                            |
 
 ## Configuración inicial (una sola vez)
@@ -42,7 +43,8 @@ también se cobren como request los archivos estáticos, que hoy son gratis.
 1. **Workers Paid.** Cloudflare → Workers & Pages → Plans → Workers Paid.
 2. **Token.** Cloudflare → My Profile → API Tokens → Create Token → template
    **Edit Cloudflare Workers**. En Account Resources elegir la cuenta y en
-   Zone Resources `mundobl.com.ar`. Copiar el token.
+   Zone Resources `mundobl.com.ar`. En Permissions agregar
+   `Account` · `D1` · `Edit`. Copiar el token.
 3. **Account ID.** Cloudflare → Workers & Pages: está en la columna de la
    derecha ("Account ID").
 4. **El `.env` de producción.** En PowerShell, dentro del repo:
@@ -69,7 +71,7 @@ también se cobren como request los archivos estáticos, que hoy son gratis.
    - Las variables de la app, de cualquiera de estas dos formas (se pueden
      mezclar; si una está en los dos lados, gana el secret suelto):
      - `MUNDOBL_ENV`: el contenido completo de `produccion.env`.
-     - Un secret por variable, con el mismo nombre (`DATABASE_URL`,
+     - Un secret por variable, con el mismo nombre (`AUTH_SECRET`,
        `GOOGLE_CLIENT_ID`, `R2_ACCESS_KEY_ID`...).
        El workflow los lee por nombre (lista `APP_KEYS` en
        `scripts/prepare-production-env.mjs` y el `env` del paso "Cargar el
@@ -80,28 +82,36 @@ también se cobren como request los archivos estáticos, que hoy son gratis.
    obligatorio, el deploy lo dice antes de buildear. Después borrar
    `produccion.env` de la compu.
 
-## Hyperdrive (pool de conexiones)
+## Base de datos (D1)
 
-Sin Hyperdrive, cada consulta abría una conexión nueva a Supabase en San
-Pablo (TCP, TLS y login: varios viajes antes de la consulta). Con Hyperdrive
-el Worker se conecta a un pool que Cloudflare mantiene abierto. El deploy lo
-crea solo (`scripts/ensure-hyperdrive.mjs`) con la caché de consultas
-**apagada**: Hyperdrive no invalida la caché al escribir, y MundoBL tiene que
-mostrar enseguida lo que el usuario acaba de marcar.
+El Worker lee la D1 `mundobl` por el binding `DB` (`wrangler.jsonc`), sin
+conexiones ni pool: la base está dentro de Cloudflare. El deploy:
 
-Solo hace falta que el token del deploy tenga permiso (una vez):
+1. Aplica las migraciones pendientes de `migrations/` (`npm run migrate:d1`).
+2. Falla si la D1 no tiene usuarios, para no publicar contra una base vacía.
+3. Prerenderiza contra la D1 por la API REST (`DATABASE_URL=d1:remote`).
 
-1. Cloudflare → ícono de perfil (arriba a la derecha) → **Profile** → **API
-   Tokens**.
-2. En el token que usa GitHub (el de "Edit Cloudflare Workers"), los tres
-   puntos → **Edit**.
-3. **Permissions** → **+ Add more** → `Account` · `Hyperdrive` · `Edit`.
-4. **Continue to summary** → **Update token**. El valor del token no cambia:
-   no hay que tocar el secret de GitHub.
+El token necesita `Account` · `D1` · `Edit` (Profile → API Tokens → el token
+de GitHub → Edit → Permissions → + Add more → Update token; el valor no cambia).
 
-El resumen de cada deploy (Actions → la ejecución → Summary) dice
-"✅ Hyperdrive activo" o por qué no se activó. Si no se activa, el sitio
-anda igual que antes, conectando directo.
+Cambiar el schema: editar `prisma/schema.prisma`, `npm run db:migration <nombre>`
+(genera el SQL en `migrations/`), probar con `npm run test:all`, mergear y correr
+**Deploy producción**.
+
+### Paso de Supabase a D1 (una sola vez)
+
+1. Darle al token el permiso de D1 (arriba).
+2. Actions → **Copiar Supabase a D1** → Run workflow → escribir `COPIAR`.
+   Solo lee Supabase. Borra y recarga la D1, así que se puede repetir. Al
+   final compara filas por tabla y falla si alguna no coincide.
+3. Revisar el resumen de esa corrida (Summary): todas las tablas iguales.
+4. Correr **Deploy producción**. Desde ahí el sitio usa la D1.
+5. Probar: login, marcar un episodio, /perfil, /viendo, comunidad.
+
+Lo que se escriba en Supabase entre el paso 2 y el 4 no pasa a D1: correr
+la copia justo antes del deploy. **Volver atrás:** redeployar el commit
+anterior al cambio; Supabase sigue con sus datos y `DATABASE_URL` sigue en el
+Worker hasta que se confirme que D1 anda bien.
 
 ## Estadísticas (Cloudflare Web Analytics)
 
@@ -190,7 +200,8 @@ Entre el paso 1 y el 2 el sitio queda sin responder uno o dos minutos.
 ## Desarrollo local contra workerd
 
 ```bash
-npx opennextjs-cloudflare build   # con DATABASE_URL/AUTH_SECRET exportadas
+npm run local:db                  # crea ./local.db con las migraciones
+npx opennextjs-cloudflare build   # con DATABASE_URL=file:./local.db y AUTH_SECRET
 npx wrangler dev --test-scheduled # variables de runtime en .dev.vars (gitignoreado)
 curl "http://localhost:8787/__scheduled?cron=0+12+*+*+*"  # dispara un cron
 ```

@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  caseVariants,
+  pickSameText,
+  sameTextCandidates,
+} from '@/lib/text-match';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -7,6 +12,7 @@ import { parseAirDate } from '@/lib/playlist-importer';
 import { attachEpisodesToSeries } from '@/lib/episode-attach';
 import { notifyEpisodesAvailable } from '@/lib/notifications';
 import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';
+import { inSequence } from '@/lib/prisma-client';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -175,29 +181,25 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const attached = await prisma.$transaction(
-        (tx) =>
-          attachEpisodesToSeries(
-            tx,
-            target.id,
-            body.seasons.map((season) => ({
-              seasonNumber: season.seasonNumber,
-              episodes: season.episodes.map((ep) => ({
-                episodeNumber: ep.episodeNumber,
-                title: ep.title?.trim() || null,
-                embedUrl: ep.embedUrl,
-                embedPlatform: ep.embedPlatform,
-                embedVideoId: ep.videoId,
-                embedChannelName: ep.embedChannelName || null,
-                embedChannelUrl: ep.embedChannelUrl || null,
-                airDate: parseAirDate(ep.publishedAt),
-              })),
+      const attached = await inSequence((tx) =>
+        attachEpisodesToSeries(
+          tx,
+          target.id,
+          body.seasons.map((season) => ({
+            seasonNumber: season.seasonNumber,
+            episodes: season.episodes.map((ep) => ({
+              episodeNumber: ep.episodeNumber,
+              title: ep.title?.trim() || null,
+              embedUrl: ep.embedUrl,
+              embedPlatform: ep.embedPlatform,
+              embedVideoId: ep.videoId,
+              embedChannelName: ep.embedChannelName || null,
+              embedChannelUrl: ep.embedChannelUrl || null,
+              airDate: parseAirDate(ep.publishedAt),
             })),
-            target.year
-          ),
-        // Mismo margen que el endpoint de link: una serie tailandesa parte
-        // cada capitulo en 4 videos y puede traer mas de 200 episodios.
-        { maxWait: 15000, timeout: 60000 }
+          })),
+          target.year
+        )
       );
 
       revalidatePath('/admin/series');
@@ -220,13 +222,17 @@ export async function POST(request: NextRequest) {
 
     // Dedupe por título dentro del catálogo curado: re-importar la misma
     // playlist (o importar algo ya existente) creaba una serie CURATED gemela.
-    const existingSeries = await prisma.series.findFirst({
-      where: {
-        origin: 'CURATED',
-        title: { equals: body.series.title.trim(), mode: 'insensitive' },
-      },
-      select: { id: true, title: true },
-    });
+    const existingSeries = pickSameText(
+      await prisma.series.findMany({
+        where: {
+          origin: 'CURATED',
+          ...sameTextCandidates('title', body.series.title.trim()),
+        },
+        select: { id: true, title: true },
+      }),
+      (row) => row.title,
+      body.series.title.trim()
+    );
     if (existingSeries) {
       return NextResponse.json(
         {
@@ -245,14 +251,14 @@ export async function POST(request: NextRequest) {
       // siempre fallaba y countryId quedaba null.
       const country = await prisma.country.findFirst({
         where: {
-          code: { equals: body.series.countryCode, mode: 'insensitive' },
+          code: { in: caseVariants(body.series.countryCode) },
         },
         select: { id: true },
       });
       countryId = country?.id ?? null;
     }
 
-    const created = await prisma.$transaction(async (tx) => {
+    const created = await inSequence(async (tx) => {
       const series = await tx.series.create({
         data: {
           title: body.series.title.trim(),

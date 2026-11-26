@@ -6,12 +6,10 @@ import {
   saveSeriesFromForm,
   SeriesEditConflictError,
 } from '../src/lib/series-save';
+import { assertLocalTestDatabase } from './assert-local-test-database';
 
 async function main() {
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port, '55433');
-  assert.equal(url.pathname, '/mundobl_replay');
+  assertLocalTestDatabase();
   const series = await prisma.series.create({
     data: {
       title: `Curation ${Date.now()}`,
@@ -68,6 +66,9 @@ async function main() {
     assert.equal(body.seasons?.[0].id, current.seasons[0].id);
     assert.equal(body.seasons?.[2].id, undefined);
     const image = { url: null, thumbUrl: null };
+    // D1 has no rollback: a failing append runs after the save, so the save
+    // stays applied and the stale form gets a conflict instead of a silent
+    // overwrite.
     await assert.rejects(
       saveSeriesFromForm(series.id, body, image, null, async () => {
         throw new Error('append failed');
@@ -77,13 +78,18 @@ async function main() {
     assert.equal(
       (await prisma.series.findUniqueOrThrow({ where: { id: series.id } }))
         .editVersion,
-      0
+      1
     );
-    assert.equal(
-      await prisma.seriesRevision.count({ where: { seriesId: series.id } }),
-      0
+    await assert.rejects(
+      saveSeriesFromForm(series.id, body, image, null),
+      SeriesEditConflictError
     );
-    await saveSeriesFromForm(series.id, body, image, null);
+    await saveSeriesFromForm(
+      series.id,
+      { ...body, editVersion: 1 },
+      image,
+      null
+    );
     const saved = await loadSeriesForSave(prisma, series.id);
     assert.ok(saved);
     assert.equal(saved.synopsis, 'Curated');
@@ -109,7 +115,7 @@ async function main() {
     );
     assert.equal(curationSnapshot(saved).title, series.title);
     console.log(
-      'PASS: curated precedence, explicit selection, original seasons/episodes/links retained, foreign IDs ignored, new seasons appended, rollback, revision and stale-write protection.'
+      'PASS: curated precedence, explicit selection, original seasons/episodes/links retained, foreign IDs ignored, new seasons appended, append failure, revision and stale-write protection.'
     );
   } finally {
     await prisma.series.delete({ where: { id: series.id } });

@@ -79,7 +79,7 @@
 
 ---
 
-*Nota: varios ítems de las secciones 1 y 7 (Achievements, Colecciones/UserList, policy de tags sensibles) ya habían sido identificados y deliberadamente diferidos en el backlog existente del proyecto — no son ideas sueltas nuevas, convergen con decisiones de producto que ya se habían tomado.*
+_Nota: varios ítems de las secciones 1 y 7 (Achievements, Colecciones/UserList, policy de tags sensibles) ya habían sido identificados y deliberadamente diferidos en el backlog existente del proyecto — no son ideas sueltas nuevas, convergen con decisiones de producto que ya se habían tomado._
 
 ---
 
@@ -88,6 +88,7 @@
 Curado de todo lo de arriba, pensado para un proyecto de código nuevo (reusa los patrones de MundoBL, no su base de código/recursos):
 
 **Fundamentos — construir bien desde el día 1 (caro de retrofitear después):**
+
 1. `siteConfig` centralizado (nombre, copy, SEO, JSON-LD en un solo lugar) — evita repetir el error de MundoBL de tener la marca desperdigada en ~6 archivos.
 2. Género/tag libres desde el modelo de datos, disciplina de nunca hardcodear un rubro en copy ni componentes — MundoBL ya validó el patrón, acá se aplica desde el arranque.
 3. Primitivo de voto/endorsement genérico (`@@unique([userId, targetId, kind])` o similar) como base de recomendar/favoritos/reportes — una sola pieza reusable en vez de una tabla por feature.
@@ -96,26 +97,29 @@ Curado de todo lo de arriba, pensado para un proyecto de código nuevo (reusa lo
 6. Estadísticas públicas simples (COUNT/GROUP BY, sin caja negra) desde el día 1 — es la promesa central del producto, barato de hacer bien desde el principio.
 
 **Diferenciadores tempranos (después del esqueleto, pero pronto):**
+
 - Hub por género/tribu (identidad propia sin multi-tenant caro)
 - Perfiles públicos + seguir gente
 - Traducción de comentarios bajo demanda (si va a ser multi-país desde el arranque)
 
 **Más adelante (no bloquean nada):**
+
 - Achievements, colecciones curadas, watch parties, API pública, onboarding por gustos, y el resto de las secciones 3-7 de arriba.
 
 ## Nombre del proyecto — candidatos
 
-| Nombre | Por qué |
-|---|---|
+| Nombre                  | Por qué                                                                                                                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Tribu** (mi favorito) | Es literalmente el concepto que disparó la idea. Fácil de decir/recordar en cualquier idioma. Deja espacio para nombrar cada comunidad ("Tribu BL", "Tribu K-pop") coherente con el hub por género. |
-| Afín / Afines | De "gente afín" — comparte gustos. Corto, no se compromete a un rubro. |
-| Nicho | Describe el modelo literalmente (comunidades de nicho, no mainstream). Simple, quizás plano. |
-| Veraz | Pone el foco en "estadística real, no manipulada" como identidad de marca. Fuerte pero menos cálido. |
-| Culto | Evoca devoción de fandom ("serie de culto"), corto, doble sentido. |
+| Afín / Afines           | De "gente afín" — comparte gustos. Corto, no se compromete a un rubro.                                                                                                                              |
+| Nicho                   | Describe el modelo literalmente (comunidades de nicho, no mainstream). Simple, quizás plano.                                                                                                        |
+| Veraz                   | Pone el foco en "estadística real, no manipulada" como identidad de marca. Fuerte pero menos cálido.                                                                                                |
+| Culto                   | Evoca devoción de fandom ("serie de culto"), corto, doble sentido.                                                                                                                                  |
 
 ## Infra / capa gratuita (recursos separados de MundoBL)
 
 Mismo stack que ya usa MundoBL, todo con capa gratuita razonable para etapa sandbox:
+
 - **Vercel Hobby** — gratis, alcanza para tráfico bajo.
 - **Supabase free tier** — DB + auth + storage gratis; en el plan free el proyecto se pausa tras ~1 semana de inactividad (a tener en cuenta en un "patio de juegos" con tráfico intermitente).
 - **Google OAuth** — gratis; solo hace falta un proyecto nuevo en Google Cloud Console con su propio client id/secret (no reusar el de MundoBL).

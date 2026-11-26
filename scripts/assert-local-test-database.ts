@@ -1,14 +1,18 @@
 import assert from 'node:assert/strict';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
-/** Deliberately narrow: local replay database, or explicitly selected disposable Prisma dev runtime. */
+/**
+ * Deliberately narrow: tests only run against a disposable local SQLite file
+ * (test-results/ or the OS temp folder), never the real D1 or a dev database.
+ */
 export function assertLocalTestDatabase() {
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port, '55433');
+  const url = process.env.DATABASE_URL ?? '';
+  assert.ok(url.startsWith('file:'), 'Tests require DATABASE_URL=file:...');
+  const file = path.resolve(url.slice('file:'.length));
+  const allowed = [path.resolve('test-results'), path.resolve(tmpdir())];
   assert.ok(
-    url.pathname === '/mundobl_replay' ||
-      (url.pathname === '/template1' &&
-        process.env.MUNDOBL_TEST_RUNTIME === 'prisma-dev'),
-    'Tests require mundobl_replay or the explicitly selected disposable Prisma dev database'
+    allowed.some((dir) => file.startsWith(dir + path.sep)),
+    `Tests require a disposable database under test-results/ or ${tmpdir()}`
   );
 }

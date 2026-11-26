@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { inSequence } from '@/lib/prisma-client';
 
 // POST - Fusionar dos actores (mover referencias del source al target, eliminar source)
 export async function POST(request: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await prisma.$transaction(async (tx) => {
+    await inSequence(async (tx) => {
       // 1. Mover SeriesActor: source → target
       const seriesActors = await tx.seriesActor.findMany({
         where: { actorId: sourceId },

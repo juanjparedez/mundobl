@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { prisma } from '../src/lib/database';
 import { markEpisode, setSeriesTrackingStatus } from '../src/lib/tracking';
 import { assertLocalTestDatabase } from './assert-local-test-database';
+import { inSequence } from '../src/lib/prisma-client';
 
 async function main() {
   assertLocalTestDatabase();
@@ -14,9 +15,7 @@ async function main() {
   });
   const where = { userId: user.id, seriesId: series.id };
   const mark = (status: 'VISTA' | 'SIN_VER' | 'VIENDO') =>
-    prisma.$transaction((tx) =>
-      setSeriesTrackingStatus(tx, user.id, series.id, status)
-    );
+    inSequence((tx) => setSeriesTrackingStatus(tx, user.id, series.id, status));
   try {
     await Promise.all(Array.from({ length: 4 }, () => mark('VISTA')));
     assert.equal(
@@ -58,9 +57,10 @@ async function main() {
       0,
       'Retry does not resubscribe'
     );
-    // Mantener el cambio manual sin confirmar hasta que el marcado de episodio
-    // llegue a la misma fila. Asi se reproduce la carrera sin depender del azar.
-    if (process.env.MUNDOBL_TEST_RUNTIME !== 'prisma-dev') {
+    // El marcado de episodio decide en la misma sentencia (updateMany con el
+    // estado en el WHERE): una serie cerrada a mano no vuelve a "viendo",
+    // aunque el cierre haya entrado justo antes.
+    {
       const season = await prisma.season.create({
         data: { seriesId: series.id, seasonNumber: 1 },
       });
@@ -68,40 +68,8 @@ async function main() {
         data: { seasonId: season.id, episodeNumber: 1 },
       });
       await mark('VISTA');
-      let episodeWrite: Promise<unknown> | undefined;
-      try {
-        await prisma.$transaction(
-          async (tx) => {
-            await setSeriesTrackingStatus(tx, user.id, series.id, 'ABANDONADA');
-            const [session] = await tx.$queryRaw<{ pid: number }[]>`
-            SELECT pg_backend_pid() AS pid
-          `;
-            episodeWrite = prisma.$transaction((writer) =>
-              markEpisode(writer, user.id, episode.id, 'VISTA')
-            );
-            // Conservar el error para el await del finally.
-            void episodeWrite.catch(() => {});
-            const deadline = Date.now() + 8000;
-            while (true) {
-              const [lock] = await tx.$queryRaw<{ waiting: boolean }[]>`
-              SELECT EXISTS (
-                SELECT 1 FROM pg_locks
-                WHERE NOT granted AND ${session.pid} = ANY(pg_blocking_pids(pid))
-              ) AS waiting
-            `;
-              if (lock.waiting) break;
-              assert.ok(
-                Date.now() < deadline,
-                'Episode writer must reach the lock'
-              );
-              await new Promise((resolve) => setTimeout(resolve, 20));
-            }
-          },
-          { timeout: 12000 }
-        );
-      } finally {
-        await episodeWrite;
-      }
+      await setSeriesTrackingStatus(prisma, user.id, series.id, 'ABANDONADA');
+      await markEpisode(prisma, user.id, episode.id, 'VISTA');
       const saved = await prisma.viewStatus.findUniqueOrThrow({
         where: { userId_seriesId: where },
       });

@@ -291,11 +291,6 @@ async function main() {
       0,
       'Topic drafts cannot leak to discovery'
     );
-    const rls = await prisma.$queryRaw<
-      { relname: string; relrowsecurity: boolean }[]
-    >`SELECT relname, relrowsecurity FROM pg_class WHERE relname IN ('CommunityProfile','RecommendationList','RecommendationListItem','CommunityFollow','CommunityBlock','CommunityReport','CommunityModerationAction','CommunitySettings')`;
-    assert.equal(rls.length, 8);
-    assert.ok(rls.every((row) => row.relrowsecurity));
     const exported = await getCommunityAccountExport(owner);
     assert.ok(exported.lists.some((list) => list.id === topFive[0].id));
     assert.ok(exported.topics.some((row) => row.id === topic.id));

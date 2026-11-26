@@ -1,10 +1,10 @@
-import { prisma } from './database';
 import {
   loadSeriesForSave,
   recordSeriesRevision,
   SeriesEditConflictError,
 } from './series-save';
 import { parseContentClassification } from './content-rating';
+import { inSequence } from './prisma-client';
 
 export async function saveEditorialClassification(
   seriesId: number,
@@ -13,7 +13,7 @@ export async function saveEditorialClassification(
 ) {
   const input = parseContentClassification(raw);
   if (!input) throw new Error('INVALID_CLASSIFICATION');
-  return prisma.$transaction(async (tx) => {
+  return inSequence(async (tx) => {
     const editor = await tx.user.findUnique({
       where: { id: userId },
       select: { role: true, banned: true },

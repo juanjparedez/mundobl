@@ -2,14 +2,10 @@ import assert from 'node:assert/strict';
 import { mkdirSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 import { encode } from 'next-auth/jwt';
-import pg from 'pg';
+import { createTestPool } from './db/test-pool.mjs';
 
 // Corre contra `next dev -p 3002` con AUTH_SECRET=onboarding-local-test-only.
 const base = 'http://localhost:3002';
-const connection = new URL(process.env.DATABASE_URL);
-assert.equal(connection.hostname, '127.0.0.1');
-assert.equal(connection.port, '55433');
-assert.equal(connection.pathname, '/mundobl_replay');
 
 const PREFIX = 'Airing alert UI';
 const USER_ID = 'airing-alert-ui-user';
@@ -23,7 +19,7 @@ const DAYS = [
   'sabado',
 ];
 const now = new Date();
-const pool = new pg.Pool({ connectionString: connection.href });
+const pool = createTestPool();
 
 async function cleanup() {
   await pool.query(`DELETE FROM "User" WHERE id = $1`, [USER_ID]);

@@ -1,9 +1,11 @@
-import type { Prisma, PrismaClient } from '@prisma/client';
+import type { AppPrismaClient } from './prisma-client';
+import type { Prisma } from '@prisma/client';
 import { CommunityError, parseCommunityTopic } from './community-input';
 import {
   parseRecommendationList,
   parseCommunityProfile,
 } from './community-library-input';
+import { withLease } from './lease';
 
 const object = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === 'object' && !Array.isArray(value);
@@ -27,7 +29,7 @@ const topicKey = (value: ReturnType<typeof parseCommunityTopic>) =>
 
 /** Restore content only. Visibility, identities, moderation and notification permissions never come from a backup. */
 export function createCommunityBackupRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput
 ) {
   async function restoreCommunityBackup(
@@ -61,10 +63,9 @@ export function createCommunityBackupRepository(
         source[name]
       ).length;
     }
-    return db.$transaction(
+    return withLease(
+      `community-library:${userId}`,
       async (tx) => {
-        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community-library:${userId}`}))::text`;
-        await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR SHARE`;
         if (
           !(await tx.user.findFirst({
             where: { id: userId, banned: false },
@@ -224,7 +225,7 @@ export function createCommunityBackupRepository(
           });
         return summary;
       },
-      { timeout: 30000 }
+      { db: db }
     );
   }
   return { restoreCommunityBackup };

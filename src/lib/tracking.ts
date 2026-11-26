@@ -1,15 +1,12 @@
+import type { AppTransactionClient } from './prisma-client';
+import { createManySkippingDuplicates } from './create-many';
 /**
  * Reglas de tracking compartidas entre el endpoint de episodios y el
  * endpoint de progreso masivo (T05), para no duplicar la lógica de
  * "marcar episodio promueve la serie a VIENDO".
  */
 
-import type {
-  Prisma,
-  PrismaClient,
-  ViewStatus,
-  WatchStatus,
-} from '@prisma/client';
+import type { PrismaClient, ViewStatus, WatchStatus } from '@prisma/client';
 import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 import {
   TRACKING_STATUSES,
@@ -22,7 +19,7 @@ import {
 } from './tracking-core';
 import { fromCoreStatus, toCoreStatus } from './tracking-status';
 
-export type TrackingClient = PrismaClient | Prisma.TransactionClient;
+export type TrackingClient = AppTransactionClient;
 
 const CURATOR_ROLES: ReadonlySet<string> = new Set(['ADMIN', 'MODERATOR']);
 
@@ -48,10 +45,9 @@ export async function subscribeOnFirstTrack(
     select: { role: true },
   });
   if (user && CURATOR_ROLES.has(user.role)) return;
-  await client.seriesSubscription.createMany({
-    data: [{ userId, seriesId }],
-    skipDuplicates: true,
-  });
+  await createManySkippingDuplicates([{ userId, seriesId }], (rows) =>
+    client.seriesSubscription.createMany({ data: rows })
+  );
 }
 
 /** upToEpisodeId de otra serie, o serie/episodio inexistente. */
@@ -129,15 +125,15 @@ async function updateSeriesAfterWatch(
   now: Date
 ): Promise<ViewStatus> {
   const where = { userId, seriesId };
-  const inserted = await client.viewStatus.createMany({
-    data: [{ ...where, status: 'VIENDO', lastWatchedAt: now }],
-    skipDuplicates: true,
-  });
+  const inserted = await createManySkippingDuplicates(
+    [{ ...where, status: 'VIENDO' as const, lastWatchedAt: now }],
+    (rows) => client.viewStatus.createMany({ data: rows })
+  );
   if (inserted.count) {
     await subscribeOnFirstTrack(client, userId, seriesId);
   } else {
-    // PostgreSQL comprueba el estado al escribir, incluso si otra transaccion
-    // acaba de cerrar la serie mientras se marcaba el episodio.
+    // El estado se comprueba en la misma sentencia que escribe, asi que una
+    // serie cerrada mientras se marcaba el episodio sigue cerrada.
     const updated = await client.viewStatus.updateMany({
       where: { ...where, status: { in: WATCHING_AFTER_WATCH } },
       data: { status: 'VIENDO', lastWatchedAt: now },
@@ -256,15 +252,15 @@ async function markManyWatched(
   episodeIds: number[],
   now: Date
 ): Promise<number> {
-  const created = await client.viewStatus.createMany({
-    data: episodeIds.map((episodeId) => ({
+  const created = await createManySkippingDuplicates(
+    episodeIds.map((episodeId) => ({
       userId,
       episodeId,
-      status: 'VISTA',
+      status: 'VISTA' as const,
       watchedDate: now,
     })),
-    skipDuplicates: true,
-  });
+    (rows) => client.viewStatus.createMany({ data: rows })
+  );
   const updated = await client.viewStatus.updateMany({
     where: { userId, episodeId: { in: episodeIds }, status: { not: 'VISTA' } },
     data: { status: 'VISTA', watchedDate: now },
@@ -430,9 +426,9 @@ async function buildProgressResult(
   };
 }
 
-/** Use inside a transaction. Identical commands preserve dates, including unknown ones. */
+/** Identical commands preserve dates, including unknown ones. */
 export async function setSeriesTrackingStatus(
-  client: Prisma.TransactionClient,
+  client: AppTransactionClient,
   userId: string,
   seriesId: number,
   status: WatchStatus
@@ -446,10 +442,10 @@ export async function setSeriesTrackingStatus(
     ...(completedAt !== undefined ? { watchedDate: completedAt } : {}),
     ...(lastWatchedAt ? { lastWatchedAt } : {}),
   };
-  const inserted = await client.viewStatus.createMany({
-    data: [{ userId, seriesId, status, ...dates }],
-    skipDuplicates: true,
-  });
+  const inserted = await createManySkippingDuplicates(
+    [{ userId, seriesId, status, ...dates }],
+    (rows) => client.viewStatus.createMany({ data: rows })
+  );
   await client.viewStatus.updateMany({
     where: { userId, seriesId, status: { not: status } },
     data: { status, ...dates },

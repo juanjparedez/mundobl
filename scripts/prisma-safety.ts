@@ -1,15 +1,21 @@
-/** Development schema commands must never target the shared/production database. */
-export function assertSafePrismaCommand(args: string[], datasourceUrl: string) {
-  const unsafe =
+/**
+ * The D1 schema is migrated from migrations/*.sql (wrangler's format), not by
+ * Prisma: `prisma migrate dev/reset/deploy` and `db push` would write a
+ * second, diverging history (and miss sqlite-extras). Only `migrate diff`,
+ * which writes nothing, stays allowed.
+ */
+export function assertSafePrismaCommand(args: string[]) {
+  const writesSchema =
     (args.includes('migrate') &&
-      (args.includes('dev') || args.includes('reset'))) ||
+      ['dev', 'reset', 'deploy', 'resolve'].some((cmd) =>
+        args.includes(cmd)
+      )) ||
     (args.includes('db') && args.includes('push'));
-  if (!unsafe || !datasourceUrl) return;
-  const hostname = new URL(datasourceUrl).hostname;
-  if (!['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname)) {
+  if (writesSchema) {
     throw new Error(
-      'Comando bloqueado: migrate dev/reset y db push solo se permiten en PostgreSQL local. ' +
-        'Generá y probá migraciones localmente; para producción usá npm run migrate:supabase.'
+      'Comando bloqueado: la base es D1 y se migra con migrations/. ' +
+        'Nueva migracion: npm run db:migration -- nombre. ' +
+        'Aplicar: npm run local:db (local) o npm run migrate:d1 (produccion).'
     );
   }
 }

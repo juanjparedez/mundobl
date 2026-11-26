@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import type { AppTransactionClient } from './prisma-client';
 
 /**
  * Adjunta episodios embebidos a una serie que YA existe, en vez de crear una
@@ -49,7 +49,7 @@ export interface AttachResult {
 }
 
 export async function attachEpisodesToSeries(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   targetSeriesId: number,
   seasons: AttachSeasonInput[],
   targetYear?: number | null

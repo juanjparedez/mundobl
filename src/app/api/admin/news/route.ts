@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse, after } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
 import { notifyNewsPublished, revalidateNews } from '@/lib/news-publish';
+import { inSequence } from '@/lib/prisma-client';
 
 const STATUS_VALUES = [
   'DRAFT',
@@ -35,9 +37,9 @@ export async function GET(request: NextRequest) {
     }
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { summary: { contains: search, mode: 'insensitive' } },
-        { sourceName: { contains: search, mode: 'insensitive' } },
+        { title: { contains: search } },
+        { summary: { contains: search } },
+        { sourceName: { contains: search } },
       ];
     }
 
@@ -260,14 +262,14 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
-    const news = await prisma.$transaction(async (tx) => {
+    const news = await inSequence(async (tx) => {
       if (body.tagIds !== undefined) {
         await tx.newsTag.deleteMany({ where: { newsId: id } });
         if (body.tagIds.length > 0) {
-          await tx.newsTag.createMany({
-            data: body.tagIds.map((tagId) => ({ newsId: id, tagId })),
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(
+            body.tagIds.map((tagId) => ({ newsId: id, tagId })),
+            (rows) => tx.newsTag.createMany({ data: rows })
+          );
         }
       }
       return tx.news.update({

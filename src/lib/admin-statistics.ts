@@ -138,10 +138,10 @@ export async function getAdminStatistics(now: Date = new Date()) {
 
     // Top 10 best rated by users (avg score)
     prisma.$queryRaw<
-      Array<{ seriesId: number; avgScore: number; count: bigint }>
+      Array<{ seriesId: number; avgScore: number; count: number }>
     >(Prisma.sql`
         WITH votes AS (${COMMUNITY_RATINGS_SQL})
-        SELECT "seriesId", ROUND(AVG(score)::numeric, 1)::float8 AS "avgScore", COUNT(*) AS count
+        SELECT "seriesId", ROUND(AVG(score), 1) AS "avgScore", COUNT(*) AS count
         FROM votes GROUP BY "seriesId" HAVING COUNT(*) >= 2
         ORDER BY "avgScore" DESC, count DESC, "seriesId" ASC LIMIT 10
       `),
@@ -181,8 +181,9 @@ export async function getAdminStatistics(now: Date = new Date()) {
       orderBy: { _count: { id: 'desc' } },
     }),
 
-    prisma.$queryRaw<Array<{ day: Date; count: bigint }>>(Prisma.sql`
-        SELECT date_trunc('day', COALESCE(vs."watchedDate", vs."updatedAt")) AS day, COUNT(*) AS count
+    // Inicio del dia en el mismo formato que Prisma, asi vuelve como Date.
+    prisma.$queryRaw<Array<{ day: Date; count: number }>>(Prisma.sql`
+        SELECT strftime('%Y-%m-%dT00:00:00.000+00:00', COALESCE(vs."watchedDate", vs."updatedAt")) AS day, COUNT(*) AS count
         FROM "ViewStatus" vs JOIN "User" u ON u.id = vs."userId"
         JOIN "Series" s ON s.id = vs."seriesId"
         WHERE vs.status = 'VISTA' AND ${COMMUNITY_SQL} AND ${PUBLIC_SERIES_SQL}

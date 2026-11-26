@@ -5,7 +5,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org)
 [![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma)](https://www.prisma.io)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://www.postgresql.org)
+[![Cloudflare D1](https://img.shields.io/badge/Cloudflare-D1-F38020?logo=cloudflare)](https://developers.cloudflare.com/d1/)
 [![i18n](https://img.shields.io/badge/i18n-10%20idiomas-informational)](docs/ai-context/context.md)
 
 **Plataforma de catalogación, curaduría y streaming oficial de contenido audiovisual asiático (BL/GL).**  
@@ -35,8 +35,8 @@ MundoBL es una plataforma full-stack para descubrir, calificar y organizar produ
 
 ### Arquitectura y decisiones técnicas
 
-- **Stack:** Next.js 16 (App Router), React 19, TypeScript estricto (0 `any`), Prisma 7, PostgreSQL (Supabase / local Docker).
-- **Modelo de datos robusto:** 83 modelos relacionales, 61 migraciones versionadas y control de concurrencia optimista (`editVersion`) con auditoría de revisiones (`SeriesRevision`).
+- **Stack:** Next.js 16 (App Router), React 19, TypeScript estricto (0 `any`), Prisma 7, Cloudflare D1 (SQLite) en Workers.
+- **Modelo de datos robusto:** 83 modelos relacionales, migraciones SQL versionadas y control de concurrencia optimista (`editVersion`) con auditoría de revisiones (`SeriesRevision`).
 - **Privacidad por diseño (Privacy by Design):** Telemetría interna agregada en `SiteTrafficDaily` y `SeriesActivityDaily` con claves primarias compuestas por día UTC, sección y país del edge, sin identificadores personales ni almacenamiento de IPs.
 - **Eficiencia e ISR en Vercel:** Revalidación bajo demanda (ISR) en fichas públicas, compuerta estricta para contenido adulto (`/adultos`), reducción de payload de catálogo (1 MB → 180 KB en transporte) y extracción de sinopsis bajo demanda para cuidar cuotas de CPU/ISR.
 - **Internacionalización profunda:** 10 idiomas completos (`es`, `en`, `it`, `de`, `fr`, `ja`, `ko`, `zh-CN`, `zh-TW`, `th`) con auditoría estricta de paridad de claves.
@@ -76,8 +76,8 @@ MundoBL is a production full-stack platform to discover, track, rate, and stream
 
 ### Architecture & Technical Decisions
 
-- **Stack:** Next.js 16 (App Router), React 19, strict TypeScript (0 `any`), Prisma 7, PostgreSQL.
-- **Relational Domain:** 83 Prisma models, 61 versioned migrations, optimistic locking (`editVersion`), and full snapshot auditing (`SeriesRevision`) on edits.
+- **Stack:** Next.js 16 (App Router), React 19, strict TypeScript (0 `any`), Prisma 7, Cloudflare D1 (SQLite) on Workers.
+- **Relational Domain:** 83 Prisma models, versioned SQL migrations, optimistic locking (`editVersion`), and full snapshot auditing (`SeriesRevision`) on edits.
 - **Privacy by Design:** First-party aggregation via `SiteTrafficDaily` and `SeriesActivityDaily` using compound primary keys by UTC day and edge country, completely decoupling operational metrics from personal user data and IP logging.
 - **ISR & Edge Cost Optimization:** On-demand Incremental Static Regeneration, dynamic gating for 18+ content, catalog payload compression (1 MB → 180 KB), and on-demand synopsis caching to stay strictly within serverless execution limits.
 - **Deep i18n:** Full support for 10 locales with automated key parity enforcement.
@@ -91,14 +91,12 @@ MundoBL is a production full-stack platform to discover, track, rate, and stream
 # Instalar dependencias
 npm install
 
-# Levantar PostgreSQL local (Docker) + aplicar migraciones + dev server
+# Crear ./local.db (SQLite con las migraciones de la D1) + dev server
 npm run local:dev
 
-# O con base de datos ya levantada:
-npm run dev
-
 # Verificaciones de calidad
-npm run check          # type-check + lint
+npm run test:fast      # tipos, lint y formato
+npm run test:all       # suite completa (base SQLite local, sin Docker)
 npm run build          # compilación de producción
 ```
 

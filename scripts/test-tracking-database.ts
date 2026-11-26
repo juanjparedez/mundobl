@@ -132,44 +132,41 @@ async function main() {
       3
     );
 
-    // Fail the final section in SQL and prove prior status/series-note writes roll back.
-    // Identifiers and predicate use only this script's numeric run id, in the guarded disposable DB.
-    if (process.env.MUNDOBL_TEST_RUNTIME !== 'prisma-dev') {
-      const triggerName = `test_restore_failure_${runId}`;
-      await prisma.$executeRawUnsafe(
-        `CREATE FUNCTION "${triggerName}"() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW."userId" = '${rollback}' THEN RAISE EXCEPTION 'intentional test failure'; END IF; RETURN NEW; END $$`
+    // D1 has no transactions: a restore that fails halfway keeps what it
+    // already wrote. Prove that a retry converges to the full restore and
+    // that the history lease is released after the failure.
+    const triggerName = `test_restore_failure_${runId}`;
+    await prisma.$executeRawUnsafe(
+      `CREATE TRIGGER "${triggerName}" BEFORE INSERT ON "EpisodeNote" WHEN NEW."userId" = '${rollback}' BEGIN SELECT RAISE(ABORT, 'intentional test failure'); END`
+    );
+    try {
+      await assert.rejects(
+        restoreTrackingBackup(rollback, payload, false),
+        /intentional test failure/
       );
-      try {
-        await prisma.$executeRawUnsafe(
-          `CREATE TRIGGER "${triggerName}" BEFORE INSERT ON "EpisodeNote" FOR EACH ROW EXECUTE FUNCTION "${triggerName}"()`
-        );
-        await assert.rejects(
-          restoreTrackingBackup(rollback, payload, false),
-          /intentional test failure/
-        );
-        assert.equal(
-          await prisma.viewStatus.count({ where: { userId: rollback } }),
-          0
-        );
-        assert.equal(
-          await prisma.seriesNote.count({ where: { userId: rollback } }),
-          0
-        );
-        assert.equal(
-          await prisma.episodeNote.count({ where: { userId: rollback } }),
-          0
-        );
-      } finally {
-        await prisma.$executeRawUnsafe(
-          `DROP TRIGGER IF EXISTS "${triggerName}" ON "EpisodeNote"`
-        );
-        await prisma.$executeRawUnsafe(`DROP FUNCTION "${triggerName}"()`);
-      }
-    } else {
-      console.log(
-        'SKIP: deliberate SQL-error rollback requires native PostgreSQL; PGlite socket cannot reliably recover its protocol after this exception.'
-      );
+    } finally {
+      await prisma.$executeRawUnsafe(`DROP TRIGGER IF EXISTS "${triggerName}"`);
     }
+    assert.equal(
+      await prisma.lease.count({
+        where: { key: `tracking-restore:${rollback}` },
+      }),
+      0
+    );
+    const retried = await restoreTrackingBackup(rollback, payload, false);
+    assert.equal(retried.imported.episodeNotes, 1);
+    assert.equal(
+      await prisma.viewStatus.count({ where: { userId: rollback } }),
+      3
+    );
+    assert.equal(
+      await prisma.seriesNote.count({ where: { userId: rollback } }),
+      1
+    );
+    assert.equal(
+      await prisma.episodeNote.count({ where: { userId: rollback } }),
+      1
+    );
 
     const existing = await getContributionMetadata({
       tagNames: [tagName.toLowerCase(), ` ${tagName} `],
@@ -197,7 +194,7 @@ async function main() {
       await prisma.tag.delete({ where: { id: ambiguous.id } });
     }
     console.log(
-      `PASS: SQL-backed preview, account ownership, date preservation, retry, existing-data priority, metadata matching, ambiguous names, read-only resolution. Runtime: ${process.env.MUNDOBL_TEST_RUNTIME === 'prisma-dev' ? 'PGlite (rollback skipped)' : 'native PostgreSQL (rollback verified)'}. No production data.`
+      'PASS: SQL-backed preview, account ownership, date preservation, retry after a partial failure, existing-data priority, metadata matching, ambiguous names, read-only resolution. No production data.'
     );
   } finally {
     await prisma.series.deleteMany({ where: { id: series.id } });

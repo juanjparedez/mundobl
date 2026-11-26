@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { revalidateSeriesDetail } from '@/lib/revalidate-series';
-import { prisma, getContributionMetadata } from '@/lib/database';
+import { getContributionMetadata } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { assertSeriesOwnership } from '@/lib/collaborator-guard';
 import { contributionMetadataFailure } from '@/lib/contribution-metadata';
 import { loadSeriesForSave, recordSeriesRevision } from '@/lib/series-save';
+import { inSequence } from '@/lib/prisma-client';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -131,7 +132,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (body.productionCompanyName !== undefined)
       data.productionCompanyId = metadata.data.productionCompanyId;
 
-    const updated = await prisma.$transaction(async (tx) => {
+    const updated = await inSequence(async (tx) => {
       // Recheck the boundary in the write itself: ownership may change after the guard.
       const where = {
         id: seriesId,
@@ -144,7 +145,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           : {}),
       };
       // Foto previa al guardado, antes de tocar nada. Si el UPDATE de abajo
-      // no pasa el limite de ownership, la transaccion se revierte con ella.
+      // no pasa el limite de ownership, falla antes de registrar la revision.
       const before = await loadSeriesForSave(tx, seriesId);
       // A real parent UPDATE also locks the boundary for relation-only edits.
       const series = await tx.series.update({

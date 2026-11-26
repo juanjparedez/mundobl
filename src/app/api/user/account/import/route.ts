@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import {
   prisma,
   restoreTrackingBackup,
@@ -175,10 +176,9 @@ export async function POST(req: NextRequest) {
       toInsert.push({ userId, seriesId, category, score });
     }
     if (!dryRun && toInsert.length > 0) {
-      const result = await prisma.userRating.createMany({
-        data: toInsert,
-        skipDuplicates: true,
-      });
+      const result = await createManySkippingDuplicates(toInsert, (rows) =>
+        prisma.userRating.createMany({ data: rows })
+      );
       summary.imported.userRatings = result.count;
       summary.skipped.userRatings = toInsert.length - result.count;
     } else {
@@ -213,10 +213,9 @@ export async function POST(req: NextRequest) {
       toInsert.push({ userId, seriesId });
     }
     if (!dryRun && toInsert.length > 0) {
-      const result = await prisma.userFavorite.createMany({
-        data: toInsert,
-        skipDuplicates: true,
-      });
+      const result = await createManySkippingDuplicates(toInsert, (rows) =>
+        prisma.userFavorite.createMany({ data: rows })
+      );
       summary.imported.favorites = result.count;
       summary.skipped.favorites = toInsert.length - result.count;
     } else {
@@ -338,10 +337,9 @@ export async function POST(req: NextRequest) {
       toInsert.push({ userId, featureRequestId });
     }
     if (!dryRun && toInsert.length > 0) {
-      const result = await prisma.featureVote.createMany({
-        data: toInsert,
-        skipDuplicates: true,
-      });
+      const result = await createManySkippingDuplicates(toInsert, (rows) =>
+        prisma.featureVote.createMany({ data: rows })
+      );
       summary.imported.featureVotes = result.count;
       summary.skipped.featureVotes = toInsert.length - result.count;
     } else {

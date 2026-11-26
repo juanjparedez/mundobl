@@ -8,7 +8,7 @@
 # COSTO: $0 mientras se respeten los topes.
 #   - Actions: repo publico => minutos gratis ilimitados.
 #   - R2: 10 GB de storage y 1M de escrituras/mes en la capa gratuita.
-#     El dump pesa ~78 MB. Con RETENTION_DAYS=14 el techo es ~1.1 GB, muy
+#     El volcado SQL de D1 pesa ~50 MB sin comprimir. Con RETENTION_DAYS=14 el techo es ~1.1 GB, muy
 #     por debajo de los 10 GB. Sin la limpieza, en ~4 meses se pasaria.
 #     Por eso el paso de retencion NO es opcional.
 #
@@ -19,7 +19,9 @@ name: Backup de la base
 
 on:
   schedule:
-    - cron: '0 7 * * 0' # domingos 07:00 UTC ~ 04:00 AR (egress de Supabase)
+    - cron: '0 7 * * 0' # domingos 07:00 UTC ~ 04:00 AR
+    # Ademas de esto, D1 guarda 30 dias de Time Travel (restaurar a un minuto
+    # exacto): `npx wrangler d1 time-travel restore mundobl --timestamp=...`.
   workflow_dispatch:
 
 concurrency:
@@ -50,14 +52,15 @@ jobs:
       - name: Verificar que estan los secrets
         # Falla temprano y con un mensaje claro, en vez de a mitad del dump.
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
         run: |
           faltan=""
-          for v in DATABASE_URL R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET; do
+          for v in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET; do
             [ -z "${!v}" ] && faltan="$faltan $v"
           done
           if [ -n "$faltan" ]; then
@@ -68,23 +71,28 @@ jobs:
           echo "Todos los secrets presentes."
 
       - name: Instalar dependencias
-        run: npm ci --ignore-scripts
+        run: npm ci
 
-      - name: Generar cliente Prisma
-        run: npx prisma generate
-
-      - name: Verificar cobertura de todos los modelos
-        run: npx tsx scripts/backup-db.ts --check-models
-
-      - name: Dump de la base
+      - name: Volcado de D1
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx tsx scripts/backup-db.ts
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          mkdir -p backups
+          npx wrangler d1 export mundobl --remote --output="backups/mundobl_$(date -u +%Y-%m-%d_%H%M).sql"
+
+      # Un backup que no se puede cargar no sirve: se carga en una base
+      # SQLite vacia antes de subirlo (solo cuenta filas, no las imprime).
+      - name: Ensayo de restauracion
+        run: |
+          archivo=$(ls -t backups/mundobl_*.sql | head -1)
+          node scripts/db/restore-local.mjs "$archivo" "$RUNNER_TEMP/restore.db" | tail -5
+          rm -f "$RUNNER_TEMP"/restore.db*
 
       - name: Comprimir
         id: comprimir
         run: |
-          archivo=$(ls -t backups/mundobl_*.json | head -1)
+          archivo=$(ls -t backups/mundobl_*.sql | head -1)
           gzip -9 "$archivo"
           echo "path=${archivo}.gz" >> "$GITHUB_OUTPUT"
           echo "name=$(basename "${archivo}.gz")" >> "$GITHUB_OUTPUT"

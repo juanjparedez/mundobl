@@ -12,9 +12,6 @@ import { isScannerPath } from '../src/lib/scanner-paths';
 
 interface WorkerEnv {
   CRON_SECRET?: string;
-  DATABASE_URL?: string;
-  /** Lo agrega el deploy (scripts/ensure-hyperdrive.mjs) si se pudo crear. */
-  HYPERDRIVE?: { connectionString: string };
   /** Rate limiting de Cloudflare (wrangler.jsonc `ratelimits`), incluido. */
   RATE_LIMITER?: {
     limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -49,18 +46,6 @@ const CRON_ROUTES: Record<string, string> = {
 
 const SITE_HOST = 'mundobl.com.ar';
 const SITE_ORIGIN = `https://${SITE_HOST}`;
-
-/**
- * Con Hyperdrive, la app usa su connection string en vez de DATABASE_URL.
- * OpenNext copia las variables string del env a process.env en cada request,
- * asi que pisar DATABASE_URL en el env que recibe es la forma de que Prisma
- * (src/lib/database.ts) la tome sin saber nada de Cloudflare. Sin el binding
- * queda todo igual que antes.
- */
-function withHyperdrive(env: WorkerEnv): WorkerEnv {
-  const connectionString = env.HYPERDRIVE?.connectionString;
-  return connectionString ? { ...env, DATABASE_URL: connectionString } : env;
-}
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
@@ -138,7 +123,7 @@ async function fetchEdgeCached(
   const key = new Request(url.toString(), { method: 'GET' });
   const hit = cache ? await cache.match(key).catch(() => undefined) : undefined;
   if (hit) return hit;
-  const response = await handler.fetch(request, withHyperdrive(env), ctx);
+  const response = await handler.fetch(request, env, ctx);
   if (cache && response.ok) {
     ctx.waitUntil(cache.put(key, response.clone()).catch(() => undefined));
   }
@@ -155,7 +140,7 @@ export default {
     ) {
       return fetchEdgeCached(request, env, ctx);
     }
-    return handler.fetch(request, withHyperdrive(env), ctx);
+    return handler.fetch(request, env, ctx);
   },
 
   async scheduled(
@@ -172,7 +157,7 @@ export default {
     const request = new Request(new URL(path, SITE_ORIGIN), {
       headers: { authorization: `Bearer ${env.CRON_SECRET ?? ''}` },
     });
-    const response = await handler.fetch(request, withHyperdrive(env), ctx);
+    const response = await handler.fetch(request, env, ctx);
     const body = await response.text();
     if (!response.ok) {
       // Tirar marca la ejecucion como fallida en el dashboard de Cloudflare.

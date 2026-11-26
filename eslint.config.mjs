@@ -26,6 +26,22 @@ const eslintConfig = [
       '@typescript-eslint/no-explicit-any': 'warn',
       'prefer-const': 'warn',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // D1 no tiene transacciones: Prisma corre `$transaction` como consultas
+      // sueltas sin avisar. Ver inSequence (prisma-client.ts), atomicWrite
+      // (d1.ts) y withLease (lease.ts).
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "MemberExpression[property.name='$transaction']",
+          message:
+            'D1 no tiene transacciones. Usa inSequence, atomicWrite o withLease.',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/FOR (UPDATE|SHARE|NO KEY)|pg_advisory|pg_try_advisory|set_config/]',
+          message: 'D1 no tiene bloqueos de filas. Usa withLease.',
+        },
+      ],
     },
   },
   {

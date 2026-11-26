@@ -21,15 +21,16 @@ const sha = (value: string) => createHash('sha256').update(value).digest('hex');
 const MAX_EVIDENCE_AGE_MS = 60 * 60_000;
 
 async function main() {
-  // Never load a database implicitly from .env or accept another project.
-  const url = new URL(process.env.DATABASE_URL ?? '');
+  // Never load a database implicitly from .env or accept another database.
+  // Run with: DATABASE_URL=d1:remote node --import ./scripts/db/runtime.mjs
+  //   --import tsx scripts/publish-ver-content-batch.ts ...
+  const PRODUCTION_D1 = '7846511e-b152-4380-945d-e1a285ce2759';
   if (
-    url.hostname !== 'aws-1-sa-east-1.pooler.supabase.com' ||
-    url.pathname !== '/postgres' ||
-    url.username !== 'postgres.vhwvzvteunwomnrlweoa'
+    process.env.DATABASE_URL !== 'd1:remote' ||
+    process.env.CLOUDFLARE_D1_DATABASE_ID !== PRODUCTION_D1
   ) {
     throw new Error(
-      'This release only targets the configured MundoBL production database.'
+      'This release only targets the MundoBL production D1 (DATABASE_URL=d1:remote).'
     );
   }
   const args = process.argv.slice(2);
@@ -126,20 +127,23 @@ async function main() {
       series.imageUrl = info.thumbnailUrl;
     }
   }
-  const { prisma } = await import('../src/lib/database');
+  const { prisma, inSequence } = await import('../src/lib/database');
+  const { caseVariants } = await import('../src/lib/text-match');
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const output = `backups/ver-release-${stamp}`;
   mkdirSync(output, { recursive: true });
   try {
-    const result = await prisma.$transaction(
+    // D1 has no transactions: the dry-run writes nothing because
+    // importWatchContentBatch only writes with apply=true, and the plan's
+    // snapshot hash stops an apply if production changed since the review.
+    const result = await inSequence(
       async (tx) => {
-        if (!apply) await tx.$executeRawUnsafe('SET TRANSACTION READ ONLY');
         const snapshot = await tx.series.findMany({
           where: {
             OR: batch.series.map((s) =>
               s.targetSeriesId
                 ? { id: s.targetSeriesId }
-                : { title: { equals: s.title, mode: 'insensitive' as const } }
+                : { title: { in: caseVariants(s.title) } }
             ),
           },
           include: {
@@ -151,7 +155,7 @@ async function main() {
           orderBy: { id: 'asc' },
         });
         const snapshotHash = sha(JSON.stringify(snapshot));
-        const target = `${url.hostname}/${url.username}${url.pathname}`;
+        const target = `d1/${PRODUCTION_D1}`;
         if (apply) {
           const plan: {
             target: string;
@@ -173,7 +177,7 @@ async function main() {
           series: await tx.series.count(),
           episodes: await tx.episode.count(),
         };
-        // Scoped restore evidence, plus SeriesRevision inside the transactional importer.
+        // Scoped restore evidence, plus SeriesRevision written by the importer.
         // No user/account tables are exported, modified or sent to CI artifacts.
         writeFileSync(
           `${output}/before.json`,
@@ -198,8 +202,7 @@ async function main() {
           before,
           results,
         };
-      },
-      { timeout: 120_000, maxWait: 20_000, isolationLevel: 'Serializable' }
+      }
     );
     writeFileSync(
       `${output}/${apply ? 'applied' : 'plan'}.json`,

@@ -1,6 +1,6 @@
 name: Tracking integration
 on:
-  # Las pruebas habituales corren localmente con npm run test:docker.
+  # Las pruebas habituales corren localmente con npm run test:all.
   # Actions queda como comprobación limpia opcional, solo a pedido.
   workflow_dispatch:
 # Una ejecución manual nueva de la misma rama reemplaza la anterior.
@@ -13,20 +13,7 @@ jobs:
   integration:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: mundobl
-          POSTGRES_PASSWORD: mundobl
-          POSTGRES_DB: mundobl_replay
-        ports: ['55433:5432']
-        options: >-
-          --health-cmd "pg_isready -U mundobl"
-          --health-interval 5s --health-timeout 5s --health-retries 10
     env:
-      DATABASE_URL: postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay
-      DIRECT_URL: postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay
       AUTH_SECRET: integration-tests-only-not-a-production-secret
     steps:
       - uses: actions/checkout@v6
@@ -34,13 +21,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --ignore-scripts
-      # Misma lista que corre local: npm run test:all (scripts/test-all.mjs).
+      # Con scripts: better-sqlite3 (la D1 local de las pruebas) es nativo.
+      - run: npm ci
+      # Misma lista que corre local: npm run test:all (scripts/test-all.mjs),
+      # con una D1 local (archivo SQLite) en test-results/.
       # Incluye tipos, lint, prettier, migraciones, backup/restore, regresiones,
       # UI con Playwright, build y la app contra el servidor de produccion.
       - run: node scripts/test-all.mjs
-        env:
-          MUNDOBL_TEST_DB: external
       - name: Logs del servidor si algo fallo
         if: failure()
         run: cat test-results/test-all/next-start.log 2>/dev/null || true

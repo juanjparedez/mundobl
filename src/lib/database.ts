@@ -1,6 +1,14 @@
+import { createManySkippingDuplicates } from './create-many';
 import {
-  assertTrackingCanBeRemoved,
-  assertEpisodeTrackingCanBeRemoved,
+  caseVariants,
+  findSameTextCandidates,
+  pickSameText,
+  sameTextCandidates,
+} from './text-match';
+import {
+  deleteEpisodeIfUntracked,
+  deleteSeasonsIfUntracked,
+  deleteSeriesIfUntracked,
 } from './tracking-preservation';
 import { COMMUNITY_MEMBER, FAVORITE_MEMBER } from './statistics-scope';
 import { createSupportRepository } from './support-repository';
@@ -53,13 +61,9 @@ import {
  */
 
 import { unstable_cache } from 'next/cache';
-import { Pool } from 'pg';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { withSerialTransactions } from './serial-transactions';
-import { scopeBatchingToRequest } from './request-scoped-batching';
-import { RequestScopedPool } from './request-scoped-pool';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { inSequence, prisma, type AppTransactionClient } from './prisma-client';
+import { withLease } from './lease';
 import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
@@ -82,52 +86,8 @@ import {
   isWatchableEpisode,
 } from './watchable';
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-const IS_WORKERD =
-  typeof navigator !== 'undefined' &&
-  navigator.userAgent === 'Cloudflare-Workers';
-
-/** ExecutionContext del request actual en workerd (clave del pool). */
-function currentRequestKey(): object | undefined {
-  try {
-    return getCloudflareContext().ctx;
-  } catch {
-    return undefined;
-  }
-}
-
-function createPrismaClient() {
-  const config = {
-    // En workerd se lee por request (RequestScopedPool crea el pool real en
-    // cada uno), asi toma la connection string de Hyperdrive que inyecta
-    // cloudflare/worker.ts.
-    get connectionString() {
-      return process.env.DATABASE_URL;
-    },
-    max: 5,
-    idleTimeoutMillis: 10000,
-    connectionTimeoutMillis: 10000,
-    // En workerd cada conexion se usa una vez y se cierra, asi ningun timer
-    // de idle queda vivo al terminar el request. El pooling real lo hace
-    // Hyperdrive, o el pooler de Supabase si el deploy no lo pudo activar.
-    // En Node se reutilizan.
-    ...(IS_WORKERD && { maxUses: 1 }),
-  };
-  const pool = IS_WORKERD
-    ? new RequestScopedPool(config, currentRequestKey)
-    : new Pool(config);
-  const adapter = withSerialTransactions(new PrismaPg(pool));
-  const client = new PrismaClient({ adapter });
-  // Sin esto, Prisma despacha juntos los findUnique de requests distintos
-  // desde el contexto del primero (ver request-scoped-batching.ts).
-  if (IS_WORKERD) scopeBatchingToRequest(client, currentRequestKey);
-  return client;
-}
-
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-globalForPrisma.prisma = prisma;
+export { prisma, inSequence };
+export type { AppPrismaClient, AppTransactionClient } from './prisma-client';
 
 /** Hidden editorial blocks are readable only by an authorized editor. */
 export async function getReadableSeriesInfoBlocks(
@@ -162,7 +122,7 @@ export async function searchContributionMetadata(
   search: string
 ) {
   const args = {
-    where: { name: { contains: search.trim(), mode: 'insensitive' as const } },
+    where: { name: { contains: search.trim() } },
     select: { name: true },
     orderBy: [{ name: 'asc' as const }, { id: 'asc' as const }],
     take: 30,
@@ -180,44 +140,43 @@ export async function searchContributionMetadata(
 /** Read-only resolution. Unknown or ambiguous names cannot mutate shared entities. */
 export async function getContributionMetadata(
   input: ContributionMetadataInput,
-  client: Prisma.TransactionClient = prisma
+  client: AppTransactionClient = prisma
 ) {
-  const whereNames = (names: (string | null | undefined)[]) => ({
-    OR: contributionNames(names).map((name) => ({
-      name: { equals: name, mode: 'insensitive' as const },
-    })),
-  });
+  // Candidatos por nombre sin mirar mayusculas; resolveContributionMetadata
+  // elige el igual (y marca como ambiguo si hay mas de uno).
   const select = { id: true, name: true } as const;
+  const named = (names: (string | null | undefined)[]) =>
+    contributionNames(names);
   const [countries, productionCompanies, languages, actors, tags, genres] =
     await Promise.all([
       input.countryCode?.trim()
         ? client.country.findMany({
-            where: {
-              code: { equals: input.countryCode.trim(), mode: 'insensitive' },
-            },
+            where: { code: { in: caseVariants(input.countryCode.trim()) } },
             select: { id: true, code: true },
           })
         : Promise.resolve([]),
-      client.productionCompany.findMany({
-        where: whereNames([input.productionCompanyName]),
-        select,
-      }),
-      client.language.findMany({
-        where: whereNames([
+      findSameTextCandidates(
+        'name',
+        named([input.productionCompanyName]),
+        (where) => client.productionCompany.findMany({ where, select })
+      ),
+      findSameTextCandidates(
+        'name',
+        named([
           input.originalLanguageName,
           ...(input.dubbingLanguageNames ?? []),
         ]),
-        select,
-      }),
-      client.actor.findMany({
-        where: whereNames(input.actorNames ?? []),
-        select,
-      }),
-      client.tag.findMany({ where: whereNames(input.tagNames ?? []), select }),
-      client.genre.findMany({
-        where: whereNames(input.genreNames ?? []),
-        select,
-      }),
+        (where) => client.language.findMany({ where, select })
+      ),
+      findSameTextCandidates('name', named(input.actorNames ?? []), (where) =>
+        client.actor.findMany({ where, select })
+      ),
+      findSameTextCandidates('name', named(input.tagNames ?? []), (where) =>
+        client.tag.findMany({ where, select })
+      ),
+      findSameTextCandidates('name', named(input.genreNames ?? []), (where) =>
+        client.genre.findMany({ where, select })
+      ),
     ]);
   return resolveContributionMetadata(input, {
     countries,
@@ -235,7 +194,7 @@ export async function restoreTrackingBackup(
   payload: Record<string, unknown>,
   dryRun: boolean
 ) {
-  return prisma.$transaction(async (tx) => {
+  return inSequence(async (tx) => {
     const [
       series,
       seasons,
@@ -284,38 +243,30 @@ export async function restoreTrackingBackup(
       episodeNotes: plan.episodeNotes.length,
       ...(history.supplied ? { trackingEvents: history.rows.length } : {}),
     };
-    if (!dryRun) {
-      if (history.supplied) {
-        // Replaying a history must not manufacture extra events from its state snapshot.
-        await tx.$executeRaw`SELECT set_config('mundobl.restoring_tracking_history', 'on', true)`;
-      }
+    const write = async () => {
       if (plan.viewStatuses.length)
         imported.viewStatuses = (
-          await tx.viewStatus.createMany({
-            data: plan.viewStatuses,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(plan.viewStatuses, (rows) =>
+            tx.viewStatus.createMany({ data: rows })
+          )
         ).count;
       if (plan.seriesNotes.length)
         imported.seriesNotes = (
-          await tx.seriesNote.createMany({
-            data: plan.seriesNotes,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(plan.seriesNotes, (rows) =>
+            tx.seriesNote.createMany({ data: rows })
+          )
         ).count;
       if (plan.episodeNotes.length)
         imported.episodeNotes = (
-          await tx.episodeNote.createMany({
-            data: plan.episodeNotes,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(plan.episodeNotes, (rows) =>
+            tx.episodeNote.createMany({ data: rows })
+          )
         ).count;
       if (history.rows.length) {
         imported.trackingEvents = (
-          await tx.trackingEvent.createMany({
-            data: history.rows,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(history.rows, (rows) =>
+            tx.trackingEvent.createMany({ data: rows })
+          )
         ).count;
         history.skipped += history.rows.length - imported.trackingEvents;
       }
@@ -327,6 +278,13 @@ export async function restoreTrackingBackup(
       ] as const) {
         plan.skipped[section] += plan[section].length - imported[section];
       }
+    };
+    if (!dryRun) {
+      // Replaying a history must not manufacture extra events from its state
+      // snapshot: while this lease exists the ViewStatus trigger records nothing.
+      if (history.supplied)
+        await withLease(`tracking-restore:${userId}`, write, { ttlMs: 60_000 });
+      else await write();
     }
     const preferenceErrors: string[] = [];
     const preferenceMissing: {
@@ -412,7 +370,7 @@ export async function getTrackingHistory(
     origin: true,
     catalogScope: true,
   } as const;
-  const title = { contains: search, mode: 'insensitive' as const };
+  const title = { contains: search };
   const rows = await prisma.trackingEvent.findMany({
     where: {
       userId,
@@ -949,10 +907,10 @@ export async function recordUserActiveDay(userId: string): Promise<boolean> {
   const day = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
   );
-  const { count } = await prisma.userActiveDay.createMany({
-    data: [{ userId, day }],
-    skipDuplicates: true,
-  });
+  const { count } = await createManySkippingDuplicates(
+    [{ userId, day }],
+    (rows) => prisma.userActiveDay.createMany({ data: rows })
+  );
   return count > 0;
 }
 
@@ -1717,7 +1675,7 @@ export async function getActorsIndex(): Promise<PersonIndexRow[]> {
                WHERE sea."actorId" = p.id
                  AND s2.origin = 'CURATED' AND s2."catalogScope" = 'PERSONAL'
              ), 0)
-           )::int AS "creditCount"
+           ) AS "creditCount"
     FROM "Actor" p
     WHERE p."isPlaceholder" = false
     ORDER BY "creditCount" DESC, p.name ASC
@@ -1729,14 +1687,14 @@ export async function getActorsIndex(): Promise<PersonIndexRow[]> {
 export async function getDirectorsIndex(): Promise<PersonIndexRow[]> {
   return await prisma.$queryRaw<PersonIndexRow[]>(
     Prisma.sql`
-    SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
+    SELECT p.id, p.name, NULL AS "stageName", p."imageUrl",
            p.nationality, p.biography,
            COALESCE((
              SELECT COUNT(*) FROM "SeriesDirector" sd
              JOIN "Series" s ON s.id = sd."seriesId"
              WHERE sd."directorId" = p.id
                AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-           ), 0)::int AS "creditCount"
+           ), 0) AS "creditCount"
     FROM "Director" p
     ORDER BY "creditCount" DESC, p.name ASC
   `
@@ -1757,7 +1715,7 @@ export async function getProductionCompaniesIndex(): Promise<
              JOIN "Series" s ON s.id = spc."seriesId"
              WHERE spc."productionCompanyId" = p.id
                AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-           ), 0)::int AS "seriesCount"
+           ), 0) AS "seriesCount"
     FROM "ProductionCompany" p
     LEFT JOIN "Country" c ON c.id = p."countryId"
     ORDER BY "seriesCount" DESC, p.name ASC
@@ -1833,22 +1791,27 @@ async function fetchPeopleNationalities(): Promise<string[]> {
 export async function findDirectorIdByName(
   name: string
 ): Promise<number | null> {
-  const director = await prisma.director.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true },
-  });
+  const director = pickSameText(
+    await prisma.director.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   return director?.id ?? null;
 }
 
 /** Contraparte: id del actor homonimo, para la ficha de director. */
 export async function findActorIdByName(name: string): Promise<number | null> {
-  const actor = await prisma.actor.findFirst({
-    where: {
-      name: { equals: name, mode: 'insensitive' },
-      isPlaceholder: false,
-    },
-    select: { id: true },
-  });
+  const actor = pickSameText(
+    await prisma.actor.findMany({
+      where: { ...sameTextCandidates('name', name), isPlaceholder: false },
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   return actor?.id ?? null;
 }
 
@@ -2240,44 +2203,41 @@ export async function changeBasedOnValue(
   action: 'rename' | 'merge' | 'remove',
   expectedIds: number[]
 ) {
-  return prisma.$transaction(
-    async (tx) => {
-      const rows = await tx.series.findMany({
-        where: { basedOn: source },
-        select: { id: true },
-      });
-      const actual = rows.map((row) => row.id).sort((a, b) => a - b);
+  return inSequence(async (tx) => {
+    const rows = await tx.series.findMany({
+      where: { basedOn: source },
+      select: { id: true },
+    });
+    const actual = rows.map((row) => row.id).sort((a, b) => a - b);
+    if (
+      JSON.stringify(actual) !==
+      JSON.stringify([...expectedIds].sort((a, b) => a - b))
+    )
+      throw new Error('STALE');
+    if (target !== null) {
+      const exists = await tx.series.count({ where: { basedOn: target } });
       if (
-        JSON.stringify(actual) !==
-        JSON.stringify([...expectedIds].sort((a, b) => a - b))
+        (action === 'rename' && exists > 0) ||
+        (action === 'merge' && exists === 0)
       )
-        throw new Error('STALE');
-      if (target !== null) {
-        const exists = await tx.series.count({ where: { basedOn: target } });
-        if (
-          (action === 'rename' && exists > 0) ||
-          (action === 'merge' && exists === 0)
-        )
-          throw new Error('TARGET');
-      }
-      const result = await tx.series.updateMany({
-        where: { id: { in: expectedIds }, basedOn: source },
-        data: { basedOn: target },
-      });
-      if (result.count !== expectedIds.length) throw new Error('STALE');
-      return result.count;
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
-  );
+        throw new Error('TARGET');
+    }
+    const result = await tx.series.updateMany({
+      where: { id: { in: expectedIds }, basedOn: source },
+      data: { basedOn: target },
+    });
+    if (result.count !== expectedIds.length) throw new Error('STALE');
+    return result.count;
+  });
 }
 
 /** Serialize main-story changes per universe so concurrent edits keep one cover. */
 export async function saveSeriesInUniverse<T>(
   universeId: number | null,
   isMain: boolean,
-  save: (transaction: Prisma.TransactionClient) => Promise<T>
+  save: (transaction: AppTransactionClient) => Promise<T>
 ): Promise<T> {
-  return prisma.$transaction(async (transaction) => {
+  return inSequence(async (transaction) => {
     await prepareUniverseSlot(transaction, universeId, isMain);
     return save(transaction);
   });
@@ -2288,7 +2248,7 @@ export async function saveSeriesInUniverse<T>(
  * anterior. Va dentro de la transaccion del caller.
  */
 export async function prepareUniverseSlot(
-  transaction: Prisma.TransactionClient,
+  transaction: AppTransactionClient,
   universeId: number | null,
   isMain: boolean
 ): Promise<void> {
@@ -2352,11 +2312,11 @@ export interface SeriesEpisodeOrder {
 
 /**
  * Episodios de una serie ordenados por (seasonNumber, episodeNumber). Acepta
- * un client de transaccion para que setProgress (T05, src/lib/tracking.ts)
- * pueda leer dentro del mismo $transaction que sus escrituras.
+ * el client que le pasa setProgress (T05, src/lib/tracking.ts) junto con
+ * sus escrituras.
  */
 export async function getSeriesEpisodesOrdered(
-  client: PrismaClient | Prisma.TransactionClient,
+  client: AppTransactionClient,
   seriesId: number
 ): Promise<SeriesEpisodeOrder[]> {
   const seasons = await client.season.findMany({
@@ -2449,9 +2409,7 @@ export async function getCommunityReviews(
       user: communityPublicAuthorWhere(viewerId),
       series: {
         ...PUBLIC_REVIEW_SERIES,
-        ...(query
-          ? { title: { contains: query, mode: 'insensitive' as const } }
-          : {}),
+        ...(query ? { title: { contains: query } } : {}),
       },
     },
     orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { id: 'desc' }],
@@ -2790,47 +2748,32 @@ export async function saveWatchingPreferences(
   userId: string,
   input: { initial: WatchingPreferences } | { change: WatchingPreferenceChange }
 ) {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await prisma.$transaction(
-        async (tx) => {
-          const user = await tx.user.findUniqueOrThrow({
-            where: { id: userId },
-            select: { watchingPreferences: true },
-          });
-          const current = readWatchingPreferences(user.watchingPreferences);
-          if ('initial' in input && user.watchingPreferences !== null)
-            return current;
-          const next =
-            'initial' in input
-              ? input.initial
-              : applyPreferenceChange(current, input.change);
-          // Only pin series already present in this account's library.
-          const owned = await tx.viewStatus.findMany({
-            where: { userId, seriesId: { in: next.pinned } },
-            select: { seriesId: true },
-          });
-          const ids = new Set(owned.map((row) => row.seriesId));
-          next.pinned = next.pinned.filter((id) => ids.has(id));
-          await tx.user.update({
-            where: { id: userId },
-            data: { watchingPreferences: { ...next } },
-            select: { id: true },
-          });
-          return next;
-        },
-        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
-      );
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2034' &&
-        attempt < 4
-      )
-        continue;
-      throw error;
-    }
-  }
+  // Dos dispositivos a la vez no se pisan los fijados: de a uno por usuario.
+  return withLease(`watching-preferences:${userId}`, async () => {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { watchingPreferences: true },
+    });
+    const current = readWatchingPreferences(user.watchingPreferences);
+    if ('initial' in input && user.watchingPreferences !== null) return current;
+    const next =
+      'initial' in input
+        ? input.initial
+        : applyPreferenceChange(current, input.change);
+    // Only pin series already present in this account's library.
+    const owned = await prisma.viewStatus.findMany({
+      where: { userId, seriesId: { in: next.pinned } },
+      select: { seriesId: true },
+    });
+    const ids = new Set(owned.map((row) => row.seriesId));
+    next.pinned = next.pinned.filter((id) => ids.has(id));
+    await prisma.user.update({
+      where: { id: userId },
+      data: { watchingPreferences: { ...next } },
+      select: { id: true },
+    });
+    return next;
+  });
 }
 
 /** Private, date-scoped statistics. Fetch all sibling parts of matching seasons,
@@ -3142,10 +3085,10 @@ export async function getCommunityTopics(
               OR: [
                 {
                   hasSpoilers: false,
-                  title: { contains: search, mode: 'insensitive' },
+                  title: { contains: search },
                 },
                 {
-                  series: { title: { contains: search, mode: 'insensitive' } },
+                  series: { title: { contains: search } },
                 },
               ],
             }
@@ -3360,7 +3303,7 @@ export async function searchCommunitySeries(search: string) {
   const rows = await prisma.series.findMany({
     where: {
       ...PUBLIC_REVIEW_SERIES,
-      title: { contains: search.trim(), mode: 'insensitive' },
+      title: { contains: search.trim() },
     },
     select: { id: true, title: true, origin: true, catalogScope: true },
     take: 15,
@@ -3402,13 +3345,23 @@ export async function getCommunityEpisodes(seriesId: number) {
     orderBy: [{ season: { seasonNumber: 'asc' } }, { episodeNumber: 'asc' }],
   });
 }
+/** Runs a community write with this account's submissions serialized, so
+ *  concurrent requests cannot bypass the hourly limit. */
+function communityWrite<T>(
+  userId: string,
+  topic: boolean,
+  write: (tx: AppTransactionClient) => Promise<T>
+) {
+  return withLease(`community:${userId}`, async (tx) => {
+    await communityWriteLimit(tx, userId, topic);
+    return write(tx);
+  });
+}
 async function communityWriteLimit(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   userId: string,
   topic: boolean
 ) {
-  // Serialize submissions from one account so concurrent requests cannot bypass the limit.
-  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community:${userId}`}))::text`;
   if (
     !(await tx.user.findFirst({
       where: { id: userId, banned: false },
@@ -3427,8 +3380,7 @@ export async function createCommunityTopic(
   input: CommunityTopicInput,
   notifyReplies = false
 ) {
-  return prisma.$transaction(async (tx) => {
-    await communityWriteLimit(tx, userId, true);
+  return communityWrite(userId, true, async (tx) => {
     const config = await tx.communitySettings.findUnique({ where: { id: 1 } });
     if (config?.conversationsEnabled === false)
       throw new CommunityError(403, 'paused');
@@ -3467,14 +3419,12 @@ export async function replyToCommunityTopic(
   hasSpoilers: boolean,
   recommendedSeriesId: number | null = null
 ) {
-  return prisma.$transaction(async (tx) => {
-    await communityWriteLimit(tx, userId, false);
+  return communityWrite(userId, false, async (tx) => {
     if (
       (await tx.communitySettings.findUnique({ where: { id: 1 } }))
         ?.conversationsEnabled === false
     )
       throw new CommunityError(403, 'paused');
-    await tx.$queryRaw`SELECT id FROM "CommunityTopic" WHERE id = ${topicId} FOR UPDATE`;
     const topic = await tx.communityTopic.findFirst({
       where: { id: topicId, ...publicCommunityTopicWhere(userId) },
       select: { id: true, closed: true, userId: true },
@@ -3821,10 +3771,9 @@ export async function recordSeriesShare(
     select: { id: true },
   });
   if (!exists) return false;
-  await prisma.seriesShare.createMany({
-    data: [{ userId, seriesId, channel }],
-    skipDuplicates: true,
-  });
+  await createManySkippingDuplicates([{ userId, seriesId, channel }], (rows) =>
+    prisma.seriesShare.createMany({ data: rows })
+  );
   return true;
 }
 
@@ -3834,7 +3783,7 @@ export async function getWatchedTime(
   userId: string
 ): Promise<{ hoursWatched: number; unknownDurationVideos: number }> {
   const rows = await prisma.$queryRaw<
-    Array<{ total_minutes: number | string | null; unknown_durations: bigint }>
+    Array<{ total_minutes: number | string | null; unknown_durations: number }>
   >`
     SELECT COALESCE(SUM(CASE
       WHEN e."durationSeconds" > 0 THEN e."durationSeconds" / 60.0
@@ -3925,37 +3874,38 @@ export async function getPublicFavoriteCount(seriesId: number) {
   });
 }
 
-/** Delete only content with no private tracking, under the same locks as curation. */
+/**
+ * Borra contenido solo si nadie lo sigue: el chequeo va dentro del mismo
+ * DELETE (ver tracking-preservation.ts), asi no hay ventana entre mirar y
+ * borrar.
+ */
 export async function deleteUntrackedContent(
   target: { seriesId: number } | { seasonId: number } | { episodeId: number }
 ) {
-  return prisma.$transaction(async (tx) => {
-    if ('seriesId' in target) {
-      await assertTrackingCanBeRemoved(tx, target.seriesId);
-      return tx.series.delete({
-        where: { id: target.seriesId },
-        select: { id: true, title: true },
-      });
-    }
-    if ('seasonId' in target) {
-      const season = await tx.season.findUniqueOrThrow({
-        where: { id: target.seasonId },
-        select: { series: { select: { id: true, title: true } } },
-      });
-      await assertTrackingCanBeRemoved(tx, season.series.id, [target.seasonId]);
-      await tx.season.delete({ where: { id: target.seasonId } });
-      return season.series;
-    }
-    const episode = await tx.episode.findUniqueOrThrow({
-      where: { id: target.episodeId },
-      select: {
-        season: { select: { series: { select: { id: true, title: true } } } },
-      },
+  if ('seriesId' in target) {
+    const series = await prisma.series.findUniqueOrThrow({
+      where: { id: target.seriesId },
+      select: { id: true, title: true },
     });
-    await assertEpisodeTrackingCanBeRemoved(tx, target.episodeId);
-    await tx.episode.delete({ where: { id: target.episodeId } });
-    return episode.season.series;
+    await deleteSeriesIfUntracked(prisma, target.seriesId);
+    return series;
+  }
+  if ('seasonId' in target) {
+    const season = await prisma.season.findUniqueOrThrow({
+      where: { id: target.seasonId },
+      select: { series: { select: { id: true, title: true } } },
+    });
+    await deleteSeasonsIfUntracked(prisma, season.series.id, [target.seasonId]);
+    return season.series;
+  }
+  const episode = await prisma.episode.findUniqueOrThrow({
+    where: { id: target.episodeId },
+    select: {
+      season: { select: { series: { select: { id: true, title: true } } } },
+    },
   });
+  await deleteEpisodeIfUntracked(prisma, target.episodeId);
+  return episode.season.series;
 }
 
 // ============================================

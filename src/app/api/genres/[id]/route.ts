@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { pickSameText, sameTextCandidates } from '@/lib/text-match';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
@@ -30,12 +31,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Comprobar si ya existe otro género con el mismo nombre (case-insensitive)
-    const existing = await prisma.genre.findFirst({
-      where: {
-        name: { equals: name, mode: 'insensitive' },
-        NOT: { id: genreId },
-      },
-    });
+    const existing = pickSameText(
+      await prisma.genre.findMany({
+        where: { ...sameTextCandidates('name', name), NOT: { id: genreId } },
+        select: { id: true, name: true },
+      }),
+      (row) => row.name,
+      name
+    );
     if (existing) {
       return NextResponse.json(
         { error: 'Ya existe un género con ese nombre' },

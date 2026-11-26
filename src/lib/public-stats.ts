@@ -45,46 +45,46 @@ export type { WatchSectionStats };
 
 interface RawNamedCountRow {
   name: string;
-  count: bigint;
+  count: number;
 }
 
 interface RawCompanyCountRow {
   id: number;
   name: string;
-  count: bigint;
+  count: number;
 }
 
 interface RawActorCountRow {
   id: number;
   name: string;
-  count: bigint;
+  count: number;
 }
 
 interface RawDirectorCountRow {
   id: number;
   name: string;
-  count: bigint;
+  count: number;
 }
 
 interface RawTypeCountRow {
   type: string;
-  count: bigint;
+  count: number;
 }
 
 interface RawYearCountRow {
   year: number | null;
-  count: bigint;
+  count: number;
 }
 
 interface RawRatingDistRow {
   score: number;
-  count: bigint;
+  count: number;
 }
 
 interface RawTopRatedRow {
   seriesId: number;
   avgScore: number;
-  voterCount: bigint;
+  voterCount: number;
 }
 
 export interface RecentCommunityActivity {
@@ -262,7 +262,7 @@ async function getRecentCommunityActivity(
       },
     }),
     prisma
-      .$queryRaw<Array<{ count: bigint }>>(
+      .$queryRaw<Array<{ count: number }>>(
         Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
       SELECT COUNT(*) AS count FROM votes WHERE "updatedAt" >= ${shortSince} AND "updatedAt" <= ${now}
@@ -451,7 +451,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${COMMUNITY_SQL}
         AND a."isPlaceholder" = false
       GROUP BY a.id, a.name
-      ORDER BY count DESC, name ASC
+      ORDER BY count DESC, a.name ASC
       LIMIT 15
     `),
     prisma.$queryRaw<RawDirectorCountRow[]>(Prisma.sql`
@@ -466,7 +466,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${PUBLIC_SERIES_SQL}
         AND ${COMMUNITY_SQL}
       GROUP BY d.id, d.name
-      ORDER BY count DESC, name ASC
+      ORDER BY count DESC, d.name ASC
       LIMIT 15
     `),
     // Cuenta por SeriesProductionCompany (co-producciones), no por la
@@ -484,7 +484,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${PUBLIC_SERIES_SQL}
         AND ${COMMUNITY_SQL}
       GROUP BY pc.id, pc.name
-      ORDER BY count DESC, name ASC
+      ORDER BY count DESC, pc.name ASC
       LIMIT 15
     `),
     prisma.$queryRaw<RawNamedCountRow[]>(Prisma.sql`
@@ -525,20 +525,20 @@ export async function getPublicStats(): Promise<PublicStats> {
     }),
     prisma.$queryRaw<RawTopRatedRow[]>(Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
-      SELECT "seriesId", ROUND(AVG(score)::numeric, 1)::float8 AS "avgScore", COUNT(*) AS "voterCount"
+      SELECT "seriesId", ROUND(AVG(score), 1) AS "avgScore", COUNT(*) AS "voterCount"
       FROM votes GROUP BY "seriesId"
       ORDER BY "avgScore" DESC, "voterCount" DESC, "seriesId" ASC LIMIT 15
     `),
     prisma.$queryRaw<RawRatingDistRow[]>(Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
-      SELECT ROUND(score)::int AS score, COUNT(*) AS count
+      SELECT CAST(ROUND(score) AS INTEGER) AS score, COUNT(*) AS count
       FROM votes GROUP BY ROUND(score) ORDER BY score ASC
     `),
     prisma.$queryRaw<
-      Array<{ average: number | null; total: bigint }>
+      Array<{ average: number | null; total: number }>
     >(Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
-      SELECT AVG(score)::float8 AS average, COUNT(*) AS total FROM votes
+      SELECT AVG(score) AS average, COUNT(*) AS total FROM votes
     `),
     // Catalog: series per country (solo CURATED)
     prisma.$queryRaw<RawNamedCountRow[]>(Prisma.sql`

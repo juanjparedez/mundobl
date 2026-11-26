@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { revalidatePath } from 'next/cache';
 import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
 import { Prisma } from '@prisma/client';
+import { inSequence } from '@/lib/prisma-client';
 
 // GET - Listar series con sus tags y géneros con filtros de auditoría
 export async function GET(request: NextRequest) {
@@ -36,8 +38,8 @@ export async function GET(request: NextRequest) {
 
     if (q) {
       where.OR = [
-        { title: { contains: q, mode: 'insensitive' } },
-        { originalTitle: { contains: q, mode: 'insensitive' } },
+        { title: { contains: q } },
+        { originalTitle: { contains: q } },
       ];
     }
 
@@ -198,7 +200,7 @@ export async function PATCH(request: NextRequest) {
 
     const { tags, genres } = body;
 
-    const updated = await prisma.$transaction(async (tx) => {
+    const updated = await inSequence(async (tx) => {
       // 1. Actualizar tags si se proporcionaron
       if (Array.isArray(tags)) {
         const resolvedTags: Array<{ id: number; name: string }> = [];
@@ -231,10 +233,10 @@ export async function PATCH(request: NextRequest) {
           (id) => !currentTagIds.has(id)
         );
         if (toAdd.length > 0) {
-          await tx.seriesTag.createMany({
-            data: toAdd.map((tagId) => ({ seriesId, tagId })),
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(
+            toAdd.map((tagId) => ({ seriesId, tagId })),
+            (rows) => tx.seriesTag.createMany({ data: rows })
+          );
         }
       }
 
@@ -272,10 +274,10 @@ export async function PATCH(request: NextRequest) {
           (id) => !currentGenreIds.has(id)
         );
         if (toAdd.length > 0) {
-          await tx.seriesGenre.createMany({
-            data: toAdd.map((genreId) => ({ seriesId, genreId })),
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(
+            toAdd.map((genreId) => ({ seriesId, genreId })),
+            (rows) => tx.seriesGenre.createMany({ data: rows })
+          );
         }
       }
 
@@ -347,7 +349,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await prisma.$transaction(async (tx) => {
+    await inSequence(async (tx) => {
       // 1. Agregar tags en lote
       if (Array.isArray(addTags) && addTags.length > 0) {
         const resolvedAddTags: number[] = [];
@@ -362,10 +364,9 @@ export async function POST(request: NextRequest) {
           const bulkTagData = validSeriesIds.flatMap((seriesId) =>
             resolvedAddTags.map((tagId) => ({ seriesId, tagId }))
           );
-          await tx.seriesTag.createMany({
-            data: bulkTagData,
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(bulkTagData, (rows) =>
+            tx.seriesTag.createMany({ data: rows })
+          );
         }
       }
 
@@ -407,10 +408,9 @@ export async function POST(request: NextRequest) {
           const bulkGenreData = validSeriesIds.flatMap((seriesId) =>
             resolvedAddGenres.map((genreId) => ({ seriesId, genreId }))
           );
-          await tx.seriesGenre.createMany({
-            data: bulkGenreData,
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(bulkGenreData, (rows) =>
+            tx.seriesGenre.createMany({ data: rows })
+          );
         }
       }
 

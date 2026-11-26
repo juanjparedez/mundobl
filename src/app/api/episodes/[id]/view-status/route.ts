@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/auth-helpers';
 import { markEpisode } from '@/lib/tracking';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import { WATCHING_METRICS } from '@/lib/achievements';
+import { inSequence } from '@/lib/prisma-client';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     // Marca el episodio y, si corresponde, promueve la serie a VIENDO
     // (ver src/lib/tracking.ts). Transacción para que ambas escrituras
     // (o ninguna) queden consistentes.
-    const result = await prisma.$transaction((tx) =>
+    const result = await inSequence((tx) =>
       markEpisode(tx, authResult.userId, episodeId, status)
     );
 

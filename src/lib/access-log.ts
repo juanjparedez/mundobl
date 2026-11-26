@@ -184,14 +184,14 @@ export async function getLogStats() {
     await Promise.all([
       prisma.accessLog.count(),
       prisma.user.count(),
-      prisma.$queryRaw<{ path: string; count: bigint }[]>`
+      prisma.$queryRaw<{ path: string; count: number }[]>`
         SELECT path, COUNT(*) AS count
         FROM "AccessLog"
         GROUP BY path
         ORDER BY count DESC
         LIMIT 15
       `,
-      prisma.$queryRaw<{ action: string; count: bigint }[]>`
+      prisma.$queryRaw<{ action: string; count: number }[]>`
         SELECT action, COUNT(*) AS count
         FROM "AccessLog"
         GROUP BY action

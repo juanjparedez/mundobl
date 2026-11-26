@@ -12,6 +12,7 @@ import {
   type EmbedConfirmInput,
   type AllowedCountryCode,
 } from '@/lib/user-embed-preview';
+import { inSequence } from '@/lib/prisma-client';
 
 const ALLOWED_TYPES = ['serie', 'pelicula', 'corto', 'especial'] as const;
 type AllowedType = (typeof ALLOWED_TYPES)[number];
@@ -301,7 +302,7 @@ export async function POST(request: NextRequest) {
   const isAdmin = auth.role === 'ADMIN' || auth.role === 'MODERATOR';
   const visibility = isAdmin ? 'VISIBLE' : 'PENDING_REVIEW';
 
-  const newSeries = await prisma.$transaction(async (tx) => {
+  const newSeries = await inSequence(async (tx) => {
     const series = await tx.series.create({
       data: {
         title: data.title,

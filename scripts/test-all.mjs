@@ -3,18 +3,16 @@
 // llama a este mismo script, asi la lista no se desincroniza).
 //
 //   npm run test:all            todo: tipos, lint, prettier, migraciones,
-//                               regresiones contra Postgres descartable,
+//                               regresiones contra una D1 local descartable,
 //                               UI con Playwright, build y app completa
 //   npm run test:all -- --fast  solo tipos, lint y prettier (~1 min)
 //   npm run test:all -- --from=ui:test-history-cards
 //                               retoma desde un paso (despues de arreglar)
 //   npm run test:all -- --list  muestra los pasos
 //
-// Base de datos:
-//   - por defecto levanta un postgres:16-alpine en Docker (127.0.0.1:55433),
-//     en memoria, y lo borra al terminar. Requiere Docker Desktop corriendo.
-//   - MUNDOBL_TEST_DB=external usa el DATABASE_URL ya exportado (CI usa el
-//     service container). Igual tiene que ser 127.0.0.1:55433/mundobl_replay.
+// Base de datos: un archivo SQLite nuevo en test-results/test-all/, con la
+// misma interfaz y el mismo adapter de Prisma que la D1 de produccion
+// (scripts/db/local-d1.mjs). No hace falta Docker.
 //
 // Nunca usa los datos de .env: las claves de .env* se vacian en los procesos
 // hijos para que el build o el servidor de prueba no hablen con produccion.
@@ -22,28 +20,23 @@
 import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import pg from 'pg';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { migrateLocal } from './db/migrate-local.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const isWindows = process.platform === 'win32';
 const args = process.argv.slice(2);
 const fast = args.includes('--fast');
 const listOnly = args.includes('--list');
 const fromStep = args.find((a) => a.startsWith('--from='))?.slice(7);
-const external = process.env.MUNDOBL_TEST_DB === 'external';
-
-const CONTAINER = 'mundobl-test-pg';
-const DB_URL = external
-  ? (process.env.DATABASE_URL ?? '')
-  : 'postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay';
-const RESTORE_URL = DB_URL.replace(
-  /\/mundobl_replay(\?|$)/,
-  '/mundobl_restore$1'
-);
+const logDir = path.join(root, 'test-results', 'test-all');
+const DB_FILE = path.join(logDir, 'replay.db');
+const RESTORE_FILE = path.join(logDir, 'restore.db');
+const DB_URL = `file:${DB_FILE}`;
+const RESTORE_URL = `file:${RESTORE_FILE}`;
+// Cada proceso hijo (tsx, next, playwright) carga la D1 local antes que la app.
+const RUNTIME_IMPORT = `--import ${pathToFileURL(path.join(root, 'scripts', 'db', 'runtime.mjs')).href}`;
 const APP_PORT = 3223;
 const APP_URL = `http://127.0.0.1:${APP_PORT}`;
-const logDir = path.join(root, 'test-results', 'test-all');
 
 const bin = (rel) => path.join(root, 'node_modules', rel);
 const TSX = bin('tsx/dist/cli.mjs');
@@ -87,6 +80,7 @@ const trackingTests = [
   'community-metrics',
   'community-backup',
   'community-request',
+  'support-database',
   'watch-date',
   'writer-credits',
   'series-save',
@@ -168,10 +162,7 @@ const staticSteps = [
 const dbSteps = [
   { name: 'db:start', run: startDatabase },
   {
-    name: 'migrate-deploy',
-    cmd: [process.execPath, [PRISMA, 'migrate', 'deploy']],
-  },
-  {
+    // El schema de Prisma tiene que coincidir con lo que dejan las migraciones.
     name: 'db:check',
     cmd: [
       process.execPath,
@@ -185,6 +176,10 @@ const dbSteps = [
         '--exit-code',
       ],
     ],
+  },
+  {
+    name: 'test-d1-schema',
+    cmd: [process.execPath, ['scripts/test-d1-schema.mjs']],
   },
   ...tsxTests.map((t) => ({ name: `test-${t}`, cmd: tsx(`test-${t}.ts`) })),
   { name: 'audit-locale-coverage', cmd: tsx('audit-locale-coverage.ts') },
@@ -259,8 +254,10 @@ Object.assign(childEnv, {
   DIRECT_URL: DB_URL,
   AUTH_SECRET: 'integration-tests-only-not-a-production-secret',
   NEXT_TELEMETRY_DISABLED: '1',
-  MUNDOBL_TEST_RUNTIME: '',
   SHADOW_DATABASE_URL: '',
+  NODE_OPTIONS: [process.env.NODE_OPTIONS, RUNTIME_IMPORT]
+    .filter(Boolean)
+    .join(' '),
 });
 
 // --- ejecucion -------------------------------------------------------------
@@ -280,99 +277,14 @@ function exec([command, commandArgs], extraEnv = {}) {
   });
 }
 
-function docker(dockerArgs, opts = {}) {
-  return spawnSync('docker', dockerArgs, {
-    encoding: 'utf8',
-    shell: isWindows,
-    ...opts,
-  });
-}
-
-let startedContainer = false;
-
-async function waitForPostgres(url, seconds) {
-  for (let i = 0; i < seconds; i++) {
-    const client = new pg.Client({ connectionString: url });
-    try {
-      await client.connect();
-      await client.query('select 1');
-      await client.end();
-      return true;
-    } catch {
-      await client.end().catch(() => {});
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-  }
-  return false;
-}
-
-async function startDatabase() {
-  if (!external) {
-    if (docker(['info'], { stdio: 'ignore' }).status !== 0) {
-      console.error(
-        'Docker no esta corriendo. Abri Docker Desktop, o exporta MUNDOBL_TEST_DB=external con DATABASE_URL a 127.0.0.1:55433/mundobl_replay.'
-      );
-      return 1;
-    }
-    docker(['rm', '-f', CONTAINER], { stdio: 'ignore' });
-    const run = docker(
-      [
-        'run',
-        '-d',
-        '--rm',
-        '--name',
-        CONTAINER,
-        '-e',
-        'POSTGRES_USER=mundobl',
-        '-e',
-        'POSTGRES_PASSWORD=mundobl',
-        '-e',
-        'POSTGRES_DB=mundobl_replay',
-        '-p',
-        '127.0.0.1:55433:5432',
-        '--tmpfs',
-        '/var/lib/postgresql/data',
-        'postgres:16-alpine',
-      ],
-      { stdio: 'inherit' }
-    );
-    if (run.status !== 0) {
-      console.error(
-        'No se pudo levantar Postgres. ¿Esta ocupado el puerto 55433?'
-      );
-      return 1;
-    }
-    startedContainer = true;
-  }
-  // Durante el init del contenedor Postgres escucha solo por socket, asi que
-  // conectar por TCP espera al servidor definitivo.
-  if (!(await waitForPostgres(DB_URL, 60))) {
-    console.error(`Postgres no respondio en ${DB_URL}`);
-    return 1;
-  }
+function startDatabase() {
+  migrateLocal(DB_FILE, { fresh: true });
   return 0;
 }
 
-function stopDatabase() {
-  if (startedContainer) {
-    docker(['rm', '-f', CONTAINER], { stdio: 'ignore' });
-    startedContainer = false;
-  }
-}
-
-async function backupRestore() {
-  const admin = new pg.Client({ connectionString: DB_URL });
-  await admin.connect();
-  await admin.query('DROP DATABASE IF EXISTS mundobl_restore');
-  await admin.query('CREATE DATABASE mundobl_restore');
-  await admin.end();
-  const restoreEnv = { DATABASE_URL: RESTORE_URL, DIRECT_URL: RESTORE_URL };
-  const migrated = await exec(
-    [process.execPath, [PRISMA, 'migrate', 'deploy']],
-    restoreEnv
-  );
-  if (migrated !== 0) return migrated;
-  return exec(tsx('test-backup-restore.ts'), {
+function backupRestore() {
+  migrateLocal(RESTORE_FILE, { fresh: true });
+  return exec(node('test-backup-restore.mjs', false), {
     BACKUP_TEST_SOURCE_URL: DB_URL,
     BACKUP_TEST_TARGET_URL: RESTORE_URL,
   });
@@ -445,10 +357,8 @@ async function main() {
   const started = Date.now();
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i];
-    // Al retomar, la base es nueva: hay que levantarla y migrarla igual.
-    const required = ['prisma-generate', 'db:start', 'migrate-deploy'].includes(
-      step.name
-    );
+    // Al retomar, la base es nueva: hay que crearla y migrarla igual.
+    const required = ['prisma-generate', 'db:start'].includes(step.name);
     if (i < startIndex && !required) continue;
     const t0 = Date.now();
     console.log(`\n=== [${i + 1}/${steps.length}] ${step.name}`);
@@ -467,20 +377,4 @@ async function main() {
   return 0;
 }
 
-const cleanup = () => stopDatabase();
-process.on('SIGINT', () => {
-  cleanup();
-  process.exit(130);
-});
-process.on('SIGTERM', () => {
-  cleanup();
-  process.exit(143);
-});
-
-let exitCode = 1;
-try {
-  exitCode = await main();
-} finally {
-  cleanup();
-}
-process.exit(exitCode);
+process.exit(await main());

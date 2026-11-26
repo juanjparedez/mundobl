@@ -37,18 +37,21 @@ export async function GET(request: NextRequest) {
     const userId = session?.user?.id;
     const now = new Date();
 
-    const candidates = await prisma.announcement.findMany({
+    // `pages` es una lista guardada como JSON: SQLite no la filtra con
+    // hasSome, asi que se filtra aca. Los anuncios activos son pocos.
+    const active = await prisma.announcement.findMany({
       where: {
         isActive: true,
-        pages: { hasSome: [pageKey, 'global'] },
         AND: [
           { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
           { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
         ],
       },
       orderBy: { createdAt: 'desc' },
-      take: 5,
     });
+    const candidates = active
+      .filter((a) => a.pages.includes(pageKey) || a.pages.includes('global'))
+      .slice(0, 5);
 
     if (candidates.length === 0) {
       return NextResponse.json([]);

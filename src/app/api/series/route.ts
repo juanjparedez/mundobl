@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse, after } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
+import { pickSameText, sameText, sameTextCandidates } from '@/lib/text-match';
 import {
   revalidateRelatedSeries,
   revalidateSeries,
@@ -40,16 +42,17 @@ export async function GET(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const title = request.nextUrl.searchParams.get('title')?.trim();
-    const series = await prisma.series.findMany({
+    const candidates = await prisma.series.findMany({
       where: {
         origin: 'CURATED',
-        ...(title
-          ? { title: { equals: title, mode: 'insensitive' as const } }
-          : {}),
+        ...(title ? sameTextCandidates('title', title) : {}),
       },
       select: { id: true, title: true, catalogScope: true },
       orderBy: { title: 'asc' },
     });
+    const series = title
+      ? candidates.filter((row) => sameText(row.title, title))
+      : candidates;
 
     return NextResponse.json(series);
   } catch (error) {
@@ -102,13 +105,17 @@ export async function POST(request: NextRequest) {
     // altas del mismo título creaban filas gemelas (que luego "no se borran":
     // se elimina una y queda la otra). Rechazar en vez de duplicar.
     if (title && typeof title === 'string' && title.trim()) {
-      const existing = await prisma.series.findFirst({
-        where: {
-          origin: 'CURATED',
-          title: { equals: title.trim(), mode: 'insensitive' },
-        },
-        select: { id: true, title: true, catalogScope: true },
-      });
+      const existing = pickSameText(
+        await prisma.series.findMany({
+          where: {
+            origin: 'CURATED',
+            ...sameTextCandidates('title', title.trim()),
+          },
+          select: { id: true, title: true, catalogScope: true },
+        }),
+        (row) => row.title,
+        title.trim()
+      );
       if (existing) {
         return NextResponse.json(
           {
@@ -367,13 +374,13 @@ export async function POST(request: NextRequest) {
           return;
         for (const relatedId of body.relatedSeriesIds) {
           if (!relatedId || relatedId === serie.id) continue;
-          await prisma.relatedSeries.createMany({
-            data: [
+          await createManySkippingDuplicates(
+            [
               { mainSeriesId: serie.id, relatedSeriesId: relatedId },
               { mainSeriesId: relatedId, relatedSeriesId: serie.id },
             ],
-            skipDuplicates: true,
-          });
+            (rows) => prisma.relatedSeries.createMany({ data: rows })
+          );
         }
       })(),
       // Contenido audiovisual asociado

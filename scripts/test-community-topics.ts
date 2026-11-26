@@ -220,11 +220,6 @@ async function main() {
         .filter((r) => r.status === 'rejected')
         .every((r) => r.status === 'rejected' && rejected(429)(r.reason))
     );
-    const policies = await prisma.$queryRaw<
-      Array<{ relname: string; relrowsecurity: boolean }>
-    >`SELECT relname, relrowsecurity FROM pg_class WHERE relname IN ('CommunityTopic', 'CommunityReply')`;
-    assert.equal(policies.length, 2);
-    assert.ok(policies.every((row) => row.relrowsecurity));
     await manageCommunityTopic(topic.id, key);
     assert.equal(await getCommunityTopic(topic.id), null);
     assert.equal(

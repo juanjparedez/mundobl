@@ -4,18 +4,18 @@ Rama local: `codex/fix-estadisticas-integrales`. El propietario autorizó merge 
 
 ## Causas y correcciones
 
-| Reporte | Problema | Criterio corregido |
-| --- | --- | --- |
-| Favoritos | La ficha contaba todas las cuentas y el ranking excluía ADMIN | Ambos excluyen equipo (ADMIN/MODERATOR/COLLABORATOR) y cuentas bloqueadas; decisión del propietario |
-| Series completadas y viendo | Mezcla de CURATED, contenido oculto y distintos filtros entre resumen y rankings | Una fila de estado actual por cuenta y obra pública, incluyendo obras accesibles de /ver |
-| Actores/directores/productoras/países/tipos | Distinto alcance de obras y cuentas | Mismo universo de seguimiento público; actores de serie y temporada sin duplicar, sin placeholders |
-| Catálogo | Contaba obras ocultas y WATCHABLE_ONLY como catálogo | Solo CURATED + PERSONAL + VISIBLE; desgloses y total coinciden |
-| Capítulos, gráfico y ranking mensual | Contaba filas de partes como capítulos y usaba la fecha de edición | Capítulo completo cuando todas las partes están vistas, fecha máxima de las partes; watchedDate con fallback a updatedAt solo si falta fecha |
-| Calificaciones | Cada categoría pesaba como un voto y los desgloses tenían alcances distintos | Un voto por persona/obra: general si existe, promedio de categorías en otro caso; mismo universo en promedio, histograma y ranking |
-| Streaming | Usaba chapter (marcaciones) como finalizaciones, ordenaba por suma de inicios y marcaciones | Usa play_start y view; ranking por inicios; finales registrados siguen visibles en total/gráfico aunque no tengan inicio en la ventana |
-| Cociente de streaming | Recortaba a 100% cuando había más finales que inicios | Cociente de eventos, no retención de personas; null/— si no es calculable o supera 100% |
-| Aperturas | Máximo entre tráfico operativo del hub y aperturas de series | Solo open_ver, con la misma población que los otros eventos |
-| Marcaciones sin cuenta | Prometía capítulos exactos para un evento que puede ser una parte o un lote | Etiqueta honesta de acciones de marcado; no se inventa un backfill |
+| Reporte                                     | Problema                                                                                    | Criterio corregido                                                                                                                           |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Favoritos                                   | La ficha contaba todas las cuentas y el ranking excluía ADMIN                               | Ambos excluyen equipo (ADMIN/MODERATOR/COLLABORATOR) y cuentas bloqueadas; decisión del propietario                                          |
+| Series completadas y viendo                 | Mezcla de CURATED, contenido oculto y distintos filtros entre resumen y rankings            | Una fila de estado actual por cuenta y obra pública, incluyendo obras accesibles de /ver                                                     |
+| Actores/directores/productoras/países/tipos | Distinto alcance de obras y cuentas                                                         | Mismo universo de seguimiento público; actores de serie y temporada sin duplicar, sin placeholders                                           |
+| Catálogo                                    | Contaba obras ocultas y WATCHABLE_ONLY como catálogo                                        | Solo CURATED + PERSONAL + VISIBLE; desgloses y total coinciden                                                                               |
+| Capítulos, gráfico y ranking mensual        | Contaba filas de partes como capítulos y usaba la fecha de edición                          | Capítulo completo cuando todas las partes están vistas, fecha máxima de las partes; watchedDate con fallback a updatedAt solo si falta fecha |
+| Calificaciones                              | Cada categoría pesaba como un voto y los desgloses tenían alcances distintos                | Un voto por persona/obra: general si existe, promedio de categorías en otro caso; mismo universo en promedio, histograma y ranking           |
+| Streaming                                   | Usaba chapter (marcaciones) como finalizaciones, ordenaba por suma de inicios y marcaciones | Usa play_start y view; ranking por inicios; finales registrados siguen visibles en total/gráfico aunque no tengan inicio en la ventana       |
+| Cociente de streaming                       | Recortaba a 100% cuando había más finales que inicios                                       | Cociente de eventos, no retención de personas; null/— si no es calculable o supera 100%                                                      |
+| Aperturas                                   | Máximo entre tráfico operativo del hub y aperturas de series                                | Solo open_ver, con la misma población que los otros eventos                                                                                  |
+| Marcaciones sin cuenta                      | Prometía capítulos exactos para un evento que puede ser una parte o un lote                 | Etiqueta honesta de acciones de marcado; no se inventa un backfill                                                                           |
 
 Los períodos públicos usan días UTC, incluido el día actual. Las finalizaciones de streaming son videos (incluidas partes) que notificaron 80% o fin, no capítulos ni personas únicas. YouTube/Vimeo proporcionan esos eventos; otras plataformas pueden no hacerlo. No se vinculan sesiones retrospectivamente.
 

@@ -6,12 +6,10 @@ import {
   resolveBasedOnValue,
 } from '../src/lib/database';
 import { getBasedOnSuggestions } from '../src/lib/based-on';
+import { assertLocalTestDatabase } from './assert-local-test-database';
 
 async function main() {
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port, '55433');
-  assert.equal(url.pathname, '/mundobl_replay');
+  assertLocalTestDatabase();
   const fixtures = await Promise.all(
     ['manga', 'manga', 'Manga', 'GM', ' Web   novel '].map((basedOn, i) =>
       prisma.series.create({

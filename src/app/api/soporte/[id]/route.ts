@@ -4,6 +4,7 @@ import { prisma } from '@/lib/database';
 import { notifyUser, notifyStaffOfSupportThread } from '@/lib/notifications';
 import { renderSupportReplyEmail, SITE_URL } from '@/lib/email-templates';
 import { sendTransactionalEmailToUser } from '@/lib/transactional-email';
+import { inSequence } from '@/lib/prisma-client';
 
 const BODY_MAX = 4000;
 
@@ -64,7 +65,7 @@ export async function POST(
       );
     }
 
-    const created = await prisma.$transaction(async (transaction) => {
+    const created = await inSequence(async (transaction) => {
       const created = await transaction.supportMessage.create({
         data: {
           threadId: id,

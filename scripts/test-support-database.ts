@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
-import { PrismaClient } from '@prisma/client';
+import { prisma as db } from '../src/lib/database';
 import { createSupportRepository } from '../src/lib/support-repository';
 import {
   EMPTY_SUPPORT,
@@ -10,8 +8,6 @@ import {
 } from '../src/lib/support-input';
 import { assertLocalTestDatabase } from './assert-local-test-database';
 assertLocalTestDatabase();
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = new PrismaClient({ adapter: new PrismaPg(pool) });
 const repo = createSupportRepository(db);
 const prefix = `support-test-${Date.now()}`;
 const owner = prefix + '-owner',
@@ -153,12 +149,8 @@ async function main() {
       }),
       { status: 403 }
     );
-    const rls = await pool.query(
-      `SELECT relrowsecurity FROM pg_class WHERE relname='SupportSettings'`
-    );
-    assert.equal(rls.rows[0].relrowsecurity, true);
     console.log(
-      'PASS support: permissions, validation, rollback, draft isolation, publish/hide, concurrent conflict, banned owner, RLS'
+      'PASS support: permissions, validation, rollback, draft isolation, publish/hide, concurrent conflict, banned owner'
     );
   } finally {
     await db.supportSettings.deleteMany();
@@ -169,5 +161,4 @@ async function main() {
 }
 main().finally(async () => {
   await db.$disconnect();
-  await pool.end();
 });

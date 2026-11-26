@@ -63,52 +63,31 @@ export async function POST(
       },
     });
 
-    // Tres caminos: crear, cambiar (helpful↔unhelpful) o togglear (mismo voto = borrar).
-    const result = await prisma.$transaction(async (tx) => {
-      if (!existing) {
-        await tx.reviewVote.create({
-          data: { reviewId, userId: authResult.userId, helpful: helpful },
-        });
-        await tx.review.update({
-          where: { id: reviewId },
-          data: helpful
-            ? { helpfulCount: { increment: 1 } }
-            : { unhelpfulCount: { increment: 1 } },
-        });
-        return { vote: helpful as boolean | null };
-      }
-
-      if (existing.helpful === helpful) {
-        // Mismo voto: borrar (toggle off).
-        await tx.reviewVote.delete({ where: { id: existing.id } });
-        await tx.review.update({
-          where: { id: reviewId },
-          data: existing.helpful
-            ? { helpfulCount: { decrement: 1 } }
-            : { unhelpfulCount: { decrement: 1 } },
-        });
-        return { vote: null };
-      }
-
-      // Cambio de voto: actualizar y mover el contador.
-      await tx.reviewVote.update({
+    // Tres caminos: crear, cambiar (helpful<->unhelpful) o togglear (mismo
+    // voto = borrar). Los contadores se recalculan desde los votos en una
+    // sola sentencia: sin transacciones en D1, asi nunca quedan corridos.
+    let vote: boolean | null;
+    if (!existing) {
+      await prisma.reviewVote.create({
+        data: { reviewId, userId: authResult.userId, helpful },
+      });
+      vote = helpful;
+    } else if (existing.helpful === helpful) {
+      await prisma.reviewVote.deleteMany({ where: { id: existing.id } });
+      vote = null;
+    } else {
+      await prisma.reviewVote.update({
         where: { id: existing.id },
-        data: { helpful: helpful },
+        data: { helpful },
       });
-      await tx.review.update({
-        where: { id: reviewId },
-        data: helpful
-          ? {
-              helpfulCount: { increment: 1 },
-              unhelpfulCount: { decrement: 1 },
-            }
-          : {
-              helpfulCount: { decrement: 1 },
-              unhelpfulCount: { increment: 1 },
-            },
-      });
-      return { vote: helpful as boolean | null };
-    });
+      vote = helpful;
+    }
+    await prisma.$executeRaw`
+      UPDATE "Review" SET
+        "helpfulCount" = (SELECT COUNT(*) FROM "ReviewVote" WHERE "reviewId" = ${reviewId} AND helpful = 1),
+        "unhelpfulCount" = (SELECT COUNT(*) FROM "ReviewVote" WHERE "reviewId" = ${reviewId} AND helpful = 0)
+      WHERE id = ${reviewId}`;
+    const result = { vote };
 
     const updated = await prisma.review.findUnique({
       where: { id: reviewId },

@@ -8,6 +8,7 @@
 // Un logro guardado no se borra: si baja el numero que lo dio, queda.
 
 import { loadLocaleMessages } from '@/i18n/messages';
+import { createManySkippingDuplicates } from './create-many';
 import {
   ACHIEVEMENTS,
   ACHIEVEMENT_METRICS,
@@ -25,31 +26,31 @@ import {
   type PatchTier,
 } from './platform-patches';
 import { countUserWatchedChapters, getWatchedTime, prisma } from './database';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { interpolateMessage } from './i18n-format';
 import { notifyUser } from './notifications';
 import { runAfterResponse } from './after-response';
 
 type PlatformCompletions = Array<{ platform: string; count: number }>;
 
-async function countDistinct(rows: Promise<Array<{ count: bigint }>>) {
+async function countDistinct(rows: Promise<Array<{ count: number }>>) {
   return Number((await rows)[0]?.count ?? 0);
 }
 
 /** Racha mas larga de dias seguidos marcando capitulos, de toda la vida (el
  *  longestStreak del perfil mira solo las ultimas 12 semanas). */
 async function longestStreakEver(userId: string): Promise<number> {
-  const rows = await prisma.$queryRaw<Array<{ longest: bigint | null }>>`
+  const rows = await prisma.$queryRaw<Array<{ longest: number | null }>>`
     WITH days AS (
       SELECT DISTINCT DATE(vs."watchedDate") AS day
       FROM "ViewStatus" vs
       WHERE vs."userId" = ${userId}
         AND vs.status = 'VISTA'
         AND vs."episodeId" IS NOT NULL
-        AND vs."watchedDate" <= NOW()
+        AND vs."watchedDate" <= ${new Date()}
     ),
     runs AS (
-      SELECT day - (ROW_NUMBER() OVER (ORDER BY day))::int AS run
+      SELECT julianday(day) - ROW_NUMBER() OVER (ORDER BY day) AS run
       FROM days
     )
     SELECT MAX(length) AS longest
@@ -77,7 +78,7 @@ async function loadCompletedByPlatform(
   userId: string
 ): Promise<PlatformCompletions> {
   const rows = await prisma.$queryRaw<
-    Array<{ platform: string; count: bigint }>
+    Array<{ platform: string; count: number }>
   >`
     SELECT wl.platform, COUNT(DISTINCT vs."seriesId") AS count
     FROM "ViewStatus" vs
@@ -85,7 +86,7 @@ async function loadCompletedByPlatform(
     WHERE vs."userId" = ${userId}
       AND vs.status = 'VISTA'
       AND wl.official = true
-      AND wl.platform = ANY(${PATCH_PLATFORMS})
+      AND wl.platform IN (${Prisma.join(PATCH_PLATFORMS)})
     GROUP BY wl.platform
   `;
   return rows.map((row) => ({
@@ -110,7 +111,7 @@ const METRIC_LOADERS: Record<
     Math.floor((await getWatchedTime(userId)).hoursWatched),
   countries: (userId) =>
     countDistinct(prisma.$queryRaw`
-      SELECT COUNT(DISTINCT (c.name, c.code)) AS count
+      SELECT COUNT(DISTINCT c.name || char(0) || COALESCE(c.code, '')) AS count
       FROM "ViewStatus" vs
       JOIN "Series" s ON vs."seriesId" = s.id
       JOIN "Country" c ON s."countryId" = c.id
@@ -312,10 +313,10 @@ async function storeUnlocks(
   const stored = new Set(existing.map((row) => row.key));
   const inserted: string[] = [];
   for (const key of keys.filter((k) => !stored.has(k))) {
-    const { count } = await prisma.userAchievement.createMany({
-      data: [{ userId, key }],
-      skipDuplicates: true,
-    });
+    const { count } = await createManySkippingDuplicates(
+      [{ userId, key }],
+      (rows) => prisma.userAchievement.createMany({ data: rows })
+    );
     if (count > 0) inserted.push(key);
   }
   if (notify && inserted.length > 0) {

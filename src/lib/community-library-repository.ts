@@ -1,8 +1,5 @@
-import type {
-  Prisma,
-  PrismaClient,
-  RecommendationListKind,
-} from '@prisma/client';
+import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
+import type { Prisma, RecommendationListKind } from '@prisma/client';
 import { CommunityError, communityExcerpt } from './community-input';
 import type {
   CommunityProfileInput,
@@ -10,10 +7,11 @@ import type {
 } from './community-library-input';
 import { formatPublicName } from './user-display';
 import { cardImageUrl } from './image-helpers';
+import { withLease } from './lease';
 
 /** Injected through database.ts to keep a single Prisma pool and public-work policy. */
 export function createCommunityLibraryRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput
 ) {
   const publicAuthor = (viewerId?: string): Prisma.UserWhereInput => ({
@@ -99,18 +97,28 @@ export function createCommunityLibraryRepository(
     moderationHidden: false,
     user: publicAuthor(viewerId),
   });
-  async function actor(tx: Prisma.TransactionClient, userId: string) {
+  async function actor(tx: AppTransactionClient, userId: string) {
     const user = await tx.user.findUnique({
       where: { id: userId },
       select: { banned: true },
     });
     if (!user || user.banned) throw new CommunityError(403, 'unavailable');
   }
-  async function lock(tx: Prisma.TransactionClient, userId: string) {
-    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community-library:${userId}`}))::text`;
-    await actor(tx, userId);
+  /** One library write at a time per account (limits and ordering stay exact). */
+  function libraryWrite<T>(
+    userId: string,
+    write: (tx: AppTransactionClient) => Promise<T>
+  ) {
+    return withLease(
+      `community-library:${userId}`,
+      async (tx) => {
+        await actor(tx, userId);
+        return write(tx);
+      },
+      { db }
+    );
   }
-  async function settings(tx: Prisma.TransactionClient = db) {
+  async function settings(tx: AppTransactionClient = db) {
     return (
       (await tx.communitySettings.findUnique({ where: { id: 1 } })) ?? {
         id: 1,
@@ -122,7 +130,7 @@ export function createCommunityLibraryRepository(
     );
   }
   async function validateItems(
-    tx: Prisma.TransactionClient,
+    tx: AppTransactionClient,
     input: RecommendationListInput,
     kind: RecommendationListKind
   ) {
@@ -176,7 +184,7 @@ export function createCommunityLibraryRepository(
         AND: [
           mine ? { userId: viewerId } : publicListWhere(viewerId),
           authorId ? { userId: authorId } : {},
-          search ? { title: { contains: search, mode: 'insensitive' } } : {},
+          search ? { title: { contains: search } } : {},
         ],
       },
       include: listInclude,
@@ -208,8 +216,7 @@ export function createCommunityLibraryRepository(
     input: RecommendationListInput,
     kind: RecommendationListKind = 'STANDARD'
   ) {
-    return db.$transaction(async (tx) => {
-      await lock(tx, userId);
+    return libraryWrite(userId, async (tx) => {
       if (!(await settings(tx)).listsEnabled)
         throw new CommunityError(403, 'paused');
       if (kind === 'TOP_FIVE') {
@@ -247,8 +254,7 @@ export function createCommunityLibraryRepository(
     revision: number,
     input: RecommendationListInput
   ) {
-    return db.$transaction(async (tx) => {
-      await lock(tx, userId);
+    return libraryWrite(userId, async (tx) => {
       const row = await tx.recommendationList.findFirst({
         where: { id, userId },
       });
@@ -277,8 +283,7 @@ export function createCommunityLibraryRepository(
     revision: number,
     published: boolean
   ) {
-    return db.$transaction(async (tx) => {
-      await lock(tx, userId);
+    return libraryWrite(userId, async (tx) => {
       const row = await tx.recommendationList.findFirst({
         where: { id, userId },
       });
@@ -338,8 +343,7 @@ export function createCommunityLibraryRepository(
     userId: string,
     input: CommunityProfileInput
   ) {
-    return db.$transaction(async (tx) => {
-      await lock(tx, userId);
+    return libraryWrite(userId, async (tx) => {
       const existing = await tx.communityProfile.findUnique({
         where: { userId },
       });
@@ -412,8 +416,7 @@ export function createCommunityLibraryRepository(
     blocked: boolean
   ) {
     if (targetId === userId) throw new CommunityError(400, 'invalid');
-    await db.$transaction(async (tx) => {
-      await lock(tx, userId);
+    await libraryWrite(userId, async (tx) => {
       if (!blocked) {
         await tx.communityBlock.deleteMany({ where: { userId, targetId } });
         return;
@@ -480,20 +483,23 @@ export function createCommunityLibraryRepository(
     userId: string,
     deletePublicContributions: boolean
   ) {
-    await db.$transaction(async (tx) => {
+    await withLease(
+      `community-library:${userId}`,
       // Prevent a new private contribution racing between cleanup and user deletion.
-      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
-      await tx.communityTopic.deleteMany({
-        where: {
-          userId,
-          ...(deletePublicContributions ? {} : { visibility: 'PRIVATE' }),
-        },
-      });
-      if (deletePublicContributions)
-        await tx.communityReply.deleteMany({ where: { userId } });
-      // Lists/profiles/follows/blocks cascade; public conversation authors become anonymous.
-      await tx.user.delete({ where: { id: userId } });
-    });
+      async (tx) => {
+        await tx.communityTopic.deleteMany({
+          where: {
+            userId,
+            ...(deletePublicContributions ? {} : { visibility: 'PRIVATE' }),
+          },
+        });
+        if (deletePublicContributions)
+          await tx.communityReply.deleteMany({ where: { userId } });
+        // Lists/profiles/follows/blocks cascade; public conversation authors become anonymous.
+        await tx.user.delete({ where: { id: userId } });
+      },
+      { db }
+    );
   }
   return {
     getCommunityAccountExport,

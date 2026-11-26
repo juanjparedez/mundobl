@@ -7,11 +7,12 @@ import {
   setProgress,
 } from '../src/lib/tracking';
 import { assertLocalTestDatabase } from './assert-local-test-database';
+import { inSequence } from '../src/lib/prisma-client';
 
 /**
  * Prueba del progreso compartido entre un aporte USER_EMBED y la ficha
  * curada a la que esta vinculado (src/lib/tracking.ts -> syncLinkedSeries),
- * contra una base local descartable. Ver docs/seguimiento-pruebas-locales.md.
+ * contra una base local descartable. Ver docs/pruebas-locales.md.
  *
  * Uso: node --import ./scripts/prisma-test-runtime.mjs --import tsx scripts/test-linked-progress-database.ts
  */
@@ -132,14 +133,14 @@ async function main() {
     });
 
   // 1) Una parte vista en /ver del aporte no marca el capitulo de la ficha.
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setEpisodesWatched(tx, user.id, aporte.id, [p1a], true)
   );
   assert.equal((await watchedIds()).has(c1), false);
   assert.equal(await seriesStatus(curated.id), null);
 
   // 2) La segunda parte completa el capitulo: la ficha marca el 1 y pasa a VIENDO.
-  await prisma.$transaction((tx) => markEpisode(tx, user.id, p1b, 'VISTA'));
+  await inSequence((tx) => markEpisode(tx, user.id, p1b, 'VISTA'));
   let watched = await watchedIds();
   assert.equal(watched.has(c1), true);
   assert.equal(watched.has(c2), false);
@@ -147,7 +148,7 @@ async function main() {
 
   // 3) "Voy por" en el aporte hasta EP.2 [2/2]: la ficha llega al 2; el
   //    avance se marca en el aporte pero no es un capitulo.
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setProgress(tx, user.id, aporte.id, { upToEpisodeId: p2b })
   );
   watched = await watchedIds();
@@ -156,7 +157,7 @@ async function main() {
   assert.equal(watched.has(c3), false);
 
   // 4) Desmarcar una parte en el aporte desmarca el capitulo en la ficha.
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setEpisodesWatched(tx, user.id, aporte.id, [p2a], false)
   );
   watched = await watchedIds();
@@ -166,7 +167,7 @@ async function main() {
   // 5) Marcar en la ficha marca todas las partes del capitulo en el aporte,
   //    sin crearle al aporte otra fila de seguimiento.
   const aporteRowBefore = await seriesStatus(aporte.id);
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setEpisodesWatched(tx, user.id, curated.id, [c3], true)
   );
   watched = await watchedIds();
@@ -174,7 +175,7 @@ async function main() {
   assert.deepEqual(await seriesStatus(aporte.id), aporteRowBefore);
 
   // 6) Desmarcar desde la ficha ("volver a ninguno") limpia el aporte.
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setProgress(
       tx,
       user.id,
@@ -193,7 +194,7 @@ async function main() {
   // 7) Un vinculo que no calza no copia nada.
   const [w1] = await episodesOf(wrongAporte.id);
   const [l1] = await episodesOf(lonelyCurated.id);
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setEpisodesWatched(tx, user.id, wrongAporte.id, [w1], true)
   );
   assert.equal((await watchedIds()).has(l1), false);
@@ -204,7 +205,7 @@ async function main() {
     where: { id: aporte.id },
     data: { visibility: 'HIDDEN' },
   });
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setEpisodesWatched(tx, user.id, aporte.id, [p1a, p1b], true)
   );
   assert.equal((await watchedIds()).has(c1), false);

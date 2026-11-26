@@ -21,14 +21,10 @@ import { parseEpisodeSource } from '../src/lib/episode-platforms';
 import { verifyExternalEpisode } from '../src/lib/external-episode-source';
 
 async function main() {
-  // Check BEFORE importing database.ts. Never fall back to .env's remote DB.
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  if (
-    url.hostname !== '127.0.0.1' ||
-    url.port !== '55433' ||
-    !['/mundobl_ver_expansion', '/mundobl_replay'].includes(url.pathname)
-  ) {
-    throw new Error('Only the local expansion/replay database is allowed.');
+  // Check BEFORE importing database.ts. Never fall back to the real D1.
+  // Run with: node --import ./scripts/db/runtime.mjs --import tsx <this file>
+  if (!process.env.DATABASE_URL?.startsWith('file:')) {
+    throw new Error('Only a local SQLite copy (DATABASE_URL=file:...) is allowed.');
   }
   const args = process.argv.slice(2);
   if (args.some((arg) => arg !== '--apply' && !arg.startsWith('--batch=')))
@@ -125,17 +121,13 @@ async function main() {
   const { prisma } = await import('../src/lib/database');
   const apply = args.includes('--apply');
   try {
-    const results = await prisma.$transaction(
-      (tx) =>
-        importWatchContentBatch(
-          tx,
-          batch,
-          channels,
-          probes,
-          new Map(watchPages.map((probe) => [probe.videoId, probe])),
-          apply
-        ),
-      { timeout: 60000, isolationLevel: 'Serializable' }
+    const results = await importWatchContentBatch(
+      prisma,
+      batch,
+      channels,
+      probes,
+      new Map(watchPages.map((probe) => [probe.videoId, probe])),
+      apply
     );
     mkdirSync('test-results/ver-expansion', { recursive: true });
     writeFileSync(

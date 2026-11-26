@@ -1,19 +1,20 @@
+import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
 import type {
   Prisma,
-  PrismaClient,
   CommunityReportTarget,
   CommunityReportReason,
   CommunityModerationKind,
 } from '@prisma/client';
 import { CommunityError, communityId, communityText } from './community-input';
+import { withLease } from './lease';
 
 /** Moderation can inspect reported public content, never an author's private drafts. */
 export function createCommunityModerationRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput,
   publicAuthor: (viewerId?: string) => Prisma.UserWhereInput
 ) {
-  async function staff(tx: Prisma.TransactionClient, userId: string) {
+  async function staff(tx: AppTransactionClient, userId: string) {
     const user = await tx.user.findFirst({
       where: {
         id: userId,
@@ -25,7 +26,7 @@ export function createCommunityModerationRepository(
     if (!user) throw new CommunityError(403, 'unavailable');
   }
   async function target(
-    tx: Prisma.TransactionClient,
+    tx: AppTransactionClient,
     type: CommunityReportTarget,
     id: string,
     viewerId?: string,
@@ -145,50 +146,53 @@ export function createCommunityModerationRepository(
     detail: string
   ) {
     const safeDetail = communityText(detail, 0, 2000);
-    return db.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community-reports:${userId}`}))::text`;
-      if (
-        !(await tx.user.findFirst({
-          where: { id: userId, banned: false },
+    return withLease(
+      `community-reports:${userId}`,
+      async (tx) => {
+        if (
+          !(await tx.user.findFirst({
+            where: { id: userId, banned: false },
+            select: { id: true },
+          }))
+        )
+          throw new CommunityError(403, 'unavailable');
+        const content = await target(tx, type, id, userId);
+        if (!content || content.ownerId === userId)
+          throw new CommunityError(404, 'unavailable');
+        const existing = await tx.communityReport.findUnique({
+          where: {
+            reporterId_targetType_targetId: {
+              reporterId: userId,
+              targetType: type,
+              targetId: id,
+            },
+          },
           select: { id: true },
-        }))
-      )
-        throw new CommunityError(403, 'unavailable');
-      const content = await target(tx, type, id, userId);
-      if (!content || content.ownerId === userId)
-        throw new CommunityError(404, 'unavailable');
-      const existing = await tx.communityReport.findUnique({
-        where: {
-          reporterId_targetType_targetId: {
+        });
+        if (existing) return { id: existing.id, created: false };
+        if (
+          (await tx.communityReport.count({
+            where: {
+              reporterId: userId,
+              createdAt: { gte: new Date(Date.now() - 3600000) },
+            },
+          })) >= 5
+        )
+          throw new CommunityError(429, 'rateLimit');
+        const report = await tx.communityReport.create({
+          data: {
             reporterId: userId,
             targetType: type,
             targetId: id,
+            reason,
+            detail: safeDetail,
           },
-        },
-        select: { id: true },
-      });
-      if (existing) return { id: existing.id, created: false };
-      if (
-        (await tx.communityReport.count({
-          where: {
-            reporterId: userId,
-            createdAt: { gte: new Date(Date.now() - 3600000) },
-          },
-        })) >= 5
-      )
-        throw new CommunityError(429, 'rateLimit');
-      const report = await tx.communityReport.create({
-        data: {
-          reporterId: userId,
-          targetType: type,
-          targetId: id,
-          reason,
-          detail: safeDetail,
-        },
-        select: { id: true },
-      });
-      return { id: report.id, created: true };
-    });
+          select: { id: true },
+        });
+        return { id: report.id, created: true };
+      },
+      { db: db }
+    );
   }
   async function getCommunityModerationQueue(
     userId: string,
@@ -246,76 +250,79 @@ export function createCommunityModerationRepository(
     reason: string
   ) {
     const safeReason = communityText(reason, 5, 1000);
-    await db.$transaction(async (tx) => {
-      await staff(tx, userId);
-      await tx.$queryRaw`SELECT id FROM "CommunityReport" WHERE id = ${reportId} FOR UPDATE`;
-      const report = await tx.communityReport.findUnique({
-        where: { id: reportId },
-      });
-      if (!report) throw new CommunityError(404, 'unavailable');
-      if (action === 'HIDE' || action === 'RESTORE') {
-        // Removing a moderation restriction never reads or publishes a withdrawn draft.
-        // This lets the author correct and republish after a successful appeal.
-        if (
-          action === 'HIDE' &&
-          !(await target(
-            tx,
-            report.targetType,
-            report.targetId,
-            undefined,
-            true
-          ))
-        )
-          throw new CommunityError(404, 'unavailable');
-        const data = { moderationHidden: action === 'HIDE' };
-        const result =
-          report.targetType === 'TOPIC'
-            ? await tx.communityTopic.updateMany({
-                where: {
-                  id: communityId(report.targetId),
-                  ...(action === 'HIDE'
-                    ? { visibility: 'PUBLIC' as const }
-                    : {}),
-                },
-                data,
-              })
-            : report.targetType === 'REPLY'
-              ? await tx.communityReply.updateMany({
+    await withLease(
+      `CommunityReport:${reportId}`,
+      async (tx) => {
+        await staff(tx, userId);
+        const report = await tx.communityReport.findUnique({
+          where: { id: reportId },
+        });
+        if (!report) throw new CommunityError(404, 'unavailable');
+        if (action === 'HIDE' || action === 'RESTORE') {
+          // Removing a moderation restriction never reads or publishes a withdrawn draft.
+          // This lets the author correct and republish after a successful appeal.
+          if (
+            action === 'HIDE' &&
+            !(await target(
+              tx,
+              report.targetType,
+              report.targetId,
+              undefined,
+              true
+            ))
+          )
+            throw new CommunityError(404, 'unavailable');
+          const data = { moderationHidden: action === 'HIDE' };
+          const result =
+            report.targetType === 'TOPIC'
+              ? await tx.communityTopic.updateMany({
                   where: {
                     id: communityId(report.targetId),
                     ...(action === 'HIDE'
-                      ? { topic: { visibility: 'PUBLIC' as const } }
+                      ? { visibility: 'PUBLIC' as const }
                       : {}),
                   },
                   data,
                 })
-              : report.targetType === 'LIST'
-                ? await tx.recommendationList.updateMany({
+              : report.targetType === 'REPLY'
+                ? await tx.communityReply.updateMany({
                     where: {
-                      id: report.targetId,
+                      id: communityId(report.targetId),
                       ...(action === 'HIDE'
-                        ? { visibility: 'PUBLIC' as const }
+                        ? { topic: { visibility: 'PUBLIC' as const } }
                         : {}),
                     },
                     data,
                   })
-                : await tx.communityProfile.updateMany({
-                    where: {
-                      publicId: report.targetId,
-                      ...(action === 'HIDE' ? { published: true } : {}),
-                    },
-                    data,
-                  });
-        if (!result.count) throw new CommunityError(409, 'conflict');
-      }
-      await tx.communityModerationAction.create({
-        data: { reportId, moderatorId: userId, action, reason: safeReason },
-      });
-      await tx.communityReport.update({
-        where: { id: reportId },
-        data: { status: action === 'DISMISS' ? 'DISMISSED' : 'RESOLVED' },
-      });
-    });
+                : report.targetType === 'LIST'
+                  ? await tx.recommendationList.updateMany({
+                      where: {
+                        id: report.targetId,
+                        ...(action === 'HIDE'
+                          ? { visibility: 'PUBLIC' as const }
+                          : {}),
+                      },
+                      data,
+                    })
+                  : await tx.communityProfile.updateMany({
+                      where: {
+                        publicId: report.targetId,
+                        ...(action === 'HIDE' ? { published: true } : {}),
+                      },
+                      data,
+                    });
+          if (!result.count) throw new CommunityError(409, 'conflict');
+        }
+        await tx.communityModerationAction.create({
+          data: { reportId, moderatorId: userId, action, reason: safeReason },
+        });
+        await tx.communityReport.update({
+          where: { id: reportId },
+          data: { status: action === 'DISMISS' ? 'DISMISSED' : 'RESOLVED' },
+        });
+      },
+      { db: db }
+    );
   }
   async function saveCommunitySettings(
     userId: string,

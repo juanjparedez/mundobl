@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { logAction } from '@/lib/access-log';
@@ -22,8 +23,8 @@ interface AnnouncementInput {
 }
 
 /**
- * Reemplaza el set de destinatarios (SPECIFIC_USERS) por el nuevo, en una
- * transaccion junto con el update del resto de los campos. Diff simple:
+ * Reemplaza el set de destinatarios (SPECIFIC_USERS) por el nuevo y
+ * actualiza el resto de los campos. Diff simple:
  * borra los que ya no estan, crea los nuevos (skipDuplicates cubre los que
  * no cambiaron).
  */
@@ -32,30 +33,21 @@ async function updateWithRecipients(
   data: Prisma.AnnouncementUpdateInput,
   recipientUserIds: string[]
 ): Promise<Announcement> {
-  const ops: Prisma.PrismaPromise<unknown>[] = [
-    prisma.announcementRecipient.deleteMany({
-      where: {
-        announcementId,
-        ...(recipientUserIds.length > 0 && {
-          userId: { notIn: recipientUserIds },
-        }),
-      },
-    }),
-  ];
-  if (recipientUserIds.length > 0) {
-    // createMany rechaza `data: []` (pide al menos un elemento) — solo se
-    // agrega este paso si realmente hay destinatarios nuevos.
-    ops.push(
-      prisma.announcementRecipient.createMany({
-        data: recipientUserIds.map((userId) => ({ announcementId, userId })),
-        skipDuplicates: true,
-      })
-    );
-  }
-  ops.push(prisma.announcement.update({ where: { id: announcementId }, data }));
-
-  const results = await prisma.$transaction(ops);
-  return results[results.length - 1] as Announcement;
+  // Sequential, not atomic: each step is idempotent, so saving again after a
+  // partial failure converges to the same recipients.
+  await prisma.announcementRecipient.deleteMany({
+    where: {
+      announcementId,
+      ...(recipientUserIds.length > 0 && {
+        userId: { notIn: recipientUserIds },
+      }),
+    },
+  });
+  await createManySkippingDuplicates(
+    recipientUserIds.map((userId) => ({ announcementId, userId })),
+    (rows) => prisma.announcementRecipient.createMany({ data: rows })
+  );
+  return prisma.announcement.update({ where: { id: announcementId }, data });
 }
 
 // PATCH /api/admin/announcements/[id] — editar (incluye toggle isActive)

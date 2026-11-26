@@ -1,4 +1,4 @@
-import { prisma } from './database';
+import { LeaseBusyError, withLease } from './lease';
 import { runPlayabilityJob } from './playability-audit';
 import { runNewsIngestJob } from './news-ingest';
 import { runLogRetentionJob } from './access-log';
@@ -10,14 +10,11 @@ export class RuntimeJobBusyError extends Error {}
 /** One shared entry point for the scheduler and the authenticated admin UI. */
 export async function runRuntimeJob(job: RuntimeJob, trigger: RuntimeTrigger) {
   const started = Date.now();
-  return prisma.$transaction(
-    async (tx) => {
-      // Transaction-scoped: also protects different Vercel instances and releases on failure.
-      const [lock] = await tx.$queryRaw<Array<{ acquired: boolean }>>`
-      SELECT pg_try_advisory_xact_lock(881427, 1) AS acquired
-    `;
-      if (!lock?.acquired)
-        throw new RuntimeJobBusyError('A maintenance job is already running.');
+  // One job at a time across every Worker isolate; the lease expires on its
+  // own if an isolate dies mid-run.
+  return withLease(
+    'runtime-job',
+    async () => {
       const tasks =
         job === 'daily' ? (['playability', 'news'] as const) : [job];
       const results = await Promise.allSettled(
@@ -51,6 +48,10 @@ export async function runRuntimeJob(job: RuntimeJob, trigger: RuntimeTrigger) {
       );
       return { ok: failed.length === 0, completed, failed, details };
     },
-    { timeout: 58_000, maxWait: 2000 }
-  );
+    { ttlMs: 120_000, waitMs: 0 }
+  ).catch((error: unknown) => {
+    if (error instanceof LeaseBusyError)
+      throw new RuntimeJobBusyError('A maintenance job is already running.');
+    throw error;
+  });
 }

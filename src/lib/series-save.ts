@@ -1,5 +1,8 @@
+import { findSameTextCandidates } from './text-match';
+import type { AppTransactionClient } from './prisma-client';
+import { createManySkippingDuplicates } from './create-many';
 import { Prisma } from '@prisma/client';
-import { assertTrackingCanBeRemoved } from './tracking-preservation';
+import { deleteSeasonsIfUntracked } from './tracking-preservation';
 import { prepareUniverseSlot, prisma, resolveBasedOnValue } from './database';
 import { getCountryCode } from './country-codes';
 import { findOrCreateProductionCompany } from './tag-utils';
@@ -14,6 +17,7 @@ import {
   type ActorRow,
   type WatchLinkRow,
 } from './series-relations';
+import { inSequence } from './prisma-client';
 
 /** La ficha cambio desde que se abrio el form: el guardado no se aplica. */
 export class SeriesEditConflictError extends Error {
@@ -64,54 +68,61 @@ async function resolveNamedIds(
   return ids;
 }
 
-const byName = (names: string[]) => ({
-  where: { name: { in: names, mode: 'insensitive' as const } },
-  select: { id: true, name: true },
-  orderBy: { id: 'asc' as const },
-});
+/** Candidatos por nombre (sin mirar mayusculas), en tandas que entran en D1. */
+const byName = (
+  names: string[],
+  find: (args: {
+    where: { OR: Array<{ name: { contains: string } }> };
+    select: { id: true; name: true };
+    orderBy: { id: 'asc' };
+  }) => Promise<NamedRow[]>
+) =>
+  findSameTextCandidates('name', names, (where) =>
+    find({ where, select: { id: true, name: true }, orderBy: { id: 'asc' } })
+  ).then((rows) => rows.sort((a, b) => a.id - b.id));
 
 export const resolveTagIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.tag.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.tag.findMany(args)),
     (n) =>
-      prisma.tag.createMany({
-        data: n.map((name) => ({ name, category: 'trope' })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name, category: 'trope' })),
+        (rows) => prisma.tag.createMany({ data: rows })
+      )
   );
 
 export const resolveGenreIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.genre.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.genre.findMany(args)),
     (n) =>
-      prisma.genre.createMany({
-        data: n.map((name) => ({ name })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name })),
+        (rows) => prisma.genre.createMany({ data: rows })
+      )
   );
 
 export const resolveActorIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.actor.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.actor.findMany(args)),
     (n) =>
-      prisma.actor.createMany({
-        data: n.map((name) => ({ name })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name })),
+        (rows) => prisma.actor.createMany({ data: rows })
+      )
   );
 
 export const resolveDirectorIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.director.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.director.findMany(args)),
     (n) =>
-      prisma.director.createMany({
-        data: n.map((name) => ({ name })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name })),
+        (rows) => prisma.director.createMany({ data: rows })
+      )
   );
 
 /**
@@ -119,10 +130,7 @@ export const resolveDirectorIds = (names: readonly unknown[]) =>
  * la foto de SeriesRevision y el estado actual contra el que se calcula el
  * diff de relaciones (asi el diff no paga consultas propias).
  */
-export function loadSeriesForSave(
-  tx: Prisma.TransactionClient,
-  seriesId: number
-) {
+export function loadSeriesForSave(tx: AppTransactionClient, seriesId: number) {
   return tx.series.findUnique({
     where: { id: seriesId },
     include: {
@@ -152,7 +160,7 @@ export type SeriesForSave = NonNullable<
 
 /** Guarda la foto previa al guardado. Va dentro de la transaccion. */
 export function recordSeriesRevision(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   current: SeriesForSave,
   userId: string | null,
   source: 'admin-form' | 'collaborator'
@@ -183,6 +191,29 @@ export interface SeriesRelationsInput {
   relatedSeriesIds?: number[];
 }
 
+async function assertReferencesExist(
+  tx: AppTransactionClient,
+  relations: SeriesRelationsInput,
+  universeId: number | null
+): Promise<void> {
+  const unique = (ids: readonly number[] | undefined) => [...new Set(ids)];
+  const related = unique(relations.relatedSeriesIds);
+  const dubbings = unique(relations.dubbingIds);
+  const [series, languages, universes] = await Promise.all([
+    related.length ? tx.series.count({ where: { id: { in: related } } }) : 0,
+    dubbings.length
+      ? tx.language.count({ where: { id: { in: dubbings } } })
+      : 0,
+    universeId !== null ? tx.universe.count({ where: { id: universeId } }) : 0,
+  ]);
+  if (
+    series !== related.length ||
+    languages !== dubbings.length ||
+    universes !== (universeId !== null ? 1 : 0)
+  )
+    throw new Error('SERIES_UNKNOWN_REFERENCE');
+}
+
 async function syncIdSet(
   current: readonly number[],
   desired: readonly number[] | undefined,
@@ -200,7 +231,7 @@ async function syncIdSet(
  * ella. Va dentro de la transaccion del guardado: o entra todo o nada.
  */
 export async function syncSeriesRelations(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   current: SeriesForSave,
   input: SeriesRelationsInput
 ): Promise<void> {
@@ -317,13 +348,13 @@ export async function syncSeriesRelations(
         },
       });
       if (desired.length > 0) {
-        await tx.relatedSeries.createMany({
-          data: desired.flatMap((relatedId) => [
+        await createManySkippingDuplicates(
+          desired.flatMap((relatedId) => [
             { mainSeriesId: seriesId, relatedSeriesId: relatedId },
             { mainSeriesId: relatedId, relatedSeriesId: seriesId },
           ]),
-          skipDuplicates: true,
-        });
+          (rows) => tx.relatedSeries.createMany({ data: rows })
+        );
       }
     }
   }
@@ -460,7 +491,7 @@ async function resolveOriginalLanguageId(
  * el caller avise a los suscriptores despues del commit.
  */
 async function syncSeasons(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   seriesId: number,
   incoming: SeasonInput[],
   fallbackYear: number | null
@@ -478,8 +509,7 @@ async function syncSeasons(
     .map((season) => season.id)
     .filter((seasonId) => !incomingIds.has(seasonId));
   if (toDelete.length > 0) {
-    await assertTrackingCanBeRemoved(tx, seriesId, toDelete);
-    await tx.season.deleteMany({ where: { id: { in: toDelete } } });
+    await deleteSeasonsIfUntracked(tx, seriesId, toDelete);
   }
 
   const created: Array<{ id: number; seasonNumber: number }> = [];
@@ -542,7 +572,7 @@ export async function saveSeriesFromForm(
   body: SeriesFormBody,
   image: ResolvedSeriesImage,
   userId: string | null,
-  append?: (tx: Prisma.TransactionClient) => Promise<void>
+  append?: (tx: AppTransactionClient) => Promise<void>
 ): Promise<SeriesFormSaveResult> {
   const expectedEditVersion = parseExpectedEditVersion(body.editVersion);
   if (expectedEditVersion === null) throw new SeriesEditConflictError();
@@ -628,101 +658,103 @@ export async function saveSeriesFromForm(
 
   const year = body.year ? toInt(body.year) : null;
 
-  return prisma.$transaction(
-    async (tx) => {
-      const current = await loadSeriesForSave(tx, seriesId);
-      if (!current) return null;
-      if (current.editVersion !== expectedEditVersion) {
-        throw new SeriesEditConflictError();
-      }
+  return inSequence(async (tx) => {
+    const current = await loadSeriesForSave(tx, seriesId);
+    if (!current) return null;
+    // D1 has no rollback: refuse unknown ids before the first write, so a bad
+    // form never leaves a half-applied save behind.
+    await assertReferencesExist(tx, relations, requestedUniverseId ?? null);
+    if (current.editVersion !== expectedEditVersion) {
+      throw new SeriesEditConflictError();
+    }
 
-      const previousUniverseId = current.universeId;
-      const previousRelatedSeriesIds = [
-        ...current.relatedSeriesFrom.map((r) => r.relatedSeriesId),
-        ...current.relatedSeriesTo.map((r) => r.mainSeriesId),
-      ];
+    const previousUniverseId = current.universeId;
+    const previousRelatedSeriesIds = [
+      ...current.relatedSeriesFrom.map((r) => r.relatedSeriesId),
+      ...current.relatedSeriesTo.map((r) => r.mainSeriesId),
+    ];
 
-      const targetUniverseId =
-        requestedUniverseId === undefined
-          ? current.universeId
-          : requestedUniverseId;
-      const isUniverseMain =
-        targetUniverseId !== null &&
-        (body.isUniverseMain === undefined
-          ? current.universeId === targetUniverseId && current.isUniverseMain
-          : body.isUniverseMain === true);
+    const targetUniverseId =
+      requestedUniverseId === undefined
+        ? current.universeId
+        : requestedUniverseId;
+    const isUniverseMain =
+      targetUniverseId !== null &&
+      (body.isUniverseMain === undefined
+        ? current.universeId === targetUniverseId && current.isUniverseMain
+        : body.isUniverseMain === true);
 
-      await recordSeriesRevision(tx, current, userId, 'admin-form');
-      await prepareUniverseSlot(tx, targetUniverseId, isUniverseMain);
+    // Sin transacciones, la version se reclama ANTES de tocar nada: si otro
+    // guardado entro entre la lectura de arriba y aca, 0 filas y no se
+    // escribio nada. Ganado el reclamo, los pasos siguientes son nuestros.
+    const claim = await tx.series.updateMany({
+      where: { id: seriesId, editVersion: expectedEditVersion },
+      data: { editVersion: { increment: 1 } },
+    });
+    if (claim.count === 0) throw new SeriesEditConflictError();
 
-      // El WHERE con la version cubre la carrera entre la lectura de arriba y
-      // esta escritura: si otro guardado entro en el medio, 0 filas.
-      const { count } = await tx.series.updateMany({
-        where: { id: seriesId, editVersion: expectedEditVersion },
-        data: {
-          editVersion: { increment: 1 },
-          isUniverseMain,
-          title: body.title,
-          originalTitle: body.originalTitle || null,
-          year,
-          type: body.type || 'serie',
-          durationMinutes: body.durationMinutes
-            ? toInt(body.durationMinutes) || null
-            : null,
-          basedOn: normalizedBasedOn,
-          format: body.format || 'regular',
-          imageUrl: image.url,
-          ...(image.thumbUrl !== undefined && {
-            imageThumbUrl: image.thumbUrl,
-          }),
-          imagePosition: body.imagePosition || 'center',
-          synopsis: body.synopsis || null,
-          // Defensivo a proposito (mismo patron que `airDays` mas abajo): si el
-          // body no trae la clave, no se toca la columna. Sin esto, cualquier
-          // guardado desde un form que no registre el campo lo pisaba con null
-          // — que es exactamente como se perdio la resena editorial de las 613
-          // series del catalogo (medido 2026-09-10: 549 con nota, 0 con resena).
-          review: body.review !== undefined ? body.review || null : undefined,
-          soundtrack: body.soundtrack || null,
-          overallRating: body.overallRating ? toInt(body.overallRating) : null,
-          observations: body.observations || null,
-          notesPrivate: body.notesPrivate === true,
-          featured: body.featured === true,
-          featuredOrder:
-            typeof body.featuredOrder === 'number' ? body.featuredOrder : 0,
-          airDays:
-            body.airDays !== undefined ? body.airDays || null : undefined,
-          catalogScope:
-            body.catalogScope === 'WATCHABLE_ONLY'
-              ? 'WATCHABLE_ONLY'
-              : 'PERSONAL',
-          countryId,
-          universeId: targetUniverseId,
-          productionCompanyId,
-          originalLanguageId,
-        },
-      });
-      if (count === 0) throw new SeriesEditConflictError();
+    await recordSeriesRevision(tx, current, userId, 'admin-form');
+    await prepareUniverseSlot(tx, targetUniverseId, isUniverseMain);
 
-      await syncSeriesRelations(tx, current, relations);
-      const newSeasons =
-        body.seasons !== undefined
-          ? await syncSeasons(tx, seriesId, body.seasons || [], year)
-          : [];
+    await tx.series.update({
+      where: { id: seriesId },
+      data: {
+        isUniverseMain,
+        title: body.title,
+        originalTitle: body.originalTitle || null,
+        year,
+        type: body.type || 'serie',
+        durationMinutes: body.durationMinutes
+          ? toInt(body.durationMinutes) || null
+          : null,
+        basedOn: normalizedBasedOn,
+        format: body.format || 'regular',
+        imageUrl: image.url,
+        ...(image.thumbUrl !== undefined && {
+          imageThumbUrl: image.thumbUrl,
+        }),
+        imagePosition: body.imagePosition || 'center',
+        synopsis: body.synopsis || null,
+        // Defensivo a proposito (mismo patron que `airDays` mas abajo): si el
+        // body no trae la clave, no se toca la columna. Sin esto, cualquier
+        // guardado desde un form que no registre el campo lo pisaba con null
+        // — que es exactamente como se perdio la resena editorial de las 613
+        // series del catalogo (medido 2026-09-10: 549 con nota, 0 con resena).
+        review: body.review !== undefined ? body.review || null : undefined,
+        soundtrack: body.soundtrack || null,
+        overallRating: body.overallRating ? toInt(body.overallRating) : null,
+        observations: body.observations || null,
+        notesPrivate: body.notesPrivate === true,
+        featured: body.featured === true,
+        featuredOrder:
+          typeof body.featuredOrder === 'number' ? body.featuredOrder : 0,
+        airDays: body.airDays !== undefined ? body.airDays || null : undefined,
+        catalogScope:
+          body.catalogScope === 'WATCHABLE_ONLY'
+            ? 'WATCHABLE_ONLY'
+            : 'PERSONAL',
+        countryId,
+        universeId: targetUniverseId,
+        productionCompanyId,
+        originalLanguageId,
+      },
+    });
 
-      const updated = await tx.series.findUniqueOrThrow({
-        where: { id: seriesId },
-      });
-      await append?.(tx);
-      return {
-        updated,
-        newSeasons,
-        previousUniverseId,
-        previousRelatedSeriesIds,
-      };
-    },
-    // Margen para series con muchas temporadas: el default de 5 s quedaba
-    // justo cuando las funciones corrian en iad1, lejos de la base (sa-east-1).
-    { timeout: 30_000, maxWait: 5_000 }
-  );
+    await syncSeriesRelations(tx, current, relations);
+    const newSeasons =
+      body.seasons !== undefined
+        ? await syncSeasons(tx, seriesId, body.seasons || [], year)
+        : [];
+
+    const updated = await tx.series.findUniqueOrThrow({
+      where: { id: seriesId },
+    });
+    await append?.(tx);
+    return {
+      updated,
+      newSeasons,
+      previousUniverseId,
+      previousRelatedSeriesIds,
+    };
+  });
 }

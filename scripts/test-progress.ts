@@ -8,6 +8,7 @@ import {
   markEpisode,
 } from '../src/lib/tracking';
 import { assertLocalTestDatabase } from './assert-local-test-database';
+import { inSequence } from '../src/lib/prisma-client';
 
 /**
  * Prueba de src/lib/tracking.ts -> setProgress (T05), contra una base local
@@ -57,7 +58,7 @@ async function main() {
   const ep8 = episodes[7];
 
   // 1) Serie de 8 episodios, usuario limpio, upToEpisodeId = ep3.
-  const result1 = await prisma.$transaction((tx) =>
+  const result1 = await inSequence((tx) =>
     setProgress(tx, user.id, series.id, { upToEpisodeId: ep3.id })
   );
   assert.equal(result1.watched, 3);
@@ -84,7 +85,7 @@ async function main() {
     data: { lastWatchedAt: historicalDate, status: 'RETOMAR' },
   });
   // 2) Repetir no crea duplicados, no inventa fechas y no reanuda una serie pausada.
-  const result2 = await prisma.$transaction((tx) =>
+  const result2 = await inSequence((tx) =>
     setProgress(tx, user.id, series.id, { upToEpisodeId: ep3.id })
   );
   assert.equal(result2.watched, 3);
@@ -96,7 +97,7 @@ async function main() {
     preserved.watchedDate?.toISOString(),
     historicalDate.toISOString()
   );
-  const unknownDate = await prisma.$transaction((tx) =>
+  const unknownDate = await inSequence((tx) =>
     markEpisode(tx, user.id, episodes[0].id, 'VISTA')
   );
   assert.equal(unknownDate.episode.watchedDate, null);
@@ -122,7 +123,7 @@ async function main() {
     },
   });
   await assert.rejects(
-    prisma.$transaction((tx) =>
+    inSequence((tx) =>
       setProgress(tx, user.id, otherSeries.id, { upToEpisodeId: ep3.id })
     ),
     ProgressNotFoundError
@@ -130,10 +131,10 @@ async function main() {
 
   // 4) direction: 'unmark' sobre ep3 (tras marcar hasta ep8) deja 4..8 en
   // SIN_VER y no toca 1..3.
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     setProgress(tx, user.id, series.id, { upToEpisodeId: ep8.id })
   );
-  const result4 = await prisma.$transaction((tx) =>
+  const result4 = await inSequence((tx) =>
     setProgress(
       tx,
       user.id,
@@ -155,7 +156,7 @@ async function main() {
   );
 
   // 5) completeIfAll: true con el ultimo episodio -> serie VISTA.
-  const result5 = await prisma.$transaction((tx) =>
+  const result5 = await inSequence((tx) =>
     setProgress(
       tx,
       user.id,
@@ -179,7 +180,7 @@ async function main() {
   const chapterIds = [episodes[4].id, episodes[5].id];
 
   // 6) Marca solo esas dos, pone la serie en VIENDO y suscribe.
-  const result6 = await prisma.$transaction((tx) =>
+  const result6 = await inSequence((tx) =>
     setEpisodesWatched(tx, viewer.id, series.id, chapterIds, true)
   );
   assert.equal(result6.watched, 2);
@@ -199,7 +200,7 @@ async function main() {
     where: { userId_seriesId: { userId: viewer.id, seriesId: series.id } },
     data: { lastWatchedAt: historicalDate },
   });
-  const result7 = await prisma.$transaction((tx) =>
+  const result7 = await inSequence((tx) =>
     setEpisodesWatched(tx, viewer.id, series.id, chapterIds, true)
   );
   assert.equal(result7.watched, 2);
@@ -220,19 +221,19 @@ async function main() {
   );
 
   // 8) Desmarcar deja 0 vistos y no toca la fila de la serie.
-  const result8 = await prisma.$transaction((tx) =>
+  const result8 = await inSequence((tx) =>
     setEpisodesWatched(tx, viewer.id, series.id, chapterIds, false)
   );
   assert.equal(result8.watched, 0);
   assert.equal(result8.seriesStatus, 'VIENDO');
-  const rewatched = await prisma.$transaction((tx) =>
+  const rewatched = await inSequence((tx) =>
     markEpisode(tx, viewer.id, chapterIds[0], 'VISTA')
   );
   assert.ok(
     rewatched.episode.watchedDate &&
       rewatched.episode.watchedDate > historicalDate
   );
-  await prisma.$transaction((tx) =>
+  await inSequence((tx) =>
     markEpisode(tx, viewer.id, chapterIds[0], 'SIN_VER')
   );
 
@@ -240,7 +241,7 @@ async function main() {
   const foreignEpisode = await prisma.episode.findFirstOrThrow({
     where: { season: { seriesId: otherSeries.id } },
   });
-  const result9 = await prisma.$transaction((tx) =>
+  const result9 = await inSequence((tx) =>
     setEpisodesWatched(
       tx,
       viewer.id,
@@ -251,7 +252,7 @@ async function main() {
   );
   assert.equal(result9.watched, 1);
   await assert.rejects(
-    prisma.$transaction((tx) =>
+    inSequence((tx) =>
       setEpisodesWatched(tx, viewer.id, series.id, [foreignEpisode.id], true)
     ),
     ProgressNotFoundError

@@ -25,6 +25,7 @@ import { getMonthlyRanking } from '../src/lib/community-ranking';
 import { loadLocaleMessages } from '../src/i18n/messages';
 import { SUPPORTED_LOCALES } from '../src/i18n/config';
 import { assertLocalTestDatabase } from './assert-local-test-database';
+import { inSequence } from '../src/lib/prisma-client';
 
 // local-progress usa localStorage: un navegador minimo alcanza.
 function installFakeWindow() {
@@ -164,7 +165,7 @@ async function main() {
     await prisma.viewStatus.create({
       data: { userId: user.id, seriesId: series.id, status: 'QUIERO_VER' },
     });
-    await prisma.$transaction((tx) =>
+    await inSequence((tx) =>
       setEpisodesWatched(tx, user.id, series.id, [episodes[0].id], true)
     );
     assert.equal(await status(series.id), 'VIENDO');
