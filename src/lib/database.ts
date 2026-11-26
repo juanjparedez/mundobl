@@ -1670,7 +1670,7 @@ export async function getActorsIndex(): Promise<PersonIndexRow[]> {
                WHERE sea."actorId" = p.id
                  AND s2.origin = 'CURATED' AND s2."catalogScope" = 'PERSONAL'
              ), 0)
-           )::int AS "creditCount"
+           ) AS "creditCount"
     FROM "Actor" p
     WHERE p."isPlaceholder" = false
     ORDER BY "creditCount" DESC, p.name ASC
@@ -1682,14 +1682,14 @@ export async function getActorsIndex(): Promise<PersonIndexRow[]> {
 export async function getDirectorsIndex(): Promise<PersonIndexRow[]> {
   return await prisma.$queryRaw<PersonIndexRow[]>(
     Prisma.sql`
-    SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
+    SELECT p.id, p.name, NULL AS "stageName", p."imageUrl",
            p.nationality, p.biography,
            COALESCE((
              SELECT COUNT(*) FROM "SeriesDirector" sd
              JOIN "Series" s ON s.id = sd."seriesId"
              WHERE sd."directorId" = p.id
                AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-           ), 0)::int AS "creditCount"
+           ), 0) AS "creditCount"
     FROM "Director" p
     ORDER BY "creditCount" DESC, p.name ASC
   `
@@ -1710,7 +1710,7 @@ export async function getProductionCompaniesIndex(): Promise<
              JOIN "Series" s ON s.id = spc."seriesId"
              WHERE spc."productionCompanyId" = p.id
                AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-           ), 0)::int AS "seriesCount"
+           ), 0) AS "seriesCount"
     FROM "ProductionCompany" p
     LEFT JOIN "Country" c ON c.id = p."countryId"
     ORDER BY "seriesCount" DESC, p.name ASC
@@ -3789,7 +3789,7 @@ export async function getWatchedTime(
   userId: string
 ): Promise<{ hoursWatched: number; unknownDurationVideos: number }> {
   const rows = await prisma.$queryRaw<
-    Array<{ total_minutes: number | string | null; unknown_durations: bigint }>
+    Array<{ total_minutes: number | string | null; unknown_durations: number }>
   >`
     SELECT COALESCE(SUM(CASE
       WHEN e."durationSeconds" > 0 THEN e."durationSeconds" / 60.0

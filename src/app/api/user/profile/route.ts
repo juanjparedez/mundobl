@@ -15,22 +15,23 @@ import { errorDetails } from '@/lib/error-details';
 
 interface RawCountRow {
   name: string;
-  count: bigint;
+  count: number;
 }
 
 interface RawCountryRow {
   name: string;
   code: string | null;
-  count: bigint;
+  count: number;
 }
 
 interface RawYearRow {
   year: number | null;
-  count: bigint;
+  count: number;
 }
 
 interface RawDayRow {
-  day: Date;
+  /** 'YYYY-MM-DD' (date() de SQLite) */
+  day: string;
 }
 
 interface RawAvgRatingRow {
@@ -49,7 +50,7 @@ interface RawTopRatedRow {
 
 interface RawTypeRow {
   type: string;
-  count: bigint;
+  count: number;
 }
 
 // GET /api/user/profile — returns stats + recent activity for authenticated user
@@ -59,6 +60,9 @@ export async function GET(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const userId = authResult.userId;
+    const now = new Date();
+    const daysAgo = (days: number) =>
+      new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
     const topNParam = parseInt(
       request.nextUrl.searchParams.get('topN') || '5',
       10
@@ -190,8 +194,8 @@ export async function GET(request: NextRequest) {
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
           AND vs."episodeId" IS NOT NULL
-          AND vs."watchedDate" <= NOW()
-          AND vs."watchedDate" >= NOW() - INTERVAL '7 days'
+          AND vs."watchedDate" <= ${now}
+          AND vs."watchedDate" >= ${daysAgo(7)}
         ORDER BY day
       `,
 
@@ -251,21 +255,21 @@ export async function GET(request: NextRequest) {
 
       // Series completed per year
       prisma.$queryRaw<RawYearRow[]>`
-        SELECT EXTRACT(YEAR FROM vs."watchedDate")::integer AS year, COUNT(*) as count
+        SELECT CAST(strftime('%Y', vs."watchedDate") AS INTEGER) AS year, COUNT(*) as count
         FROM "ViewStatus" vs
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
           AND vs."seriesId" IS NOT NULL
           AND vs."watchedDate" IS NOT NULL
-          AND vs."watchedDate" <= NOW()
-        GROUP BY EXTRACT(YEAR FROM vs."watchedDate")
+          AND vs."watchedDate" <= ${now}
+        GROUP BY year
         ORDER BY year DESC
         LIMIT 10
       `,
 
       // Average rating given by user (across all scores)
       prisma.$queryRaw<RawAvgRatingRow[]>`
-        SELECT AVG(score)::text as avg_rating
+        SELECT CAST(AVG(score) AS TEXT) as avg_rating
         FROM "UserRating"
         WHERE "userId" = ${userId}
       `,
@@ -307,8 +311,8 @@ export async function GET(request: NextRequest) {
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
           AND vs."episodeId" IS NOT NULL
-          AND vs."watchedDate" <= NOW()
-          AND vs."watchedDate" >= NOW() - INTERVAL '182 days'
+          AND vs."watchedDate" <= ${now}
+          AND vs."watchedDate" >= ${daysAgo(182)}
         ORDER BY day
       `,
 

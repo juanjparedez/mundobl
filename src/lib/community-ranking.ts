@@ -50,8 +50,8 @@ export interface OwnRankingPosition {
 
 interface RankedRow {
   userId: string;
-  count: bigint;
-  rank: bigint;
+  count: number;
+  rank: number;
 }
 
 function windowStart(now: Date): Date {

@@ -30,27 +30,27 @@ interface SeriesRow {
   seriesId: number;
   title: string;
   channel: string | null;
-  views: bigint;
-  chapters: bigint;
-  wants: bigint;
-  finishes: bigint;
-  trackers: bigint;
+  views: number;
+  chapters: number;
+  wants: number;
+  finishes: number;
+  trackers: number;
 }
 
 interface ChannelRow {
   channel: string;
-  series: bigint;
-  views: bigint;
-  chapters: bigint;
-  wants: bigint;
-  finishes: bigint;
+  series: number;
+  views: number;
+  chapters: number;
+  wants: number;
+  finishes: number;
 }
 
 const toTotals = (row: {
-  views: bigint;
-  chapters: bigint;
-  wants: bigint;
-  finishes: bigint;
+  views: number;
+  chapters: number;
+  wants: number;
+  finishes: number;
 }): ActivityTotals => ({
   views: Number(row.views),
   chapters: Number(row.chapters),
@@ -121,13 +121,18 @@ export async function getProducerReport(
         GROUP BY a."seriesId"
       ),
       channel AS (
-        SELECT DISTINCT ON (se."seriesId") se."seriesId", e."embedChannelName" AS channel
-        FROM "Episode" e
-        JOIN "Season" se ON se.id = e."seasonId"
-        WHERE e."embedChannelName" IS NOT NULL AND e."embedUrl" IS NOT NULL
-          AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
-        GROUP BY se."seriesId", e."embedChannelName"
-        ORDER BY se."seriesId", COUNT(*) DESC, e."embedChannelName"
+        SELECT "seriesId", channel FROM (
+          SELECT se."seriesId", e."embedChannelName" AS channel,
+                 ROW_NUMBER() OVER (
+                   PARTITION BY se."seriesId"
+                   ORDER BY COUNT(*) DESC, e."embedChannelName"
+                 ) AS rank
+          FROM "Episode" e
+          JOIN "Season" se ON se.id = e."seasonId"
+          WHERE e."embedChannelName" IS NOT NULL AND e."embedUrl" IS NOT NULL
+            AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
+          GROUP BY se."seriesId", e."embedChannelName"
+        ) WHERE rank = 1
       ),
       trackers AS (
         SELECT vs."seriesId", COUNT(DISTINCT vs."userId") AS trackers
@@ -153,13 +158,18 @@ export async function getProducerReport(
     `),
     prisma.$queryRaw<ChannelRow[]>(Prisma.sql`
       WITH channel AS (
-        SELECT DISTINCT ON (se."seriesId") se."seriesId", e."embedChannelName" AS channel
-        FROM "Episode" e
-        JOIN "Season" se ON se.id = e."seasonId"
-        WHERE e."embedChannelName" IS NOT NULL AND e."embedUrl" IS NOT NULL
-          AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
-        GROUP BY se."seriesId", e."embedChannelName"
-        ORDER BY se."seriesId", COUNT(*) DESC, e."embedChannelName"
+        SELECT "seriesId", channel FROM (
+          SELECT se."seriesId", e."embedChannelName" AS channel,
+                 ROW_NUMBER() OVER (
+                   PARTITION BY se."seriesId"
+                   ORDER BY COUNT(*) DESC, e."embedChannelName"
+                 ) AS rank
+          FROM "Episode" e
+          JOIN "Season" se ON se.id = e."seasonId"
+          WHERE e."embedChannelName" IS NOT NULL AND e."embedUrl" IS NOT NULL
+            AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
+          GROUP BY se."seriesId", e."embedChannelName"
+        ) WHERE rank = 1
       )
       SELECT c.channel,
              COUNT(DISTINCT a."seriesId") AS series,
@@ -182,7 +192,7 @@ export async function getProducerReport(
       orderBy: { _sum: { count: 'desc' } },
       take: 20,
     }),
-    prisma.$queryRaw<Array<{ platform: string; clicks: bigint }>>(Prisma.sql`
+    prisma.$queryRaw<Array<{ platform: string; clicks: number }>>(Prisma.sql`
       SELECT w.platform, SUM(c.clicks) AS clicks
       FROM "WatchLinkClickDaily" c
       JOIN "WatchLink" w ON w.id = c."watchLinkId"

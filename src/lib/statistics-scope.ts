@@ -37,7 +37,7 @@ export function statsWindowStart(days: number, now: Date): Date {
 /** A member has one vote per work: explicit general score, otherwise category average. */
 export const COMMUNITY_RATINGS_SQL = Prisma.sql`
   SELECT ur."seriesId", ur."userId",
-    COALESCE(MAX(ur.score) FILTER (WHERE ur.category = 'general'), AVG(ur.score))::float8 AS score,
+    CAST(COALESCE(MAX(ur.score) FILTER (WHERE ur.category = 'general'), AVG(ur.score)) AS REAL) AS score,
     MAX(ur."updatedAt") AS "updatedAt"
   FROM "UserRating" ur
   JOIN "User" u ON u.id = ur."userId"
