@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  caseVariants,
+  pickSameText,
+  sameTextCandidates,
+} from '@/lib/text-match';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -220,13 +225,17 @@ export async function POST(request: NextRequest) {
 
     // Dedupe por título dentro del catálogo curado: re-importar la misma
     // playlist (o importar algo ya existente) creaba una serie CURATED gemela.
-    const existingSeries = await prisma.series.findFirst({
-      where: {
-        origin: 'CURATED',
-        title: { equals: body.series.title.trim(), mode: 'insensitive' },
-      },
-      select: { id: true, title: true },
-    });
+    const existingSeries = pickSameText(
+      await prisma.series.findMany({
+        where: {
+          origin: 'CURATED',
+          ...sameTextCandidates('title', body.series.title.trim()),
+        },
+        select: { id: true, title: true },
+      }),
+      (row) => row.title,
+      body.series.title.trim()
+    );
     if (existingSeries) {
       return NextResponse.json(
         {
@@ -245,7 +254,7 @@ export async function POST(request: NextRequest) {
       // siempre fallaba y countryId quedaba null.
       const country = await prisma.country.findFirst({
         where: {
-          code: { equals: body.series.countryCode, mode: 'insensitive' },
+          code: { in: caseVariants(body.series.countryCode) },
         },
         select: { id: true },
       });

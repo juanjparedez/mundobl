@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       reviews: { none: { status: 'PUBLISHED' } },
     };
     if (search) {
-      where.title = { contains: search, mode: 'insensitive' };
+      where.title = { contains: search };
     }
 
     const [series, total, totalSeries] = await Promise.all([

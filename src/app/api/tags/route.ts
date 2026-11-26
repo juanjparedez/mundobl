@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { pickSameText, sameTextCandidates } from '@/lib/text-match';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
@@ -52,9 +53,14 @@ export async function POST(request: NextRequest) {
 
     // Evitar duplicados por diferencia de mayúsculas/espacios (ej. "Boys Love"
     // vs "boys love"): si ya existe un tag equivalente, rechazar como duplicado.
-    const existing = await prisma.tag.findFirst({
-      where: { name: { equals: name, mode: 'insensitive' } },
-    });
+    const existing = pickSameText(
+      await prisma.tag.findMany({
+        where: sameTextCandidates('name', name),
+        select: { id: true, name: true },
+      }),
+      (row) => row.name,
+      name
+    );
     if (existing) {
       return NextResponse.json(
         { error: 'Ya existe un tag con ese nombre' },

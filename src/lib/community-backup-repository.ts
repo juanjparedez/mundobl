@@ -1,3 +1,4 @@
+import type { AppPrismaClient } from './prisma-client';
 import type { Prisma, PrismaClient } from '@prisma/client';
 import { CommunityError, parseCommunityTopic } from './community-input';
 import {
@@ -27,7 +28,7 @@ const topicKey = (value: ReturnType<typeof parseCommunityTopic>) =>
 
 /** Restore content only. Visibility, identities, moderation and notification permissions never come from a backup. */
 export function createCommunityBackupRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput
 ) {
   async function restoreCommunityBackup(

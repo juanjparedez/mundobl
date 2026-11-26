@@ -1,4 +1,6 @@
+import type { AppTransactionClient } from './prisma-client';
 import { Prisma } from '@prisma/client';
+import { pickSameText, sameTextCandidates } from './text-match';
 
 /**
  * Busca un tag existente de forma insensible a mayúsculas y espacios, y solo
@@ -6,21 +8,25 @@ import { Prisma } from '@prisma/client';
  * que matcheaba por `name` exacto (case/whitespace-sensitive) y generaba
  * duplicados: "Enemy to Lovers" vs "enemy to lovers" vs "Enemy to Lovers ".
  *
- * Acepta el cliente Prisma o un cliente de transacción (`Prisma.TransactionClient`).
+ * Acepta el cliente Prisma o un cliente de transacción (`AppTransactionClient`).
  * Devuelve `null` si el nombre queda vacío tras el trim.
  */
 export async function findOrCreateTag(
-  client: Prisma.TransactionClient,
+  client: AppTransactionClient,
   rawName: string,
   category = 'trope'
 ): Promise<{ id: number; name: string } | null> {
   const name = rawName.trim();
   if (!name) return null;
 
-  const existing = await client.tag.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true, name: true },
-  });
+  const existing = pickSameText(
+    await client.tag.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   if (existing) return existing;
 
   try {
@@ -30,7 +36,7 @@ export async function findOrCreateTag(
     });
   } catch (error) {
     // Carrera: otra request creó el mismo tag entre el findFirst y el create.
-    // El @unique de Postgres es case-sensitive, así que este catch cubre el
+    // El @unique de la base distingue mayusculas, así que este catch cubre el
     // caso de colisión exacta; reintentamos la búsqueda insensible.
     if (
       error &&
@@ -38,10 +44,16 @@ export async function findOrCreateTag(
       'code' in error &&
       (error as { code?: string }).code === 'P2002'
     ) {
-      return client.tag.findFirst({
-        where: { name: { equals: name, mode: 'insensitive' } },
-        select: { id: true, name: true },
-      });
+      return (
+        pickSameText(
+          await client.tag.findMany({
+            where: sameTextCandidates('name', name),
+            select: { id: true, name: true },
+          }),
+          (row) => row.name,
+          name
+        ) ?? null
+      );
     }
     throw error;
   }
@@ -53,16 +65,20 @@ export async function findOrCreateTag(
  * guardado de series.
  */
 export async function findOrCreateGenre(
-  client: Prisma.TransactionClient,
+  client: AppTransactionClient,
   rawName: string
 ): Promise<{ id: number; name: string } | null> {
   const name = rawName.trim();
   if (!name) return null;
 
-  const existing = await client.genre.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true, name: true },
-  });
+  const existing = pickSameText(
+    await client.genre.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   if (existing) return existing;
 
   try {
@@ -77,10 +93,16 @@ export async function findOrCreateGenre(
       'code' in error &&
       (error as { code?: string }).code === 'P2002'
     ) {
-      return client.genre.findFirst({
-        where: { name: { equals: name, mode: 'insensitive' } },
-        select: { id: true, name: true },
-      });
+      return (
+        pickSameText(
+          await client.genre.findMany({
+            where: sameTextCandidates('name', name),
+            select: { id: true, name: true },
+          }),
+          (row) => row.name,
+          name
+        ) ?? null
+      );
     }
     throw error;
   }
@@ -92,16 +114,20 @@ export async function findOrCreateGenre(
  * persistir reparto desde nombre.
  */
 export async function findOrCreateActor(
-  client: Prisma.TransactionClient,
+  client: AppTransactionClient,
   rawName: string
 ): Promise<{ id: number; name: string } | null> {
   const name = rawName.trim();
   if (!name) return null;
 
-  const existing = await client.actor.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true, name: true },
-  });
+  const existing = pickSameText(
+    await client.actor.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   if (existing) return existing;
 
   try {
@@ -116,10 +142,16 @@ export async function findOrCreateActor(
       'code' in error &&
       (error as { code?: string }).code === 'P2002'
     ) {
-      return client.actor.findFirst({
-        where: { name: { equals: name, mode: 'insensitive' } },
-        select: { id: true, name: true },
-      });
+      return (
+        pickSameText(
+          await client.actor.findMany({
+            where: sameTextCandidates('name', name),
+            select: { id: true, name: true },
+          }),
+          (row) => row.name,
+          name
+        ) ?? null
+      );
     }
     throw error;
   }
@@ -134,16 +166,20 @@ export async function findOrCreateActor(
  * a pesar de que ya existia /api/directors/merge.
  */
 export async function findOrCreateDirector(
-  client: Prisma.TransactionClient,
+  client: AppTransactionClient,
   rawName: string
 ): Promise<{ id: number; name: string } | null> {
   const name = rawName.trim();
   if (!name) return null;
 
-  const existing = await client.director.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true, name: true },
-  });
+  const existing = pickSameText(
+    await client.director.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   if (existing) return existing;
 
   try {
@@ -158,10 +194,16 @@ export async function findOrCreateDirector(
       'code' in error &&
       (error as { code?: string }).code === 'P2002'
     ) {
-      return client.director.findFirst({
-        where: { name: { equals: name, mode: 'insensitive' } },
-        select: { id: true, name: true },
-      });
+      return (
+        pickSameText(
+          await client.director.findMany({
+            where: sameTextCandidates('name', name),
+            select: { id: true, name: true },
+          }),
+          (row) => row.name,
+          name
+        ) ?? null
+      );
     }
     throw error;
   }
@@ -175,16 +217,20 @@ export async function findOrCreateDirector(
  * decision del caller, no de este helper.
  */
 export async function findOrCreateProductionCompany(
-  client: Prisma.TransactionClient,
+  client: AppTransactionClient,
   rawName: string
 ): Promise<{ id: number; name: string } | null> {
   const name = rawName.trim();
   if (!name) return null;
 
-  const existing = await client.productionCompany.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true, name: true },
-  });
+  const existing = pickSameText(
+    await client.productionCompany.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   if (existing) return existing;
 
   try {
@@ -199,10 +245,16 @@ export async function findOrCreateProductionCompany(
       'code' in error &&
       (error as { code?: string }).code === 'P2002'
     ) {
-      return client.productionCompany.findFirst({
-        where: { name: { equals: name, mode: 'insensitive' } },
-        select: { id: true, name: true },
-      });
+      return (
+        pickSameText(
+          await client.productionCompany.findMany({
+            where: sameTextCandidates('name', name),
+            select: { id: true, name: true },
+          }),
+          (row) => row.name,
+          name
+        ) ?? null
+      );
     }
     throw error;
   }

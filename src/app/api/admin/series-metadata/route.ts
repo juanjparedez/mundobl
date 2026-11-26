@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { revalidatePath } from 'next/cache';
 import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
@@ -36,8 +37,8 @@ export async function GET(request: NextRequest) {
 
     if (q) {
       where.OR = [
-        { title: { contains: q, mode: 'insensitive' } },
-        { originalTitle: { contains: q, mode: 'insensitive' } },
+        { title: { contains: q } },
+        { originalTitle: { contains: q } },
       ];
     }
 
@@ -231,10 +232,10 @@ export async function PATCH(request: NextRequest) {
           (id) => !currentTagIds.has(id)
         );
         if (toAdd.length > 0) {
-          await tx.seriesTag.createMany({
-            data: toAdd.map((tagId) => ({ seriesId, tagId })),
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(
+            toAdd.map((tagId) => ({ seriesId, tagId })),
+            (rows) => tx.seriesTag.createMany({ data: rows })
+          );
         }
       }
 
@@ -272,10 +273,10 @@ export async function PATCH(request: NextRequest) {
           (id) => !currentGenreIds.has(id)
         );
         if (toAdd.length > 0) {
-          await tx.seriesGenre.createMany({
-            data: toAdd.map((genreId) => ({ seriesId, genreId })),
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(
+            toAdd.map((genreId) => ({ seriesId, genreId })),
+            (rows) => tx.seriesGenre.createMany({ data: rows })
+          );
         }
       }
 
@@ -362,10 +363,9 @@ export async function POST(request: NextRequest) {
           const bulkTagData = validSeriesIds.flatMap((seriesId) =>
             resolvedAddTags.map((tagId) => ({ seriesId, tagId }))
           );
-          await tx.seriesTag.createMany({
-            data: bulkTagData,
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(bulkTagData, (rows) =>
+            tx.seriesTag.createMany({ data: rows })
+          );
         }
       }
 
@@ -407,10 +407,9 @@ export async function POST(request: NextRequest) {
           const bulkGenreData = validSeriesIds.flatMap((seriesId) =>
             resolvedAddGenres.map((genreId) => ({ seriesId, genreId }))
           );
-          await tx.seriesGenre.createMany({
-            data: bulkGenreData,
-            skipDuplicates: true,
-          });
+          await createManySkippingDuplicates(bulkGenreData, (rows) =>
+            tx.seriesGenre.createMany({ data: rows })
+          );
         }
       }
 

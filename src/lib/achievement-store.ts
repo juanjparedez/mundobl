@@ -8,6 +8,7 @@
 // Un logro guardado no se borra: si baja el numero que lo dio, queda.
 
 import { loadLocaleMessages } from '@/i18n/messages';
+import { createManySkippingDuplicates } from './create-many';
 import {
   ACHIEVEMENTS,
   ACHIEVEMENT_METRICS,
@@ -312,10 +313,10 @@ async function storeUnlocks(
   const stored = new Set(existing.map((row) => row.key));
   const inserted: string[] = [];
   for (const key of keys.filter((k) => !stored.has(k))) {
-    const { count } = await prisma.userAchievement.createMany({
-      data: [{ userId, key }],
-      skipDuplicates: true,
-    });
+    const { count } = await createManySkippingDuplicates(
+      [{ userId, key }],
+      (rows) => prisma.userAchievement.createMany({ data: rows })
+    );
     if (count > 0) inserted.push(key);
   }
   if (notify && inserted.length > 0) {

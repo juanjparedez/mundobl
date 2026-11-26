@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import {
@@ -65,10 +66,9 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    const result = await prisma.embeddableContent.createMany({
-      data,
-      skipDuplicates: true,
-    });
+    const result = await createManySkippingDuplicates(data, (rows) =>
+      prisma.embeddableContent.createMany({ data: rows })
+    );
 
     if (seriesId && result.count > 0) {
       const sid = Number(seriesId);

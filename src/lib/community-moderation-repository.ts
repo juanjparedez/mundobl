@@ -1,3 +1,4 @@
+import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
 import type {
   Prisma,
   PrismaClient,
@@ -9,11 +10,11 @@ import { CommunityError, communityId, communityText } from './community-input';
 
 /** Moderation can inspect reported public content, never an author's private drafts. */
 export function createCommunityModerationRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput,
   publicAuthor: (viewerId?: string) => Prisma.UserWhereInput
 ) {
-  async function staff(tx: Prisma.TransactionClient, userId: string) {
+  async function staff(tx: AppTransactionClient, userId: string) {
     const user = await tx.user.findFirst({
       where: {
         id: userId,
@@ -25,7 +26,7 @@ export function createCommunityModerationRepository(
     if (!user) throw new CommunityError(403, 'unavailable');
   }
   async function target(
-    tx: Prisma.TransactionClient,
+    tx: AppTransactionClient,
     type: CommunityReportTarget,
     id: string,
     viewerId?: string,

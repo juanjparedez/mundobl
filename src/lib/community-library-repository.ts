@@ -1,3 +1,4 @@
+import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
 import type {
   Prisma,
   PrismaClient,
@@ -13,7 +14,7 @@ import { cardImageUrl } from './image-helpers';
 
 /** Injected through database.ts to keep a single Prisma pool and public-work policy. */
 export function createCommunityLibraryRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput
 ) {
   const publicAuthor = (viewerId?: string): Prisma.UserWhereInput => ({
@@ -99,18 +100,18 @@ export function createCommunityLibraryRepository(
     moderationHidden: false,
     user: publicAuthor(viewerId),
   });
-  async function actor(tx: Prisma.TransactionClient, userId: string) {
+  async function actor(tx: AppTransactionClient, userId: string) {
     const user = await tx.user.findUnique({
       where: { id: userId },
       select: { banned: true },
     });
     if (!user || user.banned) throw new CommunityError(403, 'unavailable');
   }
-  async function lock(tx: Prisma.TransactionClient, userId: string) {
+  async function lock(tx: AppTransactionClient, userId: string) {
     await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community-library:${userId}`}))::text`;
     await actor(tx, userId);
   }
-  async function settings(tx: Prisma.TransactionClient = db) {
+  async function settings(tx: AppTransactionClient = db) {
     return (
       (await tx.communitySettings.findUnique({ where: { id: 1 } })) ?? {
         id: 1,
@@ -122,7 +123,7 @@ export function createCommunityLibraryRepository(
     );
   }
   async function validateItems(
-    tx: Prisma.TransactionClient,
+    tx: AppTransactionClient,
     input: RecommendationListInput,
     kind: RecommendationListKind
   ) {
@@ -176,7 +177,7 @@ export function createCommunityLibraryRepository(
         AND: [
           mine ? { userId: viewerId } : publicListWhere(viewerId),
           authorId ? { userId: authorId } : {},
-          search ? { title: { contains: search, mode: 'insensitive' } } : {},
+          search ? { title: { contains: search } } : {},
         ],
       },
       include: listInclude,

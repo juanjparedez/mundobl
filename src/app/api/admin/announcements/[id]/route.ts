@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { logAction } from '@/lib/access-log';
@@ -46,10 +47,10 @@ async function updateWithRecipients(
     // createMany rechaza `data: []` (pide al menos un elemento) — solo se
     // agrega este paso si realmente hay destinatarios nuevos.
     ops.push(
-      prisma.announcementRecipient.createMany({
-        data: recipientUserIds.map((userId) => ({ announcementId, userId })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        recipientUserIds.map((userId) => ({ announcementId, userId })),
+        (rows) => prisma.announcementRecipient.createMany({ data: rows })
+      )
     );
   }
   ops.push(prisma.announcement.update({ where: { id: announcementId }, data }));

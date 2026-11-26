@@ -1,3 +1,4 @@
+import type { AppTransactionClient } from './prisma-client';
 import { Prisma } from '@prisma/client';
 
 /**
@@ -49,7 +50,7 @@ export interface AttachResult {
 }
 
 export async function attachEpisodesToSeries(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   targetSeriesId: number,
   seasons: AttachSeasonInput[],
   targetYear?: number | null

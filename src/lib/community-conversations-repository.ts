@@ -1,14 +1,16 @@
+import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
+import { createManySkippingDuplicates } from './create-many';
 import type { Prisma, PrismaClient } from '@prisma/client';
 import type { CommunityTopicInput } from '@/types/community';
 import { CommunityError } from './community-input';
 
 export function createCommunityConversationsRepository(
-  db: PrismaClient,
+  db: AppPrismaClient,
   publicSeries: Prisma.SeriesWhereInput,
   publicTopic: (viewerId?: string) => Prisma.CommunityTopicWhereInput,
   publicAuthor: (viewerId?: string) => Prisma.UserWhereInput
 ) {
-  async function actor(tx: Prisma.TransactionClient, userId: string) {
+  async function actor(tx: AppTransactionClient, userId: string) {
     if (
       !(await tx.user.findFirst({
         where: { id: userId, banned: false },
@@ -202,10 +204,10 @@ export function createCommunityConversationsRepository(
         select: { id: true },
       });
       if (existing) return { added: false };
-      const created = await tx.viewStatus.createMany({
-        data: [{ userId, seriesId, status: 'SIN_VER' }],
-        skipDuplicates: true,
-      });
+      const created = await createManySkippingDuplicates(
+        [{ userId, seriesId, status: 'SIN_VER' as const }],
+        (rows) => tx.viewStatus.createMany({ data: rows })
+      );
       return { added: created.count > 0 };
     });
   }

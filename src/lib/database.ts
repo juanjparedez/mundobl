@@ -1,3 +1,10 @@
+import { createManySkippingDuplicates } from './create-many';
+import {
+  caseVariants,
+  findSameTextCandidates,
+  pickSameText,
+  sameTextCandidates,
+} from './text-match';
 import {
   assertTrackingCanBeRemoved,
   assertEpisodeTrackingCanBeRemoved,
@@ -53,11 +60,8 @@ import {
  */
 
 import { unstable_cache } from 'next/cache';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { PrismaD1 } from '@prisma/adapter-d1';
-import { lazyD1 } from './d1';
-import { scopeBatchingToRequest } from './request-scoped-batching';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { prisma, type AppTransactionClient } from './prisma-client';
 import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
@@ -80,39 +84,8 @@ import {
   isWatchableEpisode,
 } from './watchable';
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-const IS_WORKERD =
-  typeof navigator !== 'undefined' &&
-  navigator.userAgent === 'Cloudflare-Workers';
-
-/** ExecutionContext del request actual en workerd (clave del pool). */
-function currentRequestKey(): object | undefined {
-  try {
-    return getCloudflareContext().ctx;
-  } catch {
-    return undefined;
-  }
-}
-
-function createPrismaClient() {
-  // Un solo PrismaClient por isolate (cada uno pesa ~30 MB). La base se
-  // resuelve en cada consulta (lazyD1): `env.DB` en el Worker, el archivo
-  // local o la API REST en Node (scripts/db/runtime.mjs).
-  //
-  // D1 no tiene transacciones interactivas: Prisma corre `$transaction` como
-  // consultas sueltas. Lo que tiene que ser todo-o-nada usa atomicWrite()
-  // (src/lib/d1.ts), que va en un batch de D1.
-  const client = new PrismaClient({ adapter: new PrismaD1(lazyD1) });
-  // Sin esto, Prisma despacha juntos los findUnique de requests distintos
-  // desde el contexto del primero (ver request-scoped-batching.ts).
-  if (IS_WORKERD) scopeBatchingToRequest(client, currentRequestKey);
-  return client;
-}
-
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-globalForPrisma.prisma = prisma;
+export { prisma };
+export type { AppPrismaClient, AppTransactionClient } from './prisma-client';
 
 /** Hidden editorial blocks are readable only by an authorized editor. */
 export async function getReadableSeriesInfoBlocks(
@@ -147,7 +120,7 @@ export async function searchContributionMetadata(
   search: string
 ) {
   const args = {
-    where: { name: { contains: search.trim(), mode: 'insensitive' as const } },
+    where: { name: { contains: search.trim() } },
     select: { name: true },
     orderBy: [{ name: 'asc' as const }, { id: 'asc' as const }],
     take: 30,
@@ -165,44 +138,43 @@ export async function searchContributionMetadata(
 /** Read-only resolution. Unknown or ambiguous names cannot mutate shared entities. */
 export async function getContributionMetadata(
   input: ContributionMetadataInput,
-  client: Prisma.TransactionClient = prisma
+  client: AppTransactionClient = prisma
 ) {
-  const whereNames = (names: (string | null | undefined)[]) => ({
-    OR: contributionNames(names).map((name) => ({
-      name: { equals: name, mode: 'insensitive' as const },
-    })),
-  });
+  // Candidatos por nombre sin mirar mayusculas; resolveContributionMetadata
+  // elige el igual (y marca como ambiguo si hay mas de uno).
   const select = { id: true, name: true } as const;
+  const named = (names: (string | null | undefined)[]) =>
+    contributionNames(names);
   const [countries, productionCompanies, languages, actors, tags, genres] =
     await Promise.all([
       input.countryCode?.trim()
         ? client.country.findMany({
-            where: {
-              code: { equals: input.countryCode.trim(), mode: 'insensitive' },
-            },
+            where: { code: { in: caseVariants(input.countryCode.trim()) } },
             select: { id: true, code: true },
           })
         : Promise.resolve([]),
-      client.productionCompany.findMany({
-        where: whereNames([input.productionCompanyName]),
-        select,
-      }),
-      client.language.findMany({
-        where: whereNames([
+      findSameTextCandidates(
+        'name',
+        named([input.productionCompanyName]),
+        (where) => client.productionCompany.findMany({ where, select })
+      ),
+      findSameTextCandidates(
+        'name',
+        named([
           input.originalLanguageName,
           ...(input.dubbingLanguageNames ?? []),
         ]),
-        select,
-      }),
-      client.actor.findMany({
-        where: whereNames(input.actorNames ?? []),
-        select,
-      }),
-      client.tag.findMany({ where: whereNames(input.tagNames ?? []), select }),
-      client.genre.findMany({
-        where: whereNames(input.genreNames ?? []),
-        select,
-      }),
+        (where) => client.language.findMany({ where, select })
+      ),
+      findSameTextCandidates('name', named(input.actorNames ?? []), (where) =>
+        client.actor.findMany({ where, select })
+      ),
+      findSameTextCandidates('name', named(input.tagNames ?? []), (where) =>
+        client.tag.findMany({ where, select })
+      ),
+      findSameTextCandidates('name', named(input.genreNames ?? []), (where) =>
+        client.genre.findMany({ where, select })
+      ),
     ]);
   return resolveContributionMetadata(input, {
     countries,
@@ -276,31 +248,27 @@ export async function restoreTrackingBackup(
       }
       if (plan.viewStatuses.length)
         imported.viewStatuses = (
-          await tx.viewStatus.createMany({
-            data: plan.viewStatuses,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(plan.viewStatuses, (rows) =>
+            tx.viewStatus.createMany({ data: rows })
+          )
         ).count;
       if (plan.seriesNotes.length)
         imported.seriesNotes = (
-          await tx.seriesNote.createMany({
-            data: plan.seriesNotes,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(plan.seriesNotes, (rows) =>
+            tx.seriesNote.createMany({ data: rows })
+          )
         ).count;
       if (plan.episodeNotes.length)
         imported.episodeNotes = (
-          await tx.episodeNote.createMany({
-            data: plan.episodeNotes,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(plan.episodeNotes, (rows) =>
+            tx.episodeNote.createMany({ data: rows })
+          )
         ).count;
       if (history.rows.length) {
         imported.trackingEvents = (
-          await tx.trackingEvent.createMany({
-            data: history.rows,
-            skipDuplicates: true,
-          })
+          await createManySkippingDuplicates(history.rows, (rows) =>
+            tx.trackingEvent.createMany({ data: rows })
+          )
         ).count;
         history.skipped += history.rows.length - imported.trackingEvents;
       }
@@ -397,7 +365,7 @@ export async function getTrackingHistory(
     origin: true,
     catalogScope: true,
   } as const;
-  const title = { contains: search, mode: 'insensitive' as const };
+  const title = { contains: search };
   const rows = await prisma.trackingEvent.findMany({
     where: {
       userId,
@@ -934,10 +902,10 @@ export async function recordUserActiveDay(userId: string): Promise<boolean> {
   const day = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
   );
-  const { count } = await prisma.userActiveDay.createMany({
-    data: [{ userId, day }],
-    skipDuplicates: true,
-  });
+  const { count } = await createManySkippingDuplicates(
+    [{ userId, day }],
+    (rows) => prisma.userActiveDay.createMany({ data: rows })
+  );
   return count > 0;
 }
 
@@ -1818,22 +1786,27 @@ async function fetchPeopleNationalities(): Promise<string[]> {
 export async function findDirectorIdByName(
   name: string
 ): Promise<number | null> {
-  const director = await prisma.director.findFirst({
-    where: { name: { equals: name, mode: 'insensitive' } },
-    select: { id: true },
-  });
+  const director = pickSameText(
+    await prisma.director.findMany({
+      where: sameTextCandidates('name', name),
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   return director?.id ?? null;
 }
 
 /** Contraparte: id del actor homonimo, para la ficha de director. */
 export async function findActorIdByName(name: string): Promise<number | null> {
-  const actor = await prisma.actor.findFirst({
-    where: {
-      name: { equals: name, mode: 'insensitive' },
-      isPlaceholder: false,
-    },
-    select: { id: true },
-  });
+  const actor = pickSameText(
+    await prisma.actor.findMany({
+      where: { ...sameTextCandidates('name', name), isPlaceholder: false },
+      select: { id: true, name: true },
+    }),
+    (row) => row.name,
+    name
+  );
   return actor?.id ?? null;
 }
 
@@ -2260,7 +2233,7 @@ export async function changeBasedOnValue(
 export async function saveSeriesInUniverse<T>(
   universeId: number | null,
   isMain: boolean,
-  save: (transaction: Prisma.TransactionClient) => Promise<T>
+  save: (transaction: AppTransactionClient) => Promise<T>
 ): Promise<T> {
   return prisma.$transaction(async (transaction) => {
     await prepareUniverseSlot(transaction, universeId, isMain);
@@ -2273,7 +2246,7 @@ export async function saveSeriesInUniverse<T>(
  * anterior. Va dentro de la transaccion del caller.
  */
 export async function prepareUniverseSlot(
-  transaction: Prisma.TransactionClient,
+  transaction: AppTransactionClient,
   universeId: number | null,
   isMain: boolean
 ): Promise<void> {
@@ -2341,7 +2314,7 @@ export interface SeriesEpisodeOrder {
  * pueda leer dentro del mismo $transaction que sus escrituras.
  */
 export async function getSeriesEpisodesOrdered(
-  client: PrismaClient | Prisma.TransactionClient,
+  client: AppTransactionClient,
   seriesId: number
 ): Promise<SeriesEpisodeOrder[]> {
   const seasons = await client.season.findMany({
@@ -2434,9 +2407,7 @@ export async function getCommunityReviews(
       user: communityPublicAuthorWhere(viewerId),
       series: {
         ...PUBLIC_REVIEW_SERIES,
-        ...(query
-          ? { title: { contains: query, mode: 'insensitive' as const } }
-          : {}),
+        ...(query ? { title: { contains: query } } : {}),
       },
     },
     orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { id: 'desc' }],
@@ -3127,10 +3098,10 @@ export async function getCommunityTopics(
               OR: [
                 {
                   hasSpoilers: false,
-                  title: { contains: search, mode: 'insensitive' },
+                  title: { contains: search },
                 },
                 {
-                  series: { title: { contains: search, mode: 'insensitive' } },
+                  series: { title: { contains: search } },
                 },
               ],
             }
@@ -3345,7 +3316,7 @@ export async function searchCommunitySeries(search: string) {
   const rows = await prisma.series.findMany({
     where: {
       ...PUBLIC_REVIEW_SERIES,
-      title: { contains: search.trim(), mode: 'insensitive' },
+      title: { contains: search.trim() },
     },
     select: { id: true, title: true, origin: true, catalogScope: true },
     take: 15,
@@ -3388,7 +3359,7 @@ export async function getCommunityEpisodes(seriesId: number) {
   });
 }
 async function communityWriteLimit(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   userId: string,
   topic: boolean
 ) {
@@ -3806,10 +3777,9 @@ export async function recordSeriesShare(
     select: { id: true },
   });
   if (!exists) return false;
-  await prisma.seriesShare.createMany({
-    data: [{ userId, seriesId, channel }],
-    skipDuplicates: true,
-  });
+  await createManySkippingDuplicates([{ userId, seriesId, channel }], (rows) =>
+    prisma.seriesShare.createMany({ data: rows })
+  );
   return true;
 }
 

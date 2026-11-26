@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createManySkippingDuplicates } from '@/lib/create-many';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { notifyUser } from '@/lib/notifications';
@@ -112,13 +113,13 @@ export async function PATCH(
             where: { glossaryTermId: term.id },
           });
           if (tagIds.length > 0) {
-            await transaction.glossaryTermTag.createMany({
-              data: tagIds.map((tagId) => ({
+            await createManySkippingDuplicates(
+              tagIds.map((tagId) => ({
                 glossaryTermId: term.id,
                 tagId,
               })),
-              skipDuplicates: true,
-            });
+              (rows) => transaction.glossaryTermTag.createMany({ data: rows })
+            );
           }
         }
       }

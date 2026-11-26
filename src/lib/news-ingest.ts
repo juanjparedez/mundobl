@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import { prisma } from './database';
+import { caseVariants } from './text-match';
 import { OFFICIAL_CHANNELS } from './official-channels';
 import { fetchYouTubeChannel } from './channel-fetcher';
 import { titleTokens } from './channel-sweep';
@@ -221,7 +222,7 @@ async function fromNewsSites(): Promise<{
   skippedSources: Array<{ name: string; reason: string }>;
 }> {
   const sites = await prisma.recommendedSite.findMany({
-    where: { category: { equals: 'noticias', mode: 'insensitive' } },
+    where: { category: { in: caseVariants('noticias') } },
     select: { name: true, url: true },
   });
   let failed = 0;

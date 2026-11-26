@@ -1,3 +1,6 @@
+import { findSameTextCandidates } from './text-match';
+import type { AppTransactionClient } from './prisma-client';
+import { createManySkippingDuplicates } from './create-many';
 import { Prisma } from '@prisma/client';
 import { assertTrackingCanBeRemoved } from './tracking-preservation';
 import { prepareUniverseSlot, prisma, resolveBasedOnValue } from './database';
@@ -64,54 +67,61 @@ async function resolveNamedIds(
   return ids;
 }
 
-const byName = (names: string[]) => ({
-  where: { name: { in: names, mode: 'insensitive' as const } },
-  select: { id: true, name: true },
-  orderBy: { id: 'asc' as const },
-});
+/** Candidatos por nombre (sin mirar mayusculas), en tandas que entran en D1. */
+const byName = (
+  names: string[],
+  find: (args: {
+    where: { OR: Array<{ name: { contains: string } }> };
+    select: { id: true; name: true };
+    orderBy: { id: 'asc' };
+  }) => Promise<NamedRow[]>
+) =>
+  findSameTextCandidates('name', names, (where) =>
+    find({ where, select: { id: true, name: true }, orderBy: { id: 'asc' } })
+  ).then((rows) => rows.sort((a, b) => a.id - b.id));
 
 export const resolveTagIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.tag.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.tag.findMany(args)),
     (n) =>
-      prisma.tag.createMany({
-        data: n.map((name) => ({ name, category: 'trope' })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name, category: 'trope' })),
+        (rows) => prisma.tag.createMany({ data: rows })
+      )
   );
 
 export const resolveGenreIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.genre.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.genre.findMany(args)),
     (n) =>
-      prisma.genre.createMany({
-        data: n.map((name) => ({ name })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name })),
+        (rows) => prisma.genre.createMany({ data: rows })
+      )
   );
 
 export const resolveActorIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.actor.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.actor.findMany(args)),
     (n) =>
-      prisma.actor.createMany({
-        data: n.map((name) => ({ name })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name })),
+        (rows) => prisma.actor.createMany({ data: rows })
+      )
   );
 
 export const resolveDirectorIds = (names: readonly unknown[]) =>
   resolveNamedIds(
     names,
-    (n) => prisma.director.findMany(byName(n)),
+    (n) => byName(n, (args) => prisma.director.findMany(args)),
     (n) =>
-      prisma.director.createMany({
-        data: n.map((name) => ({ name })),
-        skipDuplicates: true,
-      })
+      createManySkippingDuplicates(
+        n.map((name) => ({ name })),
+        (rows) => prisma.director.createMany({ data: rows })
+      )
   );
 
 /**
@@ -119,10 +129,7 @@ export const resolveDirectorIds = (names: readonly unknown[]) =>
  * la foto de SeriesRevision y el estado actual contra el que se calcula el
  * diff de relaciones (asi el diff no paga consultas propias).
  */
-export function loadSeriesForSave(
-  tx: Prisma.TransactionClient,
-  seriesId: number
-) {
+export function loadSeriesForSave(tx: AppTransactionClient, seriesId: number) {
   return tx.series.findUnique({
     where: { id: seriesId },
     include: {
@@ -152,7 +159,7 @@ export type SeriesForSave = NonNullable<
 
 /** Guarda la foto previa al guardado. Va dentro de la transaccion. */
 export function recordSeriesRevision(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   current: SeriesForSave,
   userId: string | null,
   source: 'admin-form' | 'collaborator'
@@ -200,7 +207,7 @@ async function syncIdSet(
  * ella. Va dentro de la transaccion del guardado: o entra todo o nada.
  */
 export async function syncSeriesRelations(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   current: SeriesForSave,
   input: SeriesRelationsInput
 ): Promise<void> {
@@ -317,13 +324,13 @@ export async function syncSeriesRelations(
         },
       });
       if (desired.length > 0) {
-        await tx.relatedSeries.createMany({
-          data: desired.flatMap((relatedId) => [
+        await createManySkippingDuplicates(
+          desired.flatMap((relatedId) => [
             { mainSeriesId: seriesId, relatedSeriesId: relatedId },
             { mainSeriesId: relatedId, relatedSeriesId: seriesId },
           ]),
-          skipDuplicates: true,
-        });
+          (rows) => tx.relatedSeries.createMany({ data: rows })
+        );
       }
     }
   }
@@ -460,7 +467,7 @@ async function resolveOriginalLanguageId(
  * el caller avise a los suscriptores despues del commit.
  */
 async function syncSeasons(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   seriesId: number,
   incoming: SeasonInput[],
   fallbackYear: number | null
@@ -542,7 +549,7 @@ export async function saveSeriesFromForm(
   body: SeriesFormBody,
   image: ResolvedSeriesImage,
   userId: string | null,
-  append?: (tx: Prisma.TransactionClient) => Promise<void>
+  append?: (tx: AppTransactionClient) => Promise<void>
 ): Promise<SeriesFormSaveResult> {
   const expectedEditVersion = parseExpectedEditVersion(body.editVersion);
   if (expectedEditVersion === null) throw new SeriesEditConflictError();

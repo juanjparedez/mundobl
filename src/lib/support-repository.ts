@@ -1,3 +1,5 @@
+import type { AppPrismaClient } from './prisma-client';
+import { createManySkippingDuplicates } from './create-many';
 import { Prisma, type PrismaClient } from '@prisma/client';
 import {
   EMPTY_SUPPORT,
@@ -6,7 +8,7 @@ import {
   SupportError,
   type parseSupportMutation,
 } from './support-input';
-export function createSupportRepository(db: PrismaClient) {
+export function createSupportRepository(db: AppPrismaClient) {
   async function requireOwner(userId: string) {
     const user = await db.user.findUnique({
       where: { id: userId },
@@ -40,12 +42,10 @@ export function createSupportRepository(db: PrismaClient) {
   ) {
     await requireOwner(userId);
     await db.$transaction(async (tx) => {
-      await tx.supportSettings.createMany({
-        data: [
-          { id: 1, draft: { intro: '', purpose: '', thanks: '', methods: [] } },
-        ],
-        skipDuplicates: true,
-      });
+      await createManySkippingDuplicates(
+        [{ id: 1, draft: { intro: '', purpose: '', thanks: '', methods: [] } }],
+        (rows) => tx.supportSettings.createMany({ data: rows })
+      );
       const row = await tx.supportSettings.findUniqueOrThrow({
         where: { id: 1 },
       });

@@ -1,3 +1,4 @@
+import type { AppTransactionClient } from './prisma-client';
 import { Prisma } from '@prisma/client';
 
 export class TrackingPreservationError extends Error {
@@ -8,7 +9,7 @@ export class TrackingPreservationError extends Error {
 
 /** Lock parent rows before checking: new FK-backed private records cannot race a cascade. */
 export async function assertTrackingCanBeRemoved(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   seriesId: number,
   seasonIds?: number[]
 ) {
@@ -43,7 +44,7 @@ export async function assertTrackingCanBeRemoved(
 
 /** Same protection for an individual episode, without blocking unrelated siblings. */
 export async function assertEpisodeTrackingCanBeRemoved(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   episodeId: number
 ) {
   await tx.$queryRaw`SELECT id FROM "Episode" WHERE id = ${episodeId} FOR UPDATE`;

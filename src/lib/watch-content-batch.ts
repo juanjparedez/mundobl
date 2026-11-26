@@ -1,4 +1,6 @@
 import type { Prisma } from '@prisma/client';
+import { caseVariants, sameText, sameTextCandidates } from './text-match';
+import type { AppTransactionClient } from './prisma-client';
 import type { VideoChannelInfo } from './channel-fetcher';
 import { isOfficialChannelId } from './official-channels';
 import { MIN_EPISODE_SECONDS, type PlaybackProbe } from './playability';
@@ -172,7 +174,7 @@ function assertManualChapters(
  * renumbering aborts.
  */
 export async function importWatchContentBatch(
-  tx: Prisma.TransactionClient,
+  tx: AppTransactionClient,
   batch: WatchContentBatch,
   channels: Map<string, VideoChannelInfo>,
   probes: Map<string, PlaybackProbe>,
@@ -190,12 +192,15 @@ export async function importWatchContentBatch(
   }> = [];
   for (const entry of batch.series) {
     const platform = entry.platform ?? 'YouTube';
-    const matches = await tx.series.findMany({
+    const candidates = await tx.series.findMany({
       where: entry.targetSeriesId
         ? { id: entry.targetSeriesId }
-        : { title: { equals: entry.title, mode: 'insensitive' } },
+        : sameTextCandidates('title', entry.title),
       include: { seasons: { include: { episodes: true } } },
     });
+    const matches = entry.targetSeriesId
+      ? candidates
+      : candidates.filter((row) => sameText(row.title, entry.title));
     const existing = matches[0];
     if (
       matches.length > 1 ||
@@ -293,7 +298,7 @@ export async function importWatchContentBatch(
     if (!apply || !pending.length) continue;
 
     const country = await tx.country.findFirst({
-      where: { code: { equals: entry.countryCode, mode: 'insensitive' } },
+      where: { code: { in: caseVariants(entry.countryCode) } },
       select: { id: true },
     });
     if (!country) throw new Error(`Missing country: ${entry.countryCode}`);

@@ -81,9 +81,7 @@ function toD1Value(value: unknown): unknown {
  * lote. Las sentencias no pueden depender del resultado de otra en JS, solo
  * en SQL (subconsultas).
  */
-export async function atomicWrite(
-  statements: Prisma.Sql[]
-): Promise<number[]> {
+export async function atomicWrite(statements: Prisma.Sql[]): Promise<number[]> {
   if (!statements.length) return [];
   const db = currentD1();
   const results = await db.batch(

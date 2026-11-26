@@ -31,10 +31,10 @@ export async function GET(request: NextRequest) {
     if (language) where.language = language;
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { body: { contains: search, mode: 'insensitive' } },
-        { series: { title: { contains: search, mode: 'insensitive' } } },
-        { user: { name: { contains: search, mode: 'insensitive' } } },
+        { title: { contains: search } },
+        { body: { contains: search } },
+        { series: { title: { contains: search } } },
+        { user: { name: { contains: search } } },
       ];
     }
 

@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     } else if (author === 'active') {
       where.userId = { not: null };
     }
-    if (search) where.content = { contains: search, mode: 'insensitive' };
+    if (search) where.content = { contains: search };
     if (reportedOnly) where.reportCount = { gt: 0 };
 
     const [comments, total] = await Promise.all([

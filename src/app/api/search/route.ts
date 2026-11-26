@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const insensitive = { contains: query, mode: 'insensitive' as const };
+  // LIKE en SQLite: sin distinguir mayusculas (ASCII), ver text-match.ts.
+  const insensitive = { contains: query };
 
   const [series, actors, directors, tags, glossary] = await Promise.all([
     prisma.series.findMany({
