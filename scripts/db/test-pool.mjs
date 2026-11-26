@@ -1,5 +1,5 @@
 // Para pruebas de UI que siembran datos directo en la base: la misma forma
-// que `pg.Pool#query` (texto con $1, $2... y { rows }), sobre el archivo
+// que `pg.Pool#query` (texto con $1, $2... y { rows, rowCount }), sobre el archivo
 // SQLite local que usa la app de prueba. Solo acepta bases descartables.
 
 import assert from 'node:assert/strict';
@@ -19,7 +19,10 @@ const NOW = "strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now')";
 /** El SQL de Postgres que usan las pruebas, en su forma de SQLite. */
 export function toSqliteSql(text) {
   return text
-    .replace(/=\s*ANY\(\$(\d+)(::\w+\[\])?\)/gi, ' IN (SELECT value FROM json_each($$$1))')
+    .replace(
+      /=\s*ANY\(\$(\d+)(::\w+\[\])?\)/gi,
+      ' IN (SELECT value FROM json_each($$$1))'
+    )
     .replace(/::\w+(\[\])?/g, '')
     .replace(/\bNOW\(\)/gi, NOW)
     .replace(/\$(\d+)/g, '?$1');
@@ -43,7 +46,10 @@ export function createTestPool(url = process.env.DATABASE_URL ?? '') {
       const params = Object.fromEntries(
         values.map((value, index) => [index + 1, toSqlite(value)])
       );
-      if (statement.reader) return { rows: statement.all(params) };
+      if (statement.reader) {
+        const rows = statement.all(params);
+        return { rows, rowCount: rows.length };
+      }
       const info = statement.run(params);
       return { rows: [], rowCount: info.changes };
     },
