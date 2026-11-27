@@ -20,6 +20,10 @@ export const FAVORITE_MEMBER = COMMUNITY_MEMBER;
 
 // SQL aliases are fixed by the queries that use these fragments.
 export const COMMUNITY_SQL = Prisma.sql`u.banned = false AND u.role NOT IN ('ADMIN', 'MODERATOR', 'COLLABORATOR')`;
+/** Lo mismo que COMMUNITY_SQL pero para el equipo (ADMIN, MODERATOR, COLLABORATOR). */
+export const TEAM_SQL = Prisma.sql`u.banned = false AND u.role IN ('ADMIN', 'MODERATOR', 'COLLABORATOR')`;
+/** PUBLIC_CATALOG_SERIES en SQL (alias `s`). */
+export const PUBLIC_CATALOG_SERIES_SQL = Prisma.sql`s.visibility = 'VISIBLE' AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'`;
 export const PUBLIC_SERIES_SQL = Prisma.sql`s.visibility = 'VISIBLE' AND (
   (s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL') OR EXISTS (
     SELECT 1 FROM "Season" season JOIN "Episode" e ON e."seasonId" = season.id

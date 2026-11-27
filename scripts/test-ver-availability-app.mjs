@@ -55,7 +55,14 @@ async function login() {
 
 const open = async (n) => {
   await page.goto(`${base}/ver/${series.id}?e=1x${n}`);
-  await page.locator('.ver-serie__title').waitFor();
+  // Mientras React transmite la pagina puede haber una copia oculta del
+  // titulo (el contenido que espera para reemplazar al loading): se espera
+  // la visible.
+  await page
+    .locator('.ver-serie__title')
+    .filter({ visible: true })
+    .first()
+    .waitFor();
 };
 const signInButton = () =>
   page

@@ -83,6 +83,10 @@ const mocks = {
     },
   },
   './cron-runs': {},
+  // Una sola tanda: la prueba usa listas cortas.
+  './d1-lists': {
+    findInChunks: (items, query) => query([...items]),
+  },
 };
 const source = ts.transpileModule(
   readFileSync('src/lib/playability-audit.ts', 'utf8'),

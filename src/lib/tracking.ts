@@ -250,13 +250,25 @@ async function markManyWatched(
   episodeIds: number[],
   now: Date
 ): Promise<number> {
+  // Solo se insertan los que no tienen fila: si se manda uno que ya existe,
+  // D1 rechaza la tanda entera, se reintenta fila por fila y cada choque
+  // queda como error en los logs (y es una consulta mas por capitulo).
+  const existing = await findInChunks(episodeIds, (chunk) =>
+    client.viewStatus.findMany({
+      where: { userId, episodeId: { in: chunk } },
+      select: { episodeId: true },
+    })
+  );
+  const tracked = new Set(existing.map((row) => row.episodeId));
   const created = await createManySkippingDuplicates(
-    episodeIds.map((episodeId) => ({
-      userId,
-      episodeId,
-      status: 'VISTA' as const,
-      watchedDate: now,
-    })),
+    episodeIds
+      .filter((episodeId) => !tracked.has(episodeId))
+      .map((episodeId) => ({
+        userId,
+        episodeId,
+        status: 'VISTA' as const,
+        watchedDate: now,
+      })),
     (rows) => client.viewStatus.createMany({ data: rows })
   );
   // De a tandas: una serie larga tiene mas capitulos que los parametros que

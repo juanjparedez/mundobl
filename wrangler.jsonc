@@ -33,6 +33,17 @@
   "observability": {
     "enabled": true,
   },
+  // Cola de revalidacion ISR de OpenNext (DOQueueHandler). Por defecto corta
+  // cada regeneracion a los 10 s y la reintenta 6 veces. Workers Logs del
+  // 2026-11-27: 80 de 394 pedidos a /estadisticas cortados en 24 h, los
+  // cortados tardaban 11 s de mediana. Cortada antes de guardar, la pagina
+  // sigue vencida, cada visita la encola otra vez y cada intento repite todas
+  // sus consultas. Con 60 s termina y queda en cache; 2 reintentos alcanzan
+  // para un error pasajero.
+  "vars": {
+    "NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS": "60000",
+    "NEXT_CACHE_DO_QUEUE_MAX_RETRIES": "2",
+  },
   "services": [
     {
       // OpenNext se llama a si mismo para revalidar (open-next.config.ts).
