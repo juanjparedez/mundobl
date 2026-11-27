@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { findInChunks } from '@/lib/d1-lists';
 import { requireAuth } from '@/lib/auth-helpers';
 
 /**
@@ -43,14 +44,13 @@ export async function GET() {
   const lastActivityBySeries = new Map<number, Date>();
   if (seriesIds.length > 0) {
     const linkPaths = seriesIds.map((id) => `/series/${id}`);
-    const lastNotifs = await prisma.notification.groupBy({
-      by: ['linkPath'],
-      where: {
-        userId: auth.userId,
-        linkPath: { in: linkPaths },
-      },
-      _max: { createdAt: true },
-    });
+    const lastNotifs = await findInChunks(linkPaths, (chunk) =>
+      prisma.notification.groupBy({
+        by: ['linkPath'],
+        where: { userId: auth.userId, linkPath: { in: chunk } },
+        _max: { createdAt: true },
+      })
+    );
     for (const n of lastNotifs) {
       if (!n.linkPath || !n._max.createdAt) continue;
       const m = /^\/series\/(\d+)$/.exec(n.linkPath);

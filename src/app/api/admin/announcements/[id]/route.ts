@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createManySkippingDuplicates } from '@/lib/create-many';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
+import { countInChunks } from '@/lib/d1-lists';
 import { logAction } from '@/lib/access-log';
 import type { Announcement, Prisma } from '@prisma/client';
 
@@ -35,14 +36,20 @@ async function updateWithRecipients(
 ): Promise<Announcement> {
   // Sequential, not atomic: each step is idempotent, so saving again after a
   // partial failure converges to the same recipients.
-  await prisma.announcementRecipient.deleteMany({
-    where: {
-      announcementId,
-      ...(recipientUserIds.length > 0 && {
-        userId: { notIn: recipientUserIds },
-      }),
-    },
+  // Los que sobran se calculan aca: un `notIn` con muchos destinatarios
+  // pasa el limite de parametros de D1.
+  const keep = new Set(recipientUserIds);
+  const current = await prisma.announcementRecipient.findMany({
+    where: { announcementId },
+    select: { userId: true },
   });
+  await countInChunks(
+    current.flatMap(({ userId }) => (keep.has(userId) ? [] : [userId])),
+    (chunk) =>
+      prisma.announcementRecipient.deleteMany({
+        where: { announcementId, userId: { in: chunk } },
+      })
+  );
   await createManySkippingDuplicates(
     recipientUserIds.map((userId) => ({ announcementId, userId })),
     (rows) => prisma.announcementRecipient.createMany({ data: rows })

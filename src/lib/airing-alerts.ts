@@ -1,4 +1,5 @@
 import { prisma } from './database';
+import { findInChunks } from './d1-lists';
 import {
   airingSeriesWhere,
   isAiringNow,
@@ -102,17 +103,20 @@ export async function runAirDayAlerts(
 
   const refIds = airingToday.map((series) => `${series.id}:${dayKey(now)}`);
   const [subscriptions, already] = await Promise.all([
-    prisma.seriesSubscription.findMany({
-      where: {
-        seriesId: { in: airingToday.map((series) => series.id) },
-        user: { banned: false },
-      },
-      select: { seriesId: true, userId: true },
-    }),
-    prisma.notification.findMany({
-      where: { type: 'air_day', refType: 'air_day', refId: { in: refIds } },
-      select: { userId: true, refId: true },
-    }),
+    findInChunks(
+      airingToday.map((series) => series.id),
+      (chunk) =>
+        prisma.seriesSubscription.findMany({
+          where: { seriesId: { in: chunk }, user: { banned: false } },
+          select: { seriesId: true, userId: true },
+        })
+    ),
+    findInChunks(refIds, (chunk) =>
+      prisma.notification.findMany({
+        where: { type: 'air_day', refType: 'air_day', refId: { in: chunk } },
+        select: { userId: true, refId: true },
+      })
+    ),
   ]);
   const sent = new Set(already.map((row) => `${row.userId}|${row.refId}`));
   const byId = new Map(airingToday.map((series) => [series.id, series]));

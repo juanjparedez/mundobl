@@ -1,6 +1,7 @@
 import { API_BATCH_SIZE, probeViaApi, type PlaybackProbe } from './playability';
 import { CORE_MARKETS } from './channel-fetcher';
 import { prisma } from './database';
+import { findInChunks } from './d1-lists';
 import { Prisma } from '@prisma/client';
 import { WATCHABLE_EPISODE_WHERE } from './watchable';
 import { isPlayableIn } from './playability';
@@ -247,17 +248,19 @@ export async function runPlayabilityAudit(
   // en memoria, y los updates en lote.
   const seriesIds = [...touchedSeries];
   if (seriesIds.length > 0) {
-    const episodesForSeries = await prisma.episode.findMany({
-      where: {
-        season: { seriesId: { in: seriesIds } },
-        ...WATCHABLE_EPISODE_WHERE,
-      },
-      select: {
-        playback: true,
-        playbackBlockedMarkets: true,
-        season: { select: { seriesId: true } },
-      },
-    });
+    const episodesForSeries = await findInChunks(seriesIds, (chunk) =>
+      prisma.episode.findMany({
+        where: {
+          season: { seriesId: { in: chunk } },
+          ...WATCHABLE_EPISODE_WHERE,
+        },
+        select: {
+          playback: true,
+          playbackBlockedMarkets: true,
+          season: { select: { seriesId: true } },
+        },
+      })
+    );
 
     const bySeries = new Map<number, { total: number; playable: number }>();
     for (const seriesId of seriesIds) {

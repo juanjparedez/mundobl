@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { countInChunks } from '@/lib/d1-lists';
 import { requireRole } from '@/lib/auth-helpers';
 
 export async function POST(request: NextRequest) {
@@ -17,13 +18,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await prisma.episode.deleteMany({
-      where: { id: { in: ids } },
-    });
+    const deleted = await countInChunks(ids, (chunk) =>
+      prisma.episode.deleteMany({ where: { id: { in: chunk } } })
+    );
 
     return NextResponse.json({
-      deleted: result.count,
-      message: `${result.count} episodio(s) eliminado(s)`,
+      deleted,
+      message: `${deleted} episodio(s) eliminado(s)`,
     });
   } catch (error) {
     console.error('Error al eliminar episodios:', error);

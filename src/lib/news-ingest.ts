@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import { prisma } from './database';
+import { findInChunks } from './d1-lists';
 import { caseVariants } from './text-match';
 import { OFFICIAL_CHANNELS } from './official-channels';
 import { fetchYouTubeChannel } from './channel-fetcher';
@@ -358,10 +359,14 @@ export async function ingestNews({ dryRun = false } = {}) {
     seen.add(c.originalUrl);
     return true;
   });
-  const existing = await prisma.news.findMany({
-    where: { originalUrl: { in: unique.map((c) => c.originalUrl) } },
-    select: { originalUrl: true },
-  });
+  const existing = await findInChunks(
+    unique.map((c) => c.originalUrl),
+    (chunk) =>
+      prisma.news.findMany({
+        where: { originalUrl: { in: chunk } },
+        select: { originalUrl: true },
+      })
+  );
   const known = new Set(existing.map((n) => n.originalUrl));
   const fresh = unique
     .filter((c) => !known.has(c.originalUrl))

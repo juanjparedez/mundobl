@@ -3,6 +3,7 @@ import { createManySkippingDuplicates } from '@/lib/create-many';
 import { revalidatePath } from 'next/cache';
 import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
+import { countInChunkPairs } from '@/lib/d1-lists';
 import { requireRole } from '@/lib/auth-helpers';
 import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
 import { Prisma } from '@prisma/client';
@@ -385,12 +386,11 @@ export async function POST(request: NextRequest) {
         const removeTagIds = tagRecords.map((t) => t.id);
 
         if (removeTagIds.length > 0) {
-          await tx.seriesTag.deleteMany({
-            where: {
-              seriesId: { in: validSeriesIds },
-              tagId: { in: removeTagIds },
-            },
-          });
+          await countInChunkPairs(validSeriesIds, removeTagIds, (s, tagId) =>
+            tx.seriesTag.deleteMany({
+              where: { seriesId: { in: s }, tagId: { in: tagId } },
+            })
+          );
         }
       }
 
@@ -429,12 +429,14 @@ export async function POST(request: NextRequest) {
         const removeGenreIds = genreRecords.map((g) => g.id);
 
         if (removeGenreIds.length > 0) {
-          await tx.seriesGenre.deleteMany({
-            where: {
-              seriesId: { in: validSeriesIds },
-              genreId: { in: removeGenreIds },
-            },
-          });
+          await countInChunkPairs(
+            validSeriesIds,
+            removeGenreIds,
+            (s, genreId) =>
+              tx.seriesGenre.deleteMany({
+                where: { seriesId: { in: s }, genreId: { in: genreId } },
+              })
+          );
         }
       }
     });

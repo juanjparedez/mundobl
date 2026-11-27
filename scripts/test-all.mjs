@@ -91,6 +91,7 @@ const trackingTests = [
   'tracking-redesign',
   'airing-alerts',
   'achievements',
+  'large-library',
 ];
 // [script, usa --import tsx]
 const routeTests = [

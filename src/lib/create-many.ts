@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { D1_PARAMETERS } from './d1-lists';
 
 /** Unique violation from Prisma (P2002) or from a raw D1 batch (atomicWrite). */
 export function isUniqueViolation(error: unknown): boolean {
@@ -8,9 +9,6 @@ export function isUniqueViolation(error: unknown): boolean {
     error instanceof Error && error.message.includes('UNIQUE constraint failed')
   );
 }
-
-/** Parametros de D1 por consulta, con margen para columnas por defecto. */
-const D1_PARAMETERS = 90;
 
 /**
  * `createMany({ skipDuplicates: true })` para SQLite/D1, donde Prisma no lo
