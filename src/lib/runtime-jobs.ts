@@ -7,6 +7,12 @@ export type RuntimeJob = 'daily' | 'playability' | 'news';
 export type RuntimeTrigger = 'manual' | 'schedule';
 export class RuntimeJobBusyError extends Error {}
 
+// Workers Logs guarda un Error pasado como segundo argumento solo como su
+// stack, sin el mensaje: "GEMINI_API_KEY no esta configurado" quedaba oculto.
+function errorText(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 /** One shared entry point for the scheduler and the authenticated admin UI. */
 export async function runRuntimeJob(job: RuntimeJob, trigger: RuntimeTrigger) {
   const started = Date.now();
@@ -29,7 +35,9 @@ export async function runRuntimeJob(job: RuntimeJob, trigger: RuntimeTrigger) {
       results.forEach((result, index) => {
         if (result.status === 'rejected') {
           failed.push(tasks[index]);
-          console.error('[runtime-job]', tasks[index], result.reason);
+          console.error(
+            `[runtime-job] ${tasks[index]}: ${errorText(result.reason)}`
+          );
         } else completed.push(tasks[index]);
       });
       if (job === 'daily') {
@@ -38,7 +46,7 @@ export async function runRuntimeJob(job: RuntimeJob, trigger: RuntimeTrigger) {
           completed.push('logs');
         } catch (error) {
           failed.push('logs');
-          console.error('[runtime-job] logs', error);
+          console.error(`[runtime-job] logs: ${errorText(error)}`);
         }
       }
       const details = Object.fromEntries(

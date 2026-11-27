@@ -10,6 +10,8 @@ import {
   PUBLIC_CATALOG_SERIES,
   COMMUNITY_SQL,
   PUBLIC_SERIES_SQL,
+  PUBLIC_CATALOG_SERIES_SQL,
+  TEAM_SQL,
   COMMUNITY_RATINGS_SQL,
   statsWindowStart,
 } from './statistics-scope';
@@ -373,7 +375,7 @@ export async function getPublicStats(): Promise<PublicStats> {
     catalogByTypeRows,
     catalogByGenreRows,
     catalogByYearRows,
-    teamSeriesRows,
+    teamCompletedSeries,
   ] = await Promise.all([
     // Solo contamos series del catalogo curado (excluye USER_EMBED).
     prisma.series.count({ where: PUBLIC_CATALOG_SERIES }),
@@ -579,19 +581,20 @@ export async function getPublicStats(): Promise<PublicStats> {
       ORDER BY year DESC
       LIMIT 20
     `),
-    // Lo del equipo, aparte y a la vista (ver COMMUNITY).
-    prisma.viewStatus.groupBy({
-      by: ['seriesId'],
-      where: {
-        status: 'VISTA',
-        seriesId: { not: null },
-        series: PUBLIC_CATALOG_SERIES,
-        user: {
-          banned: false,
-          role: { in: ['ADMIN', 'MODERATOR', 'COLLABORATOR'] },
-        },
-      },
-    }),
+    // Lo del equipo, aparte y a la vista (ver COMMUNITY). Se cuenta en la
+    // base: un groupBy sin take traia ~700 ids por render solo para leer
+    // .length, en la pagina cuya regeneracion se corta por tiempo.
+    prisma
+      .$queryRaw<Array<{ count: number | bigint }>>(
+        Prisma.sql`
+      SELECT COUNT(DISTINCT vs."seriesId") AS count
+      FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
+      JOIN "Series" s ON s.id = vs."seriesId"
+      WHERE vs.status = 'VISTA' AND ${PUBLIC_CATALOG_SERIES_SQL} AND ${TEAM_SQL}
+    `
+      )
+      .then((rows) => Number(rows[0]?.count ?? 0)),
   ]);
 
   const allSeriesIdsToFetch = Array.from(
@@ -635,7 +638,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         ? Math.round(ratingStats[0].average * 10) / 10
         : null,
       totalUserRatings: Number(ratingStats[0].total),
-      teamCompletedSeries: teamSeriesRows.length,
+      teamCompletedSeries,
     },
     rankings: {
       topSeries: topSeriesRows

@@ -34,6 +34,7 @@ const { ingestNews } = load('src/lib/news-ingest.ts', {
   'fast-xml-parser': { XMLParser },
   './news-source-policy': policy,
   './text-match': load('src/lib/text-match.ts'),
+  './d1-lists': load('src/lib/d1-lists.ts'),
   './database': {
     prisma: {
       recommendedSite: { findMany: async () => sites },

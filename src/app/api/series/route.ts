@@ -469,8 +469,7 @@ export async function POST(request: NextRequest) {
           }
         } catch (error) {
           console.warn(
-            'No se pudo migrar imagen a Supabase, queda URL original:',
-            error
+            `No se pudo copiar la imagen a R2, queda la URL original: ${error instanceof Error ? error.message : String(error)}`
           );
         }
       });

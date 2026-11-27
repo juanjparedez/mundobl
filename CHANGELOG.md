@@ -13,6 +13,9 @@ Todas las versiones notables del proyecto se documentan aqui.
 ### Fixes
 
 - **«Mi seguimiento» con muchas series**: con cientos de series en la biblioteca, la lista no cargaba («No pudimos cargar tu seguimiento»). Lo mismo podía pasar en «Para vos», en las estadísticas de aportes, al marcar o desmarcar entera una serie de más de 100 capítulos y en algunas herramientas de curaduría en lote.
+- **«Pasar al catálogo» desde `/ver`**: la serie quedaba en el catálogo pero `/catalogo` la mostraba recién horas después. Ahora aparece al instante.
+- **Estadísticas al día**: `/estadisticas` y algunas fichas tardaban más de lo que el sitio esperaba para refrescarse en segundo plano y quedaban con datos viejos. Ahora tienen tiempo para terminar, y la página hace menos trabajo por refresco.
+- **Marcar «voy por el episodio N»** hace menos consultas cuando parte de esos capítulos ya estaban vistos.
 
 ## 2026-11-11 — Reacciones con emoji y visitas por serie
 
