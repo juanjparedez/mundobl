@@ -4,11 +4,11 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Base en Cloudflare D1 (2026-11-26)
 
-- La base pasa de Supabase Postgres (egress bloqueado hasta el 17/12) a la D1 `mundobl` (id `7846511e-b152-4380-945d-e1a285ce2759`). Reglas en "Base de Datos (Prisma + D1)" → "Reglas de D1". Deploy: [deploy-cloudflare.md](../deploy-cloudflare.md) ("Base de datos (D1)" y "Paso de Supabase a D1").
+- La base pasó de Supabase Postgres (egress bloqueado hasta el 17/12) a la D1 `mundobl` (id `7846511e-b152-4380-945d-e1a285ce2759`). Reglas en "Base de Datos (Prisma + D1)" → "Reglas de D1". Deploy: [deploy-cloudflare.md](../deploy-cloudflare.md) ("Base de datos (D1)" y "Paso de Supabase a D1").
 - Rutina nueva: ya no existe `npm run migrate:supabase`. El workflow "Deploy producción" aplica las migraciones de `migrations/` y frena si la D1 está vacía.
 - Pruebas: `npm run test:all` corre sobre SQLite local (`test-results/test-all/replay.db`), sin Docker. Se borraron Docker Compose, Hyperdrive, `enable-rls.ts`, `backup-db.ts`/`restore-backup-local.ts` (reemplazados por `wrangler d1 export` + `scripts/db/restore-local.mjs`) y los scripts de una sola vez que solo corrían en Postgres.
 - Diferencias aceptadas: sin rollback (los pasos parciales se pueden reintentar), LIKE sin distinguir mayúsculas solo en ASCII, orden binario de nombres.
-- Después del paso, borrar: `.github/workflows/copy-to-d1.yml`, `scripts/db/copy-postgres-to-sqlite.mjs`, la devDependency `pg` y los secrets `DATABASE_URL`/`DIRECT_URL` (repo y Worker).
+- Paso hecho el 26/11/2026 (06:45 UTC): se copiaron 81.091 filas en 88 tablas, todas iguales. Se borraron el workflow de copia, su script y la dependencia `pg`. Quedan por borrar a mano los secrets `DATABASE_URL`/`DIRECT_URL` (GitHub y Worker) cuando se confirme que D1 anda bien.
 
 ## Estadísticas públicas reconciliadas (2026-10-31)
 

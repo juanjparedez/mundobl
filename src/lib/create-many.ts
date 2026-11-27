@@ -34,6 +34,8 @@ export async function createManySkippingDuplicates<Row extends object>(
       count += (await createMany(chunk)).count;
     } catch (error) {
       if (!isUniqueViolation(error)) throw error;
+      // Una sola fila: ya se sabe que esta repetida, no hace falta reintentar.
+      if (chunk.length === 1) continue;
       for (const row of chunk) {
         try {
           count += (await createMany([row])).count;
