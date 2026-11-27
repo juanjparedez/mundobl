@@ -8,6 +8,12 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-11-27 — Bibliotecas grandes después del cambio de base
+
+### Fixes
+
+- **«Mi seguimiento» con muchas series**: con cientos de series en la biblioteca, la lista no cargaba («No pudimos cargar tu seguimiento»). Lo mismo podía pasar en «Para vos», en las estadísticas de aportes, al marcar o desmarcar entera una serie de más de 100 capítulos y en algunas herramientas de curaduría en lote.
+
 ## 2026-11-11 — Reacciones con emoji y visitas por serie
 
 ### Features

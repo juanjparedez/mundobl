@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { countInChunks } from '@/lib/d1-lists';
 import { requireAuth } from '@/lib/auth-helpers';
 
 interface Body {
@@ -23,10 +24,12 @@ export async function POST(req: NextRequest) {
   }
 
   if (Array.isArray(body.ids) && body.ids.length > 0) {
-    await prisma.notification.updateMany({
-      where: { userId: auth.userId, id: { in: body.ids }, readAt: null },
-      data: { readAt: now },
-    });
+    await countInChunks(body.ids, (chunk) =>
+      prisma.notification.updateMany({
+        where: { userId: auth.userId, id: { in: chunk }, readAt: null },
+        data: { readAt: now },
+      })
+    );
     return NextResponse.json({ ok: true });
   }
 

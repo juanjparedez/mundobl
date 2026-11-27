@@ -8,6 +8,7 @@ import type {
 import { formatPublicName } from './user-display';
 import { cardImageUrl } from './image-helpers';
 import { withLease } from './lease';
+import { countInChunks } from './d1-lists';
 
 /** Injected through database.ts to keep a single Prisma pool and public-work policy. */
 export function createCommunityLibraryRepository(
@@ -139,9 +140,11 @@ export function createCommunityLibraryRepository(
     const ids = input.items.map((item) => item.seriesId);
     if (
       ids.length !==
-      (await tx.series.count({
-        where: { AND: [publicSeries, { id: { in: ids } }] },
-      }))
+      (await countInChunks(ids, (chunk) =>
+        tx.series.count({
+          where: { AND: [publicSeries, { id: { in: chunk } }] },
+        })
+      ))
     )
       throw new CommunityError(400, 'unavailable');
   }

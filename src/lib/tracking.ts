@@ -18,6 +18,7 @@ import {
   type ProgressTarget as CoreProgressTarget,
 } from './tracking-core';
 import { fromCoreStatus, toCoreStatus } from './tracking-status';
+import { countInChunks, findInChunks } from './d1-lists';
 
 export type TrackingClient = AppTransactionClient;
 
@@ -213,10 +214,7 @@ export async function setProgress(
 
   if (plan.kind === 'unmark') {
     if (plan.episodeIds.length > 0) {
-      await client.viewStatus.updateMany({
-        where: { userId, episodeId: { in: plan.episodeIds } },
-        data: { status: 'SIN_VER', watchedDate: null },
-      });
+      await unmarkEpisodes(client, userId, plan.episodeIds);
       await syncLinkedSeries(client, userId, seriesId, plan.episodeIds);
     }
     return buildProgressResult(client, userId, seriesId, episodes);
@@ -261,11 +259,28 @@ async function markManyWatched(
     })),
     (rows) => client.viewStatus.createMany({ data: rows })
   );
-  const updated = await client.viewStatus.updateMany({
-    where: { userId, episodeId: { in: episodeIds }, status: { not: 'VISTA' } },
-    data: { status: 'VISTA', watchedDate: now },
-  });
-  return created.count + updated.count;
+  // De a tandas: una serie larga tiene mas capitulos que los parametros que
+  // D1 acepta por consulta (d1-lists.ts).
+  const updated = await countInChunks(episodeIds, (chunk) =>
+    client.viewStatus.updateMany({
+      where: { userId, episodeId: { in: chunk }, status: { not: 'VISTA' } },
+      data: { status: 'VISTA', watchedDate: now },
+    })
+  );
+  return created.count + updated;
+}
+
+async function unmarkEpisodes(
+  client: TrackingClient,
+  userId: string,
+  episodeIds: number[]
+): Promise<void> {
+  await countInChunks(episodeIds, (chunk) =>
+    client.viewStatus.updateMany({
+      where: { userId, episodeId: { in: chunk } },
+      data: { status: 'SIN_VER', watchedDate: null },
+    })
+  );
 }
 
 /**
@@ -293,10 +308,7 @@ export async function setEpisodesWatched(
       await updateSeriesAfterWatch(client, userId, seriesId, now);
     await syncLinkedSeries(client, userId, seriesId, ids, now);
   } else {
-    await client.viewStatus.updateMany({
-      where: { userId, episodeId: { in: ids } },
-      data: { status: 'SIN_VER', watchedDate: null },
-    });
+    await unmarkEpisodes(client, userId, ids);
     await syncLinkedSeries(client, userId, seriesId, ids);
   }
 
@@ -353,18 +365,16 @@ async function syncLinkedSeries(
     if (!pairs) continue;
 
     const watchedRows = now
-      ? await client.viewStatus.findMany({
-          where: {
-            userId,
-            status: 'VISTA',
-            episodeId: {
-              in: (side === 'aporte' ? aporteEpisodes : curatedEpisodes).map(
-                (episode) => episode.id
-              ),
-            },
-          },
-          select: { episodeId: true },
-        })
+      ? await findInChunks(
+          (side === 'aporte' ? aporteEpisodes : curatedEpisodes).map(
+            (episode) => episode.id
+          ),
+          (chunk) =>
+            client.viewStatus.findMany({
+              where: { userId, status: 'VISTA', episodeId: { in: chunk } },
+              select: { episodeId: true },
+            })
+        )
       : [];
     const targetIds = linkedEpisodesToSync(
       pairs,
@@ -382,10 +392,7 @@ async function syncLinkedSeries(
       if (changed > 0 && side === 'aporte')
         await updateSeriesAfterWatch(client, userId, curatedId, now);
     } else {
-      await client.viewStatus.updateMany({
-        where: { userId, episodeId: { in: targetIds } },
-        data: { status: 'SIN_VER', watchedDate: null },
-      });
+      await unmarkEpisodes(client, userId, targetIds);
     }
   }
 }
@@ -402,10 +409,12 @@ async function buildProgressResult(
       where: { userId_seriesId: { userId, seriesId } },
       select: { status: true },
     }),
-    client.viewStatus.findMany({
-      where: { userId, episodeId: { in: episodeIds }, status: 'VISTA' },
-      select: { episodeId: true },
-    }),
+    findInChunks(episodeIds, (chunk) =>
+      client.viewStatus.findMany({
+        where: { userId, episodeId: { in: chunk }, status: 'VISTA' },
+        select: { episodeId: true },
+      })
+    ),
   ]);
 
   const watchedIds = new Set(watchedRows.map((row) => row.episodeId));

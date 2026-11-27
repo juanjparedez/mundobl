@@ -952,6 +952,7 @@ npm run migrate:d1                  # aplica a la D1 remota (el deploy ya lo hac
 - **Historial de seguimiento**: lo registra un trigger SQLite (`prisma/sqlite-extras.mjs`). Un lease `tracking-restore:<userId>` (o `tracking-restore:*` en restauraciones completas) lo apaga mientras se restauran eventos.
 - **Texto**: SQLite no tiene ILIKE ni `mode: 'insensitive'`; usar [src/lib/text-match.ts](../../src/lib/text-match.ts). El case-folding de LIKE es solo ASCII y el orden de nombres es binario.
 - **SQL crudo**: dialecto SQLite. Calificar columnas ambiguas (`a.name`), numeros en vez de BigInt, sin `::casts`, `NOW()` ni `= ANY(...)`.
+- **Listas `in` largas**: D1 acepta 100 parametros por consulta (Prisma usa 98). Prisma parte solo algunas listas: con `orderBy`, `take`, `count`, `groupBy`, `notIn` o un `not` en el mismo where tira P2029 ("query parameter limit ... exceeded"). Toda lista que crezca con los datos (series de una biblioteca, capitulos de una serie, ids del cliente) va por `findInChunks` / `countInChunks` / `countInChunkPairs` ([src/lib/d1-lists.ts](../../src/lib/d1-lists.ts)) o se reemplaza por un filtro de relacion (subconsulta, sin lista). Regresion: `scripts/test-large-library.ts` (250 series, serie de 130 capitulos). Asi se rompio "Mi seguimiento" de Flor el 26/11.
 - **Nunca** un PrismaClient por request ni I/O de base global por isolate (ver "Hosting en Cloudflare Workers").
 - Backups: Time Travel de D1 (30 dias) + volcado semanal a R2. Ver [backups.md](../backups.md).
 

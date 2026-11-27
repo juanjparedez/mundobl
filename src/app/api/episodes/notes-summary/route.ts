@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { findInChunks } from '@/lib/d1-lists';
 import { auth } from '@/lib/auth';
 
 // GET /api/episodes/notes-summary?ids=1,2,3
@@ -22,10 +23,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ episodeIds: [] });
     }
 
-    const notes = await prisma.episodeNote.findMany({
-      where: { userId: session.user.id, episodeId: { in: ids } },
-      select: { episodeId: true },
-    });
+    const userId = session.user.id;
+    const notes = await findInChunks(ids, (chunk) =>
+      prisma.episodeNote.findMany({
+        where: { userId, episodeId: { in: chunk } },
+        select: { episodeId: true },
+      })
+    );
 
     return NextResponse.json({ episodeIds: notes.map((n) => n.episodeId) });
   } catch (error) {

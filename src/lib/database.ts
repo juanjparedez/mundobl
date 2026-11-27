@@ -1,4 +1,6 @@
 import { createManySkippingDuplicates } from './create-many';
+import { D1_LIST_CHUNK, countInChunks, findInChunks } from './d1-lists';
+import { sqliteDate } from './d1';
 import {
   caseVariants,
   findSameTextCandidates,
@@ -893,10 +895,12 @@ export async function getOnboardingSeries(): Promise<OnboardingSeriesRow[]> {
 export async function filterOnboardingSeriesIds(
   ids: number[]
 ): Promise<number[]> {
-  const rows = await prisma.series.findMany({
-    where: { ...onboardingSeriesWhere(), id: { in: ids } },
-    select: { id: true },
-  });
+  const rows = await findInChunks(ids, (chunk) =>
+    prisma.series.findMany({
+      where: { ...onboardingSeriesWhere(), id: { in: chunk } },
+      select: { id: true },
+    })
+  );
   return rows.map((row) => row.id);
 }
 
@@ -914,11 +918,13 @@ export async function recordUserActiveDay(userId: string): Promise<boolean> {
     select: { day: true },
   });
   if (existing) return false;
-  const { count } = await createManySkippingDuplicates(
-    [{ userId, day }],
-    (rows) => prisma.userActiveDay.createMany({ data: rows })
-  );
-  return count > 0;
+  // Dos requests en paralelo en el primer uso del dia: ON CONFLICT evita que
+  // la segunda choque con la clave y el adapter de D1 loguee el error.
+  const inserted = await prisma.$executeRaw(Prisma.sql`
+    INSERT INTO "UserActiveDay" ("userId", "day")
+    VALUES (${userId}, ${sqliteDate(day)})
+    ON CONFLICT ("userId", "day") DO NOTHING`);
+  return inserted > 0;
 }
 
 /**
@@ -1947,23 +1953,9 @@ export interface CollaboratorStats {
 export async function getCollaboratorStats(
   userId: string
 ): Promise<CollaboratorStats> {
-  const series = await prisma.series.findMany({
-    where: { origin: 'USER_EMBED', submittedById: userId },
-    select: { id: true },
-  });
-  const seriesIds = series.map((s) => s.id);
-
-  if (seriesIds.length === 0) {
-    return {
-      totalWatching: 0,
-      totalWatched: 0,
-      totalFavorites: 0,
-      totalComments: 0,
-      totalReviews: 0,
-      totalSubscriptions: 0,
-    };
-  }
-
+  // Subconsulta por relacion, no una lista de ids: un colaborador con
+  // cientos de aportes pasaria el limite de parametros de D1.
+  const series = { origin: 'USER_EMBED', submittedById: userId } as const;
   const [
     totalWatching,
     totalWatched,
@@ -1972,16 +1964,12 @@ export async function getCollaboratorStats(
     totalReviews,
     totalSubscriptions,
   ] = await Promise.all([
-    prisma.viewStatus.count({
-      where: { seriesId: { in: seriesIds }, status: 'VIENDO' },
-    }),
-    prisma.viewStatus.count({
-      where: { seriesId: { in: seriesIds }, status: 'VISTA' },
-    }),
-    prisma.userFavorite.count({ where: { seriesId: { in: seriesIds } } }),
-    prisma.comment.count({ where: { seriesId: { in: seriesIds } } }),
-    prisma.review.count({ where: { seriesId: { in: seriesIds } } }),
-    prisma.seriesSubscription.count({ where: { seriesId: { in: seriesIds } } }),
+    prisma.viewStatus.count({ where: { series, status: 'VIENDO' } }),
+    prisma.viewStatus.count({ where: { series, status: 'VISTA' } }),
+    prisma.userFavorite.count({ where: { series } }),
+    prisma.comment.count({ where: { series } }),
+    prisma.review.count({ where: { series } }),
+    prisma.seriesSubscription.count({ where: { series } }),
   ]);
 
   return {
@@ -2229,12 +2217,14 @@ export async function changeBasedOnValue(
       )
         throw new Error('TARGET');
     }
-    const result = await tx.series.updateMany({
-      where: { id: { in: expectedIds }, basedOn: source },
-      data: { basedOn: target },
-    });
-    if (result.count !== expectedIds.length) throw new Error('STALE');
-    return result.count;
+    const count = await countInChunks(expectedIds, (chunk) =>
+      tx.series.updateMany({
+        where: { id: { in: chunk }, basedOn: source },
+        data: { basedOn: target },
+      })
+    );
+    if (count !== expectedIds.length) throw new Error('STALE');
+    return count;
   });
 }
 
@@ -2534,8 +2524,9 @@ function watchingSeriesSelect(userId: string) {
 }
 
 /** Series per query: bounds the Worker's peak memory (128 MB per isolate)
- *  for libraries with hundreds of series and thousands of episodes. */
-const WATCHING_SERIES_BATCH = 100;
+ *  for libraries with hundreds of series and thousands of episodes, and
+ *  keeps each `in` list under D1's parameter limit (see d1-lists.ts). */
+const WATCHING_SERIES_BATCH = D1_LIST_CHUNK;
 
 /** Personal library; only explicit series tracking records belong here. */
 export async function getWatchingLibrary(
@@ -2622,14 +2613,16 @@ export async function getWatchingLibrary(
  */
 async function watchingBatches(seriesIds: number[]): Promise<number[][]> {
   const inLibrary = new Set(seriesIds);
-  const links = await prisma.series.findMany({
-    where: {
-      id: { in: seriesIds },
-      origin: 'USER_EMBED',
-      linkedSeriesId: { not: null },
-    },
-    select: { id: true, linkedSeriesId: true },
-  });
+  const links = await findInChunks(seriesIds, (chunk) =>
+    prisma.series.findMany({
+      where: {
+        id: { in: chunk },
+        origin: 'USER_EMBED',
+        linkedSeriesId: { not: null },
+      },
+      select: { id: true, linkedSeriesId: true },
+    })
+  );
   const groupOf = new Map(
     links.flatMap(({ id, linkedSeriesId }) =>
       linkedSeriesId !== null && inLibrary.has(linkedSeriesId)
@@ -2768,10 +2761,12 @@ export async function saveWatchingPreferences(
         ? input.initial
         : applyPreferenceChange(current, input.change);
     // Only pin series already present in this account's library.
-    const owned = await prisma.viewStatus.findMany({
-      where: { userId, seriesId: { in: next.pinned } },
-      select: { seriesId: true },
-    });
+    const owned = await findInChunks(next.pinned, (chunk) =>
+      prisma.viewStatus.findMany({
+        where: { userId, seriesId: { in: chunk } },
+        select: { seriesId: true },
+      })
+    );
     const ids = new Set(owned.map((row) => row.seriesId));
     next.pinned = next.pinned.filter((id) => ids.has(id));
     await prisma.user.update({
@@ -3526,28 +3521,29 @@ function toRecommendationFeatures(
  */
 async function recommendFromSeeds(
   seeds: RecommendationSeed[],
-  excludeIds: number[],
+  exclude: Prisma.SeriesWhereInput,
   limit: number,
   extraWhere: Prisma.SeriesWhereInput = {}
 ): Promise<RecommendedSeriesCard[]> {
-  const tagIds = [...new Set(seeds.flatMap((s) => s.tagIds))];
-  const actorIds = [...new Set(seeds.flatMap((s) => s.actorIds))];
-  if (tagIds.length === 0 && actorIds.length === 0) return [];
+  const hasTags = seeds.some((s) => s.tagIds.length > 0);
+  const hasActors = seeds.some((s) => s.actorIds.length > 0);
+  if (!hasTags && !hasActors) return [];
+  // Tags y actores de las semillas por subconsulta (lista de a lo sumo
+  // MAX_RECOMMENDATION_SEEDS ids): la union de sus tags y actores pasa
+  // facil el limite de parametros de D1.
+  const seedIds = seeds.map((s) => s.id);
+  const ofSeeds = { series: { some: { seriesId: { in: seedIds } } } };
 
   const candidates = await prisma.series.findMany({
     where: {
       AND: [
         RECOMMENDABLE_SERIES_WHERE,
         extraWhere,
-        { id: { notIn: excludeIds } },
+        exclude,
         {
           OR: [
-            ...(tagIds.length
-              ? [{ tags: { some: { tagId: { in: tagIds } } } }]
-              : []),
-            ...(actorIds.length
-              ? [{ actors: { some: { actorId: { in: actorIds } } } }]
-              : []),
+            ...(hasTags ? [{ tags: { some: { tag: ofSeeds } } }] : []),
+            ...(hasActors ? [{ actors: { some: { actor: ofSeeds } } }] : []),
           ],
         },
       ],
@@ -3609,7 +3605,7 @@ export async function getSimilarSeries(
         ...toRecommendationFeatures(source),
       },
     ],
-    [source.id],
+    { id: { not: source.id } },
     limit,
     source.universeId
       ? {
@@ -3655,11 +3651,10 @@ export async function getRecommendationsForUser(
   ]);
 
   const favoriteIds = new Set(favorites.map((f) => f.seriesId));
-  const excludeIds = new Set<number>(favoriteIds);
+  const linkedIds: number[] = [];
   const seedWeights = new Map<number, number>();
   for (const row of statuses) {
     if (row.seriesId === null) continue;
-    excludeIds.add(row.seriesId);
     const weight = SEED_WEIGHTS[row.status];
     if (weight && seedWeights.size < MAX_RECOMMENDATION_SEEDS) {
       seedWeights.set(row.seriesId, weight);
@@ -3683,7 +3678,7 @@ export async function getRecommendationsForUser(
       },
     });
     for (const row of seedRows) {
-      if (row.linkedSeriesId) excludeIds.add(row.linkedSeriesId);
+      if (row.linkedSeriesId) linkedIds.push(row.linkedSeriesId);
     }
     const seeds = seedRows.map((row) => ({
       id: row.id,
@@ -3691,27 +3686,48 @@ export async function getRecommendationsForUser(
       weight: seedWeights.get(row.id) ?? 1,
       ...toRecommendationFeatures(row),
     }));
-    const personal = await recommendFromSeeds(seeds, [...excludeIds], limit);
+    const personal = await recommendFromSeeds(
+      seeds,
+      notInLibrary(userId, linkedIds),
+      limit
+    );
     if (personal.length > 0) return { kind: 'personal', series: personal };
   }
 
   return {
     kind: 'popular',
-    series: await getPopularSeries([...excludeIds], limit),
+    series: await getPopularSeries(notInLibrary(userId, linkedIds), limit),
+  };
+}
+
+/** Series fuera de la biblioteca y los favoritos del usuario, por
+ *  subconsulta: una biblioteca de cientos de series como lista de ids pasa
+ *  el limite de parametros de D1. `linkedIds` (fichas de los aportes
+ *  semilla) es corta. */
+function notInLibrary(
+  userId: string,
+  linkedIds: number[]
+): Prisma.SeriesWhereInput {
+  return {
+    NOT: [
+      { viewStatus: { some: { userId } } },
+      { favorites: { some: { userId } } },
+      ...(linkedIds.length ? [{ id: { in: linkedIds } }] : []),
+    ],
   };
 }
 
 /** Lo que mas gente sigue o termino. */
 async function getPopularSeries(
-  excludeIds: number[],
+  exclude: Prisma.SeriesWhereInput,
   limit: number
 ): Promise<RecommendedSeriesCard[]> {
   const counts = await prisma.viewStatus.groupBy({
     by: ['seriesId'],
     where: {
       status: { in: ['VIENDO', 'VISTA'] },
-      seriesId: { not: null, notIn: excludeIds },
-      series: RECOMMENDABLE_SERIES_WHERE,
+      seriesId: { not: null },
+      series: { AND: [RECOMMENDABLE_SERIES_WHERE, exclude] },
     },
     _count: { _all: true },
     orderBy: { _count: { seriesId: 'desc' } },

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { findInChunks } from '@/lib/d1-lists';
 import { requireRole } from '@/lib/auth-helpers';
 import { detectPlatform } from '@/lib/embed-helpers';
 import { fetchYouTubeChannel, fetchVimeoChannel } from '@/lib/channel-fetcher';
@@ -40,13 +41,12 @@ export async function POST(request: NextRequest) {
     // Check which videos are already imported
     const videoIds = result.videos.map((v) => v.videoId).filter(Boolean);
 
-    const existing = await prisma.embeddableContent.findMany({
-      where: {
-        platform: platform,
-        videoId: { in: videoIds },
-      },
-      select: { videoId: true },
-    });
+    const existing = await findInChunks(videoIds, (chunk) =>
+      prisma.embeddableContent.findMany({
+        where: { platform, videoId: { in: chunk } },
+        select: { videoId: true },
+      })
+    );
 
     const alreadyImported = existing
       .map((e) => e.videoId)

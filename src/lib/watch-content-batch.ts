@@ -1,4 +1,5 @@
 import type { Prisma } from '@prisma/client';
+import { D1_LIST_CHUNK, findInChunks } from './d1-lists';
 import { caseVariants, sameText, sameTextCandidates } from './text-match';
 import type { AppTransactionClient } from './prisma-client';
 import type { VideoChannelInfo } from './channel-fetcher';
@@ -235,22 +236,28 @@ export async function importWatchContentBatch(
       number: split ? i + 1 : ep.chapter,
       title: `${entry.title} EP.${ep.chapter}${ep.parts > 1 ? ` [${ep.part}/${ep.parts}]` : ''}`,
     }));
-    const videos = await tx.episode.findMany({
-      where: {
-        OR: [
-          {
-            embedPlatform: platform,
-            embedVideoId: { in: ordered.map((e) => e.videoId) },
+    // Dos listas por tanda (id y URL de cada video): la mitad del tope de D1.
+    const videos = await findInChunks(
+      ordered,
+      (part) =>
+        tx.episode.findMany({
+          where: {
+            OR: [
+              {
+                embedPlatform: platform,
+                embedVideoId: { in: part.map((e) => e.videoId) },
+              },
+              {
+                embedUrl: {
+                  in: part.map((e) => watchBatchVideoUrl(entry, e.videoId)),
+                },
+              },
+            ],
           },
-          {
-            embedUrl: {
-              in: ordered.map((e) => watchBatchVideoUrl(entry, e.videoId)),
-            },
-          },
-        ],
-      },
-      select: { id: true, seasonId: true },
-    });
+          select: { id: true, seasonId: true },
+        }),
+      D1_LIST_CHUNK / 2
+    );
     if (videos.some((v) => v.seasonId !== season?.id)) {
       throw new Error(
         `Video already belongs to another series: ${entry.title}`

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/database';
+import { countInChunks } from '@/lib/d1-lists';
 import { isRuntimeFreezeActive } from '@/lib/runtime-freeze';
 import { runCronJob } from '@/lib/cron-runs';
 import { runAfterResponse } from '@/lib/after-response';
@@ -269,10 +270,10 @@ export async function purgeExpiredLogs(
     });
     if (rows.length === 0) return { deleted, done: true };
 
-    const { count } = await prisma.accessLog.deleteMany({
-      where: { id: { in: rows.map((row) => row.id) } },
-    });
-    deleted += count;
+    deleted += await countInChunks(
+      rows.map((row) => row.id),
+      (chunk) => prisma.accessLog.deleteMany({ where: { id: { in: chunk } } })
+    );
     if (rows.length < PURGE_BATCH) return { deleted, done: true };
   }
   return { deleted, done: false };

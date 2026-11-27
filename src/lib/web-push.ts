@@ -1,5 +1,6 @@
 import webpush from 'web-push';
 import { prisma } from './database';
+import { countInChunks } from './d1-lists';
 import { runAfterResponse } from './after-response';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -115,9 +116,9 @@ export async function sendPushToUser(
   );
 
   if (expiredEndpoints.length > 0) {
-    await prisma.pushSubscription
-      .deleteMany({ where: { endpoint: { in: expiredEndpoints } } })
-      .catch(() => undefined);
+    await countInChunks(expiredEndpoints, (chunk) =>
+      prisma.pushSubscription.deleteMany({ where: { endpoint: { in: chunk } } })
+    ).catch(() => undefined);
   }
 
   return delivered;

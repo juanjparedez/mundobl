@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database';
+import { countInChunks } from '@/lib/d1-lists';
 import { requireAuth } from '@/lib/auth-helpers';
 
 // GET /api/user/comments - lista comentarios del usuario autenticado
@@ -129,15 +130,15 @@ export async function PATCH(request: NextRequest) {
         );
       }
 
-      const result = await prisma.comment.updateMany({
-        where: {
-          id: { in: ids },
-          userId: authResult.userId,
-        },
-        data: { isPrivate: body.isPrivate },
-      });
+      const { isPrivate } = body;
+      const updated = await countInChunks(ids, (chunk) =>
+        prisma.comment.updateMany({
+          where: { id: { in: chunk }, userId: authResult.userId },
+          data: { isPrivate },
+        })
+      );
 
-      return NextResponse.json({ success: true, updated: result.count });
+      return NextResponse.json({ success: true, updated });
     }
 
     if (body.action === 'updateContent') {
@@ -238,14 +239,13 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const result = await prisma.comment.deleteMany({
-      where: {
-        id: { in: ids },
-        userId: authResult.userId,
-      },
-    });
+    const deleted = await countInChunks(ids, (chunk) =>
+      prisma.comment.deleteMany({
+        where: { id: { in: chunk }, userId: authResult.userId },
+      })
+    );
 
-    return NextResponse.json({ success: true, deleted: result.count });
+    return NextResponse.json({ success: true, deleted });
   } catch (error) {
     console.error('Error deleting user comments:', error);
     return NextResponse.json(
